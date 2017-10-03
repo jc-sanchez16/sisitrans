@@ -103,7 +103,7 @@ public class DAOProducto {
 				int tipo = rs.getInt("TIPO");
 				String descripcionE = rs.getString("DESCRIPCION_E");
 				String descripcionEn = rs.getString("DESCRIPCION_EN");
-				int tiempoPreparacion = rs.getInt("TIEMPO_PREPARACION");
+				int tiempoPreparacion = rs.getInt("TIEMPO_PREP");
 				ArrayList<Ingrediente> ingredientes =  daoIngrediente.getIngredientesProducto();
 				ArrayList<String> tipoComida = getTipoComida(nombre, restaurante);
 				ArrayList<Producto> equivalencias = getEquivalencias(nombre, restaurante);
@@ -120,18 +120,18 @@ public class DAOProducto {
 	
 
 	
-	public void addZona(Producto producto) throws SQLException, Exception {
+	public void addProducto(Producto producto) throws SQLException, Exception {
 
 		String sql = "INSERT INTO PRODUCTO VALUES ('";
 		sql += producto.getNombre() + "','";
 		sql += producto.getRestaurante() + "',";
 		sql += producto.getCosto() + ",";
 		sql += producto.getTipo() + ",'";
-		sql += producto.getCosto() + ",";
-		sql += producto.getCosto() + ",";
-		sql += producto.getCosto() + ",";
-		sql += producto.getDiscapacitados() + ",'";
-		sql += producto.getEspecialidad() + "')";
+		sql += producto.getDescripcionE() + "','";
+		sql += producto.getDescripcionEn() + "',";
+		sql += producto.getTiempoPreparacion() + ",";
+		sql += producto.getPrecio() + ",";
+		sql +="1)";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
@@ -139,15 +139,18 @@ public class DAOProducto {
 
 	}
 
-	public void updateZona(Zona zona) throws SQLException, Exception {
+	public void updateProducto(Producto producto) throws SQLException, Exception {
 
 		String sql = "UPDATE ZONA SET ";
-		sql += "ID="+zona.getId() + ",";
-		sql += "ABIERTO="+zona.getAbierto() + ",";
-		sql += "CAPACIDAD="+zona.getCapacidad() + ",";
-		sql += "DISCAPACITADOS="+zona.getDiscapacitados() + ",";
-		sql += "ESPECIALIDAD='"+zona.getEspecialidad() ;
-		sql += "' WHERE ID = " + zona.getId();
+		sql += "NOMBRE="+producto.getNombre() + "',";
+		sql += "RESTAURANTE"+producto.getRestaurante() + "',";
+		sql += "COSTO="+producto.getCosto() + ",";
+		sql += "TIPO"+producto.getTipo() + ",";
+		sql += "DESCRIPCION_E="+producto.getDescripcionE() + "',";
+		sql += "DESCRIPCIPN_EN="+producto.getDescripcionEn() + "',";
+		sql += "TIEMPO_PREP="+producto.getTiempoPreparacion() + ",";
+		sql += "PRECIO="+producto.getPrecio() + ",";
+		sql += "WHERE NOMBRE ='"+producto.getNombre()+"' AND RESTAURANTE = '"+ producto.getRestaurante()+"'";
 
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
@@ -156,10 +159,114 @@ public class DAOProducto {
 	}
 
 
-	public void deleteZona(Zona zona) throws SQLException, Exception {
+	public void deleteProducto(Producto producto) throws SQLException, Exception {
 
 		String sql = "DELETE FROM ZONA";
-		sql += " WHERE ID = " + zona.getId();
+		sql += " WHERE NOMBRE ='" + producto.getNombre()+"' AND RESTAURANTE = '"+ producto.getRestaurante()+"'";
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+	}
+	public ArrayList<Menu> getMenus() throws SQLException, Exception 
+	{
+		ArrayList<Menu> lista = new ArrayList<Menu>();
+			String sql = "SELECT * FROM PRODUCTO WHERE MENU = 0";
+
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			ResultSet rs = prepStmt.executeQuery();
+
+			while (rs.next()) {
+				String nombre = rs.getString("NOMBRE");
+				String restaurante = rs.getString("RESTAURANTE");
+				double costo = rs.getDouble("COSTO");
+				double precio = rs.getDouble("PRECIO");
+				int tiempoPreparacion = rs.getInt("TIEMPO_PREPARACION");
+				ArrayList<String> tipoComida = getTipoComida(nombre, restaurante);
+				ArrayList<Producto> productos = getProductosMenu(nombre, restaurante);
+				lista.add(new Menu(nombre, restaurante, costo, precio, tiempoPreparacion, tipoComida, productos));
+			}
+	
+		return lista;
+	}
+
+
+
+
+
+
+
+
+	public Menu getMenuPK(String PK1, String PK2) throws SQLException, Exception 
+	{
+		Menu lista = null;
+			String sql = "SELECT * FROM PRODUCTO WHERE MENU = 0 AND NOMBRE ='"+PK1+"' AND RESTAURANTE = '"+ PK2+"'";
+
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			ResultSet rs = prepStmt.executeQuery();
+
+			while (rs.next()) {
+				String nombre = rs.getString("NOMBRE");
+				String restaurante = rs.getString("RESTAURANTE");
+				double costo = rs.getDouble("COSTO");
+				double precio = rs.getDouble("PRECIO");
+				int tiempoPreparacion = rs.getInt("TIEMPO_PREPARACION");
+				ArrayList<String> tipoComida = getTipoComida(nombre, restaurante);
+				ArrayList<Producto> productos = getProductosMenu(nombre, restaurante);
+				lista=(new Menu(nombre, restaurante, costo, precio, tiempoPreparacion, tipoComida, productos));
+			}
+	
+		return lista;
+	}
+
+	
+
+	
+	public void addMenu(Menu menu)  throws SQLException, Exception {
+
+		String sql = "INSERT INTO PRODUCTO VALUES ('";
+		sql += menu.getNombre() + "','";
+		sql += menu.getRestaurante() + "',";
+		sql += menu.getCosto() + ",";
+		sql += "null,";
+		sql += "null,'";
+		sql += "null,";
+		sql += menu.getTiempoPreparacion() + ",";
+		sql += menu.getPrecio() + ",";
+		sql +="0)";
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+
+	}
+
+	public void updateZona(Producto producto) throws SQLException, Exception {
+
+		String sql = "UPDATE ZONA SET ";
+		sql += "NOMBRE="+producto.getNombre() + "',";
+		sql += "RESTAURANTE"+producto.getRestaurante() + "',";
+		sql += "COSTO="+producto.getCosto() + ",";
+		sql += "TIPO"+producto.getTipo() + ",";
+		sql += "DESCRIPCION_E="+producto.getDescripcionE() + "',";
+		sql += "DESCRIPCIPN_EN="+producto.getDescripcionEn() + "',";
+		sql += "TIEMPO_PREP="+producto.getTiempoPreparacion() + ",";
+		sql += "PRECIO="+producto.getPrecio() + ",";
+		sql += "WHERE NOMBRE ='"+producto.getNombre()+"' AND RESTAURANTE = '"+ producto.getRestaurante()+"'";
+
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+	}
+
+
+	public void deleteZona(Producto producto) throws SQLException, Exception {
+
+		String sql = "DELETE FROM ZONA";
+		sql += " WHERE NOMBRE ='" + producto.getNombre()+"' AND RESTAURANTE = '"+ producto.getRestaurante()+"'";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
@@ -183,6 +290,10 @@ public class DAOProducto {
 		return nll;
 	}
 	private ArrayList<Producto> getEquivalencias(String nombre, String restaurante) {
+		// TODO Auto-generated method stub
+		return nll;
+	}
+	private ArrayList<Producto> getProductosMenu(String nombre, String restaurante) {
 		// TODO Auto-generated method stub
 		return nll;
 	}
