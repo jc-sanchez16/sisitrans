@@ -1,13 +1,4 @@
-/**-------------------------------------------------------------------
- * $Id$
- * Universidad de los Andes (Bogotá - Colombia)
- * Departamento de Ingeniería de Sistemas y Computación
- *
- * Materia: Sistemas Transaccionales
- * Ejercicio: VideoAndes
- * Autor: Juan Felipe García - jf.garcia268@uniandes.edu.co
- * -------------------------------------------------------------------
- */
+
 package dao;
 
 
@@ -51,75 +42,77 @@ public class DAOProducto {
 	}
 
 
-	public ArrayList<Zona> getZonas() throws SQLException, Exception 
+	public ArrayList<Producto> getProductos() throws SQLException, Exception 
 	{
-		ArrayList<Zona> lista = new ArrayList<Zona>();
-		DAOReserva daoReserva = new DAOReserva();
-		DAORestaurante daoRestaurante = new DAORestaurante();
+		ArrayList<Producto> lista = new ArrayList<Producto>();
+		DAOIngrediente daoIngrediente = new DAOIngrediente();
 		try
 		{
-			daoReserva.setConn(conn);
-			daoRestaurante.setConn(conn);
-			String sql = "SELECT * FROM ZONA";
+			daoIngrediente.setConn(conn);
+			String sql = "SELECT * FROM PRODUCTO WHERE MENU = 1";
 
 			PreparedStatement prepStmt = conn.prepareStatement(sql);
 			recursos.add(prepStmt);
 			ResultSet rs = prepStmt.executeQuery();
 
 			while (rs.next()) {
-				int id = rs.getInt("ID");
-				boolean abierto =((rs.getInt("ABIERTO") == 0) ? true:false);
-				int capacidad = rs.getInt("CAPACIDAD");
-				boolean discapacitados =((rs.getInt("DISCAPACITADOS") == 0) ? true:false);
-				String especialidad =rs.getString("ESPECIALIDAD") ;
-				ArrayList<Reserva> reservas =  daoReserva.getReservasZona(id);
-				ArrayList<String> condiciones = getCondiciones(id);
-				ArrayList<Restaurante> restaurantes = daoRestaurante.getRestaurantesZona(id);
-				String name  rs.getString("NAME");
-				lista.add(new Zona(id, abierto, capacidad, discapacitados, especialidad, reservas, condiciones, restaurantes));
+				String nombre = rs.getString("NOMBRE");
+				String restaurante = rs.getString("RESTAURANTE");
+				double costo = rs.getDouble("COSTO");
+				double precio = rs.getDouble("PRECIO");
+				int tipo = rs.getInt("TIPO");
+				String descripcionE = rs.getString("DESCRIPCION_E");
+				String descripcionEn = rs.getString("DESCRIPCION_EN");
+				int tiempoPreparacion = rs.getInt("TIEMPO_PREPARACION");
+				ArrayList<Ingrediente> ingredientes =  daoIngrediente.getIngredientesProducto();
+				ArrayList<String> tipoComida = getTipoComida(nombre, restaurante);
+				ArrayList<Producto> equivalencias = getEquivalencias(nombre, restaurante);
+				lista.add(new Producto(nombre, restaurante, costo, tipo, descripcionE, descripcionEn, tiempoPreparacion, precio, tipoComida, equivalencias, ingredientes));
 			}
 		}
 		finally
 		{
-			daoReserva.cerrarRecursos();
-			daoRestaurante.cerrarRecursos();
+			daoIngrediente.cerrarRecursos();
 		}
 		return lista;
 	}
 
 
-	public Zona getZonaPK(int PK) throws SQLException, Exception 
+
+
+
+
+	public Producto getProductoPK(String PK1, String PK2) throws SQLException, Exception 
 	{
-		Zona lista = null;
-		DAOReserva daoReserva = new DAOReserva();
-		DAORestaurante daoRestaurante = new DAORestaurante();
+		Producto lista = null;
+		DAOIngrediente daoIngrediente = new DAOIngrediente();
 		try
 		{
-			daoReserva.setConn(conn);
-			daoRestaurante.setConn(conn);
-			String sql = "SELECT * FROM ZONA WHERE ID = "+PK;
+			daoIngrediente.setConn(conn);
+			String sql = "SELECT * FROM PRODUCTO WHERE MENU = 1 AND NOMBRE ='"+PK1+"' AND RESTAURANTE = '"+ PK2+"'";
 
 			PreparedStatement prepStmt = conn.prepareStatement(sql);
 			recursos.add(prepStmt);
 			ResultSet rs = prepStmt.executeQuery();
 
 			while (rs.next()) {
-				int id = rs.getInt("ID");
-				boolean abierto =((rs.getInt("ABIERTO") == 0) ? true:false);
-				int capacidad = rs.getInt("CAPACIDAD");
-				boolean discapacitados =((rs.getInt("DISCAPACITADOS") == 0) ? true:false);
-				String especialidad =rs.getString("ESPECIALIDAD") ;
-				ArrayList<Reserva> reservas =  daoReserva.getReservasZona(id);
-				ArrayList<String> condiciones = getCondiciones(id);
-				ArrayList<Restaurante> restaurantes = daoRestaurante.getRestaurantesZona(id);
-				String name  rs.getString("NAME");
-				lista=(new Zona(id, abierto, capacidad, discapacitados, especialidad, reservas, condiciones, restaurantes));
+				String nombre = rs.getString("NOMBRE");
+				String restaurante = rs.getString("RESTAURANTE");
+				double costo = rs.getDouble("COSTO");
+				double precio = rs.getDouble("PRECIO");
+				int tipo = rs.getInt("TIPO");
+				String descripcionE = rs.getString("DESCRIPCION_E");
+				String descripcionEn = rs.getString("DESCRIPCION_EN");
+				int tiempoPreparacion = rs.getInt("TIEMPO_PREPARACION");
+				ArrayList<Ingrediente> ingredientes =  daoIngrediente.getIngredientesProducto();
+				ArrayList<String> tipoComida = getTipoComida(nombre, restaurante);
+				ArrayList<Producto> equivalencias = getEquivalencias(nombre, restaurante);
+				lista = (new Producto(nombre, restaurante, costo, tipo, descripcionE, descripcionEn, tiempoPreparacion, precio, tipoComida, equivalencias, ingredientes));
 			}
 		}
 		finally
 		{
-			daoReserva.cerrarRecursos();
-			daoRestaurante.cerrarRecursos();
+			daoIngrediente.cerrarRecursos();
 		}
 		return lista;
 	}
@@ -127,14 +120,18 @@ public class DAOProducto {
 	
 
 	
-	public void addZona(Zona zona) throws SQLException, Exception {
+	public void addZona(Producto producto) throws SQLException, Exception {
 
-		String sql = "INSERT INTO ZONA VALUES (";
-		sql += zona.getId() + ",";
-		sql += zona.getAbierto() + ",";
-		sql += zona.getCapacidad() + ",";
-		sql += zona.getDiscapacitados() + ",'";
-		sql += zona.getEspecialidad() + "')";
+		String sql = "INSERT INTO PRODUCTO VALUES ('";
+		sql += producto.getNombre() + "','";
+		sql += producto.getRestaurante() + "',";
+		sql += producto.getCosto() + ",";
+		sql += producto.getTipo() + ",'";
+		sql += producto.getCosto() + ",";
+		sql += producto.getCosto() + ",";
+		sql += producto.getCosto() + ",";
+		sql += producto.getDiscapacitados() + ",'";
+		sql += producto.getEspecialidad() + "')";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
@@ -181,4 +178,12 @@ public class DAOProducto {
 		return nl;
 	}
 
+	private ArrayList<String> getTipoComida(String nombre, String restaurante) {
+		// TODO Auto-generated method stub
+		return nll;
+	}
+	private ArrayList<Producto> getEquivalencias(String nombre, String restaurante) {
+		// TODO Auto-generated method stub
+		return nll;
+	}
 }

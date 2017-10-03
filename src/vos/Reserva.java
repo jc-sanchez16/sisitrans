@@ -22,9 +22,9 @@ public class Reserva {
 	
 	private int usuario;
 	
-	private String menu;
+	private Menu menu;
 
-	public Reserva(int invitados, Date fecha, int zona, int usuario, String menu) {
+	public Reserva(int invitados, Date fecha, int zona, int usuario, Menu menu) {
 		super();
 		this.invitados = invitados;
 		this.fecha = fecha;
@@ -41,8 +41,8 @@ public class Reserva {
 		this.invitados = invitados;
 	}
 
-	public Date getFecha() {
-		return fecha;
+	public long getFecha() {
+		return fecha.getTime();
 	}
 
 	public void setFecha(Date fecha) {
@@ -65,11 +65,11 @@ public class Reserva {
 		this.usuario = usuario;
 	}
 
-	public String getMenu() {
+	public Menu getMenu() {
 		return menu;
 	}
 
-	public void setMenu(String menu) {
+	public void setMenu(Menu menu) {
 		this.menu = menu;
 	}
 	
