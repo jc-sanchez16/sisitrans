@@ -169,4 +169,10 @@ public class DAOIngrediente {
 		prepStmt.executeQuery();
 	}
 
+
+	public ArrayList<Ingrediente> getIngredientesProducto() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

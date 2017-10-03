@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 
 import vos.*;
 
@@ -42,75 +43,61 @@ public class DAOReserva {
 	}
 
 
-	public ArrayList<Zona> getZonas() throws SQLException, Exception 
+	public ArrayList<Reserva> getReservas() throws SQLException, Exception 
 	{
-		ArrayList<Zona> lista = new ArrayList<Zona>();
-		DAOReserva daoReserva = new DAOReserva();
-		DAORestaurante daoRestaurante = new DAORestaurante();
+		ArrayList<Reserva> lista = new ArrayList<Reserva>();
+		DAOProducto daoProducto = new DAOProducto();
 		try
 		{
-			daoReserva.setConn(conn);
-			daoRestaurante.setConn(conn);
-			String sql = "SELECT * FROM ZONA";
+			daoProducto.setConn(conn);
+			String sql = "SELECT * FROM RESERVA";
 
 			PreparedStatement prepStmt = conn.prepareStatement(sql);
 			recursos.add(prepStmt);
 			ResultSet rs = prepStmt.executeQuery();
 
 			while (rs.next()) {
-				int id = rs.getInt("ID");
-				boolean abierto =((rs.getInt("ABIERTO") == 0) ? true:false);
-				int capacidad = rs.getInt("CAPACIDAD");
-				boolean discapacitados =((rs.getInt("DISCAPACITADOS") == 0) ? true:false);
-				String especialidad =rs.getString("ESPECIALIDAD") ;
-				ArrayList<Reserva> reservas =  daoReserva.getReservasZona(id);
-				ArrayList<String> condiciones = getCondiciones(id);
-				ArrayList<Restaurante> restaurantes = daoRestaurante.getRestaurantesZona(id);
-				String name  rs.getString("NAME");
-				lista.add(new Zona(id, abierto, capacidad, discapacitados, especialidad, reservas, condiciones, restaurantes));
+				int invitados = rs.getInt("INVITADOS");
+				Date fecha = new Date(rs.getLong("FECHA"));
+				int zona = rs.getInt("ZONA");
+				int usuario = rs.getInt("USUARIO");
+				Menu menu = daoProducto.getMenuPK(rs.getString("MENU"),rs.getString("RESTAURANTE"));
+				lista.add(new Reserva(invitados, fecha, zona, usuario, menu));
 			}
 		}
 		finally
 		{
-			daoReserva.cerrarRecursos();
-			daoRestaurante.cerrarRecursos();
+			daoProducto.cerrarRecursos();
 		}
 		return lista;
 	}
 
 
-	public Zona getZonaPK(int PK) throws SQLException, Exception 
+	public Reserva getReservaPK(long PK1, int PK2) throws SQLException, Exception 
 	{
-		Zona lista = null;
-		DAOReserva daoReserva = new DAOReserva();
-		DAORestaurante daoRestaurante = new DAORestaurante();
+		Reserva lista = null;
+		DAOProducto daoProducto = new DAOProducto();
 		try
 		{
-			daoReserva.setConn(conn);
-			daoRestaurante.setConn(conn);
-			String sql = "SELECT * FROM ZONA WHERE ID = "+PK;
+			daoProducto.setConn(conn);
+			String sql = "SELECT * FROM RESERVA WHERE FECHA = "+PK1+" AND CLIENTE = "+PK2;
 
 			PreparedStatement prepStmt = conn.prepareStatement(sql);
 			recursos.add(prepStmt);
 			ResultSet rs = prepStmt.executeQuery();
 
 			while (rs.next()) {
-				int id = rs.getInt("ID");
-				boolean abierto =((rs.getInt("ABIERTO") == 0) ? true:false);
-				int capacidad = rs.getInt("CAPACIDAD");
-				boolean discapacitados =((rs.getInt("DISCAPACITADOS") == 0) ? true:false);
-				String especialidad =rs.getString("ESPECIALIDAD") ;
-				ArrayList<Reserva> reservas =  daoReserva.getReservasZona(id);
-				ArrayList<String> condiciones = getCondiciones(id);
-				ArrayList<Restaurante> restaurantes = daoRestaurante.getRestaurantesZona(id);
-				String name  rs.getString("NAME");
-				lista=(new Zona(id, abierto, capacidad, discapacitados, especialidad, reservas, condiciones, restaurantes));
-			}
+				int invitados = rs.getInt("INVITADOS");
+				Date fecha = new Date(rs.getLong("FECHA"));
+				int zona = rs.getInt("ZONA");
+				int usuario = rs.getInt("USUARIO");
+				Menu menu = daoProducto.getMenuPK(rs.getString("MENU"),rs.getString("RESTAURANTE"));
+				lista=(new Reserva(invitados, fecha, zona, usuario, menu));
+				}
 		}
 		finally
 		{
-			daoReserva.cerrarRecursos();
-			daoRestaurante.cerrarRecursos();
+			daoProducto.cerrarRecursos();
 		}
 		return lista;
 	}
@@ -118,14 +105,14 @@ public class DAOReserva {
 	
 
 	
-	public void addZona(Zona zona) throws SQLException, Exception {
+	public void addReserva(Reserva reserva) throws SQLException, Exception {
 
 		String sql = "INSERT INTO ZONA VALUES (";
-		sql += zona.getId() + ",";
-		sql += zona.getAbierto() + ",";
-		sql += zona.getCapacidad() + ",";
-		sql += zona.getDiscapacitados() + ",'";
-		sql += zona.getEspecialidad() + "')";
+		sql += reserva.getFecha() + ",";
+		sql += reserva.getUsuario() + ",'";
+		sql += reserva.getMenu().getNombre() + "','";
+		sql += reserva.getMenu().getRestaurante() + "',";
+		sql += reserva.getInvitados() + ")";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
@@ -133,15 +120,15 @@ public class DAOReserva {
 
 	}
 
-	public void updateZona(Zona zona) throws SQLException, Exception {
+	public void updateZona(Reserva reserva) throws SQLException, Exception {
 
-		String sql = "UPDATE ZONA SET ";
-		sql += "ID="+zona.getId() + ",";
-		sql += "ABIERTO="+zona.getAbierto() + ",";
-		sql += "CAPACIDAD="+zona.getCapacidad() + ",";
-		sql += "DISCAPACITADOS="+zona.getDiscapacitados() + ",";
-		sql += "ESPECIALIDAD='"+zona.getEspecialidad() ;
-		sql += "' WHERE ID = " + zona.getId();
+		String sql = "UPDATE RESERVA SET ";
+		sql += "FECHA="+reserva.getFecha() + ",";
+		sql += "CLIENTE="+reserva.getUsuario() + ",";
+		sql += "MENU='"+reserva.getMenu().getNombre() + "',";
+		sql += "RESTAURANTE='"+reserva.getMenu().getRestaurante() + "',";
+		sql += "INVITADOS="+reserva.getInvitados() + ")";
+		sql += "WHERE FECHA = "+reserva.getFecha()+" AND CLIENTE = "+reserva.getUsuario();
 
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
@@ -150,10 +137,10 @@ public class DAOReserva {
 	}
 
 
-	public void deleteZona(Zona zona) throws SQLException, Exception {
+	public void deleteZona(Reserva reserva) throws SQLException, Exception {
 
-		String sql = "DELETE FROM ZONA";
-		sql += " WHERE ID = " + zona.getId();
+		String sql = "DELETE FROM RESERVA";
+		sql += "WHERE FECHA = "+reserva.getFecha()+" AND CLIENTE = "+reserva.getUsuario();
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
@@ -162,14 +149,60 @@ public class DAOReserva {
 
 
 	public ArrayList<Reserva> getReservasUsuario(int id) {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<Reserva> lista = new ArrayList<Reserva>();
+		DAOProducto daoProducto = new DAOProducto();
+		try
+		{
+			daoProducto.setConn(conn);
+			String sql = "SELECT * FROM RESERVA WHERE CLIENTE ="+id;
+
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			ResultSet rs = prepStmt.executeQuery();
+
+			while (rs.next()) {
+				int invitados = rs.getInt("INVITADOS");
+				Date fecha = new Date(rs.getLong("FECHA"));
+				int zona = rs.getInt("ZONA");
+				int usuario = rs.getInt("USUARIO");
+				Menu menu = daoProducto.getMenuPK(rs.getString("MENU"),rs.getString("RESTAURANTE"));
+				lista.add(new Reserva(invitados, fecha, zona, usuario, menu));
+			}
+		}
+		finally
+		{
+			daoProducto.cerrarRecursos();
+		}
+		return lista;
 	}
 
 
 	public ArrayList<Reserva> getReservasZona(int id) {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<Reserva> lista = new ArrayList<Reserva>();
+		DAOProducto daoProducto = new DAOProducto();
+		try
+		{
+			daoProducto.setConn(conn);
+			String sql = "SELECT * FROM RESERVA WHERE ZONA ="+id;
+
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			ResultSet rs = prepStmt.executeQuery();
+
+			while (rs.next()) {
+				int invitados = rs.getInt("INVITADOS");
+				Date fecha = new Date(rs.getLong("FECHA"));
+				int zona = rs.getInt("ZONA");
+				int usuario = rs.getInt("USUARIO");
+				Menu menu = daoProducto.getMenuPK(rs.getString("MENU"),rs.getString("RESTAURANTE"));
+				lista.add(new Reserva(invitados, fecha, zona, usuario, menu));
+			}
+		}
+		finally
+		{
+			daoProducto.cerrarRecursos();
+		}
+		return lista;
 	}
 
 }

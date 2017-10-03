@@ -19,7 +19,7 @@ public class Producto {
 
 	
 	@JsonProperty(value="nombre")
-	private int nombre;
+	private String nombre;
 	
 	@JsonProperty(value="restaurante")
 	private String restaurante;
@@ -48,7 +48,7 @@ public class Producto {
 
 	private ArrayList<Ingrediente> ingredientes;
 
-	public Producto(int nombre, String restaurante, double costo, int tipo, String descripcionE, String descripcionEn,
+	public Producto(String nombre, String restaurante, double costo, int tipo, String descripcionE, String descripcionEn,
 			int tiempoPreparacion, double precio, ArrayList<String> tipoComida, ArrayList<Producto> equivalencias,
 			ArrayList<Ingrediente> ingredientes) {
 		this.nombre = nombre;
@@ -64,11 +64,11 @@ public class Producto {
 		this.ingredientes = ingredientes;
 	}
 
-	public int getNombre() {
+	public String getNombre() {
 		return nombre;
 	}
 
-	public void setNombre(int nombre) {
+	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
 
