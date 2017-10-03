@@ -148,7 +148,7 @@ public class DAOReserva {
 	}
 
 
-	public ArrayList<Reserva> getReservasUsuario(int id) {
+	public ArrayList<Reserva> getReservasUsuario(int id) throws SQLException, Exception {
 		ArrayList<Reserva> lista = new ArrayList<Reserva>();
 		DAOProducto daoProducto = new DAOProducto();
 		try
@@ -177,7 +177,7 @@ public class DAOReserva {
 	}
 
 
-	public ArrayList<Reserva> getReservasZona(int id) {
+	public ArrayList<Reserva> getReservasZona(int id) throws Exception {
 		ArrayList<Reserva> lista = new ArrayList<Reserva>();
 		DAOProducto daoProducto = new DAOProducto();
 		try
