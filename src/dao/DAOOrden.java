@@ -75,39 +75,25 @@ public class DAOOrden {
 	}
 
 
-	public Zona getZonaPK(int PK) throws SQLException, Exception 
+	public Orden getOrdenPK(int mesa, Date fecha) throws SQLException, Exception 
 	{
-		Zona lista = null;
-		DAOReserva daoReserva = new DAOReserva();
-		DAORestaurante daoRestaurante = new DAORestaurante();
-		try
-		{
-			daoReserva.setConn(conn);
-			daoRestaurante.setConn(conn);
-			String sql = "SELECT * FROM ZONA WHERE ID = "+PK;
+		ArrayList<Orden> lista = new ArrayList<Orden>();
+		String sql = "SELECT * FROM ORDEN WHERE ";
 
-			PreparedStatement prepStmt = conn.prepareStatement(sql);
-			recursos.add(prepStmt);
-			ResultSet rs = prepStmt.executeQuery();
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
 
-			while (rs.next()) {
-				int id = rs.getInt("ID");
-				boolean abierto =((rs.getInt("ABIERTO") == 0) ? true:false);
-				int capacidad = rs.getInt("CAPACIDAD");
-				boolean discapacitados =((rs.getInt("DISCAPACITADOS") == 0) ? true:false);
-				String especialidad =rs.getString("ESPECIALIDAD") ;
-				ArrayList<Reserva> reservas =  daoReserva.getReservasZona(id);
-				ArrayList<String> condiciones = getCondiciones(id);
-				ArrayList<Restaurante> restaurantes = daoRestaurante.getRestaurantesZona(id);
-				String name  rs.getString("NAME");
-				lista=(new Zona(id, abierto, capacidad, discapacitados, especialidad, reservas, condiciones, restaurantes));
-			}
+		while (rs.next()) {
+			int mesa = rs.getInt("MESA");
+			int f = rs.getInt("FECHA");
+			Date fecha = new Date(f);
+			ArrayList<Integer> usuarios = getUsuariosOrden(mesa, f);
+			ArrayList<Menu> menus= getMenusOrden(mesa,f);
+			ArrayList<Producto> productos = getProductosOrden(mesa,f);
+			lista.add(new Orden(mesa, fecha, usuarios, menus, productos));
 		}
-		finally
-		{
-			daoReserva.cerrarRecursos();
-			daoRestaurante.cerrarRecursos();
-		}
+
 		return lista;
 	}
 

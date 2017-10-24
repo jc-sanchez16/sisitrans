@@ -20,8 +20,12 @@ public class Administrador extends Usuario
 	@JsonProperty(value="clave")
 	private String clave;
 
-	public Administrador(@JsonProperty(value="id")int id, @JsonProperty(value="nombre")String nombre, @JsonProperty(value="edad")int edad, ArrayList<Orden> ordenes, ArrayList<String> preferencias,
-			ArrayList<Reserva> reservas, @JsonProperty(value="clave")String clave) {
+	public Administrador(@JsonProperty(value="id")int id, @JsonProperty(value="nombre")String nombre, @JsonProperty(value="edad")int edad, @JsonProperty(value="clave")String clave) {
+		super(id, nombre, edad);
+		this.clave = clave;
+	}
+	public Administrador(int id, String nombre, int edad, ArrayList<Orden> ordenes, ArrayList<String> preferencias,
+			ArrayList<Reserva> reservas,String clave) {
 		super(id, nombre, edad, ordenes, preferencias, reservas);
 		this.clave = clave;
 	}

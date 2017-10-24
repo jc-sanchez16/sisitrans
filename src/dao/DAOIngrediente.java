@@ -142,27 +142,10 @@ public class DAOIngrediente {
 
 	}
 
-	public void updateZona(Zona zona) throws SQLException, Exception {
+	public void deleteIngrediente(String nombre) throws SQLException, Exception {
 
-		String sql = "UPDATE ZONA SET ";
-		sql += "ID="+zona.getId() + ",";
-		sql += "ABIERTO="+zona.getAbierto() + ",";
-		sql += "CAPACIDAD="+zona.getCapacidad() + ",";
-		sql += "DISCAPACITADOS="+zona.getDiscapacitados() + ",";
-		sql += "ESPECIALIDAD='"+zona.getEspecialidad() ;
-		sql += "' WHERE ID = " + zona.getId();
-
-
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
-	}
-
-
-	public void deleteZona(Zona zona) throws SQLException, Exception {
-
-		String sql = "DELETE FROM ZONA";
-		sql += " WHERE ID = " + zona.getId();
+		String sql = "DELETE FROM INGREDIENTE";
+		sql += " WHERE ID = " + nombre;
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);

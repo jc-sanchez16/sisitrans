@@ -73,12 +73,12 @@ public class AdministradorServices {
 	@GET
 	@Path( "{id: \\d+}" )
 	@Produces( { MediaType.APPLICATION_JSON } )
-	public Response getAdministrador( @PathParam( "id" ) int id )
+	public Response getAdministradorPK( @PathParam( "id" ) int id )
 	{
 		TMUsuario tm = new TMUsuario( getPath( ) );
 		try
 		{
-			Administrador admin = tm.getAdministradorPorNumeroID(id);
+			Administrador admin = tm.getAdministradorPK(id);
 			return Response.status( 200 ).entity( admin ).build( );			
 		}
 		catch( Exception e )
@@ -136,14 +136,15 @@ public class AdministradorServices {
 	@DELETE
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteAdministrador(Administrador admin) {
+	@Path( "{id: \\d+}" )
+	public Response deleteAdministrador( @PathParam( "id" ) int id) {
 		TMUsuario tm = new TMUsuario(getPath());
 		try {
-			tm.deleteAdministrador(admin);
+			tm.deleteAdministrador(id);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
-		return Response.status(200).entity(admin).build();
+		return Response.status(200).entity(id).build();
 	}
 
 
