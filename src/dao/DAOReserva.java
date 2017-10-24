@@ -154,7 +154,7 @@ public class DAOReserva {
 		try
 		{
 			daoProducto.setConn(conn);
-			String sql = "SELECT * FROM RESERVA WHERE CLIENTE ="+id;
+			String sql = "SELECT * FROM RESERVA WHERE USUARIO ="+id;
 
 			PreparedStatement prepStmt = conn.prepareStatement(sql);
 			recursos.add(prepStmt);

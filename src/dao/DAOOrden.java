@@ -50,79 +50,79 @@ public class DAOOrden {
 		this.conn = con;
 	}
 
+//
+//	public ArrayList<Zona> getZonas() throws SQLException, Exception 
+//	{
+//		ArrayList<Zona> lista = new ArrayList<Zona>();
+//		DAOReserva daoReserva = new DAOReserva();
+//		DAORestaurante daoRestaurante = new DAORestaurante();
+//		try
+//		{
+//			daoReserva.setConn(conn);
+//			daoRestaurante.setConn(conn);
+//			String sql = "SELECT * FROM ZONA";
+//
+//			PreparedStatement prepStmt = conn.prepareStatement(sql);
+//			recursos.add(prepStmt);
+//			ResultSet rs = prepStmt.executeQuery();
+//
+//			while (rs.next()) {
+//				int id = rs.getInt("ID");
+//				boolean abierto =((rs.getInt("ABIERTO") == 0) ? true:false);
+//				int capacidad = rs.getInt("CAPACIDAD");
+//				boolean discapacitados =((rs.getInt("DISCAPACITADOS") == 0) ? true:false);
+//				String especialidad =rs.getString("ESPECIALIDAD") ;
+//				ArrayList<Reserva> reservas =  daoReserva.getReservasZona(id);
+//				ArrayList<String> condiciones = getCondiciones(id);
+//				ArrayList<Restaurante> restaurantes = daoRestaurante.getRestaurantesZona(id);
+//				String name  rs.getString("NAME");
+//				lista.add(new Zona(id, abierto, capacidad, discapacitados, especialidad, reservas, condiciones, restaurantes));
+//			}
+//		}
+//		finally
+//		{
+//			daoReserva.cerrarRecursos();
+//			daoRestaurante.cerrarRecursos();
+//		}
+//		return lista;
+//	}
 
-	public ArrayList<Zona> getZonas() throws SQLException, Exception 
-	{
-		ArrayList<Zona> lista = new ArrayList<Zona>();
-		DAOReserva daoReserva = new DAOReserva();
-		DAORestaurante daoRestaurante = new DAORestaurante();
-		try
-		{
-			daoReserva.setConn(conn);
-			daoRestaurante.setConn(conn);
-			String sql = "SELECT * FROM ZONA";
 
-			PreparedStatement prepStmt = conn.prepareStatement(sql);
-			recursos.add(prepStmt);
-			ResultSet rs = prepStmt.executeQuery();
-
-			while (rs.next()) {
-				int id = rs.getInt("ID");
-				boolean abierto =((rs.getInt("ABIERTO") == 0) ? true:false);
-				int capacidad = rs.getInt("CAPACIDAD");
-				boolean discapacitados =((rs.getInt("DISCAPACITADOS") == 0) ? true:false);
-				String especialidad =rs.getString("ESPECIALIDAD") ;
-				ArrayList<Reserva> reservas =  daoReserva.getReservasZona(id);
-				ArrayList<String> condiciones = getCondiciones(id);
-				ArrayList<Restaurante> restaurantes = daoRestaurante.getRestaurantesZona(id);
-				String name  rs.getString("NAME");
-				lista.add(new Zona(id, abierto, capacidad, discapacitados, especialidad, reservas, condiciones, restaurantes));
-			}
-		}
-		finally
-		{
-			daoReserva.cerrarRecursos();
-			daoRestaurante.cerrarRecursos();
-		}
-		return lista;
-	}
-
-
-	public Zona getZonaPK(int PK) throws SQLException, Exception 
-	{
-		Zona lista = null;
-		DAOReserva daoReserva = new DAOReserva();
-		DAORestaurante daoRestaurante = new DAORestaurante();
-		try
-		{
-			daoReserva.setConn(conn);
-			daoRestaurante.setConn(conn);
-			String sql = "SELECT * FROM ZONA WHERE ID = "+PK;
-
-			PreparedStatement prepStmt = conn.prepareStatement(sql);
-			recursos.add(prepStmt);
-			ResultSet rs = prepStmt.executeQuery();
-
-			while (rs.next()) {
-				int id = rs.getInt("ID");
-				boolean abierto =((rs.getInt("ABIERTO") == 0) ? true:false);
-				int capacidad = rs.getInt("CAPACIDAD");
-				boolean discapacitados =((rs.getInt("DISCAPACITADOS") == 0) ? true:false);
-				String especialidad =rs.getString("ESPECIALIDAD") ;
-				ArrayList<Reserva> reservas =  daoReserva.getReservasZona(id);
-				ArrayList<String> condiciones = getCondiciones(id);
-				ArrayList<Restaurante> restaurantes = daoRestaurante.getRestaurantesZona(id);
-				String name  rs.getString("NAME");
-				lista=(new Zona(id, abierto, capacidad, discapacitados, especialidad, reservas, condiciones, restaurantes));
-			}
-		}
-		finally
-		{
-			daoReserva.cerrarRecursos();
-			daoRestaurante.cerrarRecursos();
-		}
-		return lista;
-	}
+//	public Zona getZonaPK(int PK) throws SQLException, Exception 
+//	{
+//		Zona lista = null;
+//		DAOReserva daoReserva = new DAOReserva();
+//		DAORestaurante daoRestaurante = new DAORestaurante();
+//		try
+//		{
+//			daoReserva.setConn(conn);
+//			daoRestaurante.setConn(conn);
+//			String sql = "SELECT * FROM ZONA WHERE ID = "+PK;
+//
+//			PreparedStatement prepStmt = conn.prepareStatement(sql);
+//			recursos.add(prepStmt);
+//			ResultSet rs = prepStmt.executeQuery();
+//
+//			while (rs.next()) {
+//				int id = rs.getInt("ID");
+//				boolean abierto =((rs.getInt("ABIERTO") == 0) ? true:false);
+//				int capacidad = rs.getInt("CAPACIDAD");
+//				boolean discapacitados =((rs.getInt("DISCAPACITADOS") == 0) ? true:false);
+//				String especialidad =rs.getString("ESPECIALIDAD") ;
+//				ArrayList<Reserva> reservas =  daoReserva.getReservasZona(id);
+//				ArrayList<String> condiciones = getCondiciones(id);
+//				ArrayList<Restaurante> restaurantes = daoRestaurante.getRestaurantesZona(id);
+//				String name  rs.getString("NAME");
+//				lista=(new Zona(id, abierto, capacidad, discapacitados, especialidad, reservas, condiciones, restaurantes));
+//			}
+//		}
+//		finally
+//		{
+//			daoReserva.cerrarRecursos();
+//			daoRestaurante.cerrarRecursos();
+//		}
+//		return lista;
+//	}
 
 	
 
