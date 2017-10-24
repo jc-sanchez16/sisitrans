@@ -142,6 +142,17 @@ public class DAOUsuario {
 		prepStmt.executeQuery();
 	}
 
+	public void deleteUsuario(int id) throws SQLException, Exception {
+	
+		String sql = "DELETE FROM PERSONA";
+		sql += " WHERE NUMERO_ID = " + id;
+	
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+	}
+
+
 	public ArrayList<Administrador> getAdministradores() throws SQLException, Exception 
 	{
 		ArrayList<Administrador> lista = new ArrayList<Administrador>();
@@ -240,16 +251,6 @@ public class DAOUsuario {
 
 		sql += "' WHERE NUMERO_ID = " + administrador.getId() + "AND CLAVE IS NOT NULL";
 
-
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
-	}
-
-	public void deleteUsuario(Usuario usuario) throws SQLException, Exception {
-
-		String sql = "DELETE FROM PERSONA";
-		sql += " WHERE NUMERO_ID = " + usuario.getId();
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);

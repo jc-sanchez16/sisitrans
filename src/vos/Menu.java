@@ -39,7 +39,14 @@ public class Menu {
 	
 	private ArrayList<Producto> productos;
 
-	public Menu(@JsonProperty(value="nombre")String nombre,@JsonProperty(value="restaurante") String restaurante, @JsonProperty(value="costo")double costo, @JsonProperty(value="precio")double precio, @JsonProperty(value="tiempoPreparacion")int tiempoPreparacion,
+	public Menu(@JsonProperty(value="nombre")String nombre,@JsonProperty(value="restaurante") String restaurante, @JsonProperty(value="costo")double costo, @JsonProperty(value="precio")double precio, @JsonProperty(value="tiempoPreparacion")int tiempoPreparacion) {
+		this.nombre = nombre;
+		this.restaurante = restaurante;
+		this.costo = costo;
+		this.precio = precio;
+		this.tiempoPreparacion = tiempoPreparacion;
+	}
+	public Menu(String nombre,String restaurante, double costo, double precio, int tiempoPreparacion,
 			ArrayList<String> tipoComida, ArrayList<Producto> productos) {
 		this.nombre = nombre;
 		this.restaurante = restaurante;

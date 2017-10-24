@@ -157,10 +157,10 @@ public class DAORestaurante {
 	}
 
 
-	public void deleteRestaurante(Restaurante Restaurantena) throws SQLException, Exception {
+	public void deleteRestaurante(String nombre) throws SQLException, Exception {
 
 		String sql = "DELETE FROM RESTAURANTE";
-		sql += " WHERE NOMBRE = '" + Restaurantena.getNombre()+"'";
+		sql += " WHERE NOMBRE = '" + nombre+"'";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);

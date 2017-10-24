@@ -29,7 +29,12 @@ public class Ingrediente {
 	
 	private ArrayList<Producto> equivalencias;
 
-	public Ingrediente(@JsonProperty(value="nombre")int nombre, @JsonProperty(value="descripcionE")String descripcionE, @JsonProperty(value="descripcionEn")String descripcionEn, ArrayList<Producto> equivalencias) {
+	public Ingrediente(@JsonProperty(value="nombre")int nombre, @JsonProperty(value="descripcionE")String descripcionE, @JsonProperty(value="descripcionEn")String descripcionEn) {
+		this.nombre = nombre;
+		this.descripcionE = descripcionE;
+		this.descripcionEn = descripcionEn;
+	}
+	public Ingrediente(int nombre,String descripcionE, String descripcionEn, ArrayList<Producto> equivalencias) {
 		this.nombre = nombre;
 		this.descripcionE = descripcionE;
 		this.descripcionEn = descripcionEn;

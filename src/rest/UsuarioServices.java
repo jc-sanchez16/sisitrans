@@ -79,12 +79,12 @@ public class UsuarioServices {
 	@GET
 	@Path( "{id: \\d+}" )
 	@Produces( { MediaType.APPLICATION_JSON } )
-	public Response getUsuario( @PathParam( "id" ) int id )
+	public Response getUsuarioPK( @PathParam( "id" ) int id )
 	{
 		TMUsuario tm = new TMUsuario( getPath( ) );
 		try
 		{
-			Usuario user = tm.getUsuarioPorNumeroID(id);
+			Usuario user = tm.getUsuarioPK(id);
 			return Response.status( 200 ).entity( user ).build( );			
 		}
 		catch( Exception e )
@@ -142,14 +142,15 @@ public class UsuarioServices {
 	@DELETE
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteUsuario(Usuario user) {
+	@Path( "{id: \\d+}" )
+	public Response deleteUsuario( @PathParam( "id" ) int id ) {
 		TMUsuario tm = new TMUsuario(getPath());
 		try {
-			tm.deleteUsuario(user);
+			tm.deleteUsuario(id);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
-		return Response.status(200).entity(user).build();
+		return Response.status(200).entity(id).build();
 	}
 
 

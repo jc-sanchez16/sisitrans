@@ -36,7 +36,14 @@ public class Usuario {
 	
 	private ArrayList<Reserva> reservas;
 
-	public Usuario(@JsonProperty(value="id")int id, @JsonProperty(value="nombre")String nombre, @JsonProperty(value="edad")int edad, ArrayList<Orden> ordenes, ArrayList<String> preferencias,
+	public Usuario(@JsonProperty(value="id")int id, @JsonProperty(value="nombre")String nombre, @JsonProperty(value="edad")int edad) {
+	
+		this.id = id;
+		this.nombre = nombre;
+		this.edad = edad;
+	}
+
+	public Usuario(int id, String nombre,int edad, ArrayList<Orden> ordenes, ArrayList<String> preferencias,
 			ArrayList<Reserva> reservas) {
 	
 		this.id = id;

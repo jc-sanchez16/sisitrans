@@ -134,7 +134,7 @@ public class TMUsuario {
 	}
 
 	////////get usuario por su numero de identificacion
-	public Usuario getUsuarioPorNumeroID(int id) throws Exception {
+	public Usuario getUsuarioPK(int id) throws Exception {
 		Usuario usuario;
 		DAOUsuario daoUsuario = new DAOUsuario();
 		try 
@@ -230,6 +230,37 @@ public class TMUsuario {
 		}
 	}
 
+	////////////delete usuarios borra un usuario
+	public void deleteUsuario(int id) throws Exception {
+		DAOUsuario daoUsuario = new DAOUsuario();
+		try 
+		{
+			//////transaccion
+			this.conn = darConexion();
+			daoUsuario.setConn(conn);
+			daoUsuario.deleteUsuario(id);
+	
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoUsuario.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+	}
+
 	/////////////get administradores
 	public List<Administrador> getAdministradores() throws Exception {
 		List<Administrador> administradores;
@@ -264,7 +295,7 @@ public class TMUsuario {
 	}
 
 	////////get administrador por su numero de identificacion
-	public Administrador getAdministradorPorNumeroID(int id) throws Exception {
+	public Administrador getAdministradorPK(int id) throws Exception {
 		Administrador administrador;
 		DAOUsuario daoUsuario = new DAOUsuario();
 		try 
@@ -359,46 +390,15 @@ public class TMUsuario {
 		}
 	}
 
-	////////////delete usuarios borra un usuario
-	public void deleteUsuario(Usuario usuario) throws Exception {
-		DAOUsuario daoUsuario = new DAOUsuario();
-		try 
-		{
-			//////transaccion
-			this.conn = darConexion();
-			daoUsuario.setConn(conn);
-			daoUsuario.deleteUsuario(usuario);
-
-		} catch (SQLException e) {
-			System.err.println("SQLException:" + e.getMessage());
-			e.printStackTrace();
-			throw e;
-		} catch (Exception e) {
-			System.err.println("GeneralException:" + e.getMessage());
-			e.printStackTrace();
-			throw e;
-		} finally {
-			try {
-				daoUsuario.cerrarRecursos();
-				if(this.conn!=null)
-					this.conn.close();
-			} catch (SQLException exception) {
-				System.err.println("SQLException closing resources:" + exception.getMessage());
-				exception.printStackTrace();
-				throw exception;
-			}
-		}
-	}
-
 	////////////delete administradores borra un administrador
-	public void deleteAdministrador(Administrador administrador) throws Exception {
+	public void deleteAdministrador(int id) throws Exception {
 		DAOUsuario daoUsuario = new DAOUsuario();
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
 			daoUsuario.setConn(conn);
-			daoUsuario.deleteUsuario(administrador);
+			daoUsuario.deleteUsuario(id);
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());

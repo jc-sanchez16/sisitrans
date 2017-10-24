@@ -1,5 +1,6 @@
 package rest;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -73,15 +74,14 @@ public class ReservaServices {
 	 * el error que se produjo
 	 */
 	@GET
-	@Path( "{fecha: \\d+}"+"{id_cliente: \\d+}")
+	@Path( "{id: \\d+}/{fecha: [0-9/]+}")
 	@Produces( { MediaType.APPLICATION_JSON } )
-	public Response getReserva( @PathParam( "fecha" ) Long fecha ,@PathParam( "id_cliente" ) int id_cliente )
+	public Response getReserva( @PathParam( "id" ) int id ,@PathParam( "fecha" ) Date fecha )
 	{
-		System.out.println("}}}}}}}}}}}}}}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]==============================="+fecha+id_cliente);
 		TMReserva tm = new TMReserva( getPath( ) );
 		try
 		{
-			Reserva reserva = tm.getReservaPorFechaYIDCliente(fecha, id_cliente);
+			Reserva reserva = tm.getReservaPK(id, fecha);
 			return Response.status( 200 ).entity( reserva ).build( );			
 		}
 		catch( Exception e )
@@ -139,14 +139,15 @@ public class ReservaServices {
 	@DELETE
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteReserva(Reserva reserva) {
+	@Path( "{id: \\d+}/{fecha: [0-9/]+}")
+	public Response deleteReserva( @PathParam( "id" ) int id ,@PathParam( "fecha" ) Date fecha ) {
 		TMReserva tm = new TMReserva(getPath());
 		try {
-			tm.deleteReserva(reserva);
+			tm.deleteReserva(id, fecha);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
-		return Response.status(200).entity(reserva).build();
+		return Response.status(200).entity(id+", "+fecha).build();
 	}
 
 

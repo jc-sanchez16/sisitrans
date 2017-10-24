@@ -38,7 +38,7 @@ public class Restaurante {
 	
 	private ArrayList<Menu> menus;
 
-	public Restaurante(@JsonProperty(value="nombre")String nombre, @JsonProperty(value="tipoComida")String tipoComida, @JsonProperty(value="web")String web, int zona, Administrador administrador,ArrayList<Producto> productos, ArrayList<Menu> menus) {
+	public Restaurante(String nombre, String tipoComida,String web, int zona, Administrador administrador,ArrayList<Producto> productos, ArrayList<Menu> menus) {
 	
 		this.nombre = nombre;
 		this.tipoComida = tipoComida;
@@ -47,6 +47,12 @@ public class Restaurante {
 		this.administrador = administrador;
 		this.productos = productos;
 		this.menus = menus;
+	}
+	public Restaurante(@JsonProperty(value="nombre")String nombre, @JsonProperty(value="tipoComida")String tipoComida, @JsonProperty(value="web")String web) {
+		
+		this.nombre = nombre;
+		this.tipoComida = tipoComida;
+		this.web = web;
 	}
 
 	public String getNombre() {

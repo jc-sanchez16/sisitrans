@@ -132,7 +132,7 @@ public class TMProducto {
 	}
 
 	//////// get producto por su nombre y restaurante
-	public Producto getProductoNombreYRestaurante(String nombre,String restaurante) throws Exception {
+	public Producto getProductoPK(String nombre,String restaurante) throws Exception {
 		Producto producto;
 		DAOProducto daoProducto = new DAOProducto();
 		try 
@@ -231,14 +231,14 @@ public class TMProducto {
 	}
 
 	//////////// delete producto borra un producto
-	public void deleteProducto(Producto producto) throws Exception {
+	public void deleteProducto(String nombre,String restaurante) throws Exception {
 		DAOProducto daoProducto = new DAOProducto();
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
 			daoProducto.setConn(conn);
-			daoProducto.deleteProducto(producto);
+			daoProducto.deleteProducto(nombre, restaurante);
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
@@ -295,7 +295,7 @@ public class TMProducto {
 	}
 
 	////////get menu por su nombre y restaurante
-	public Menu getMenuNombreYRestaurante(String nombre,String restaurante) throws Exception {
+	public Menu getMenuPK(String nombre,String restaurante) throws Exception {
 		Menu menu;
 		DAOProducto daoProducto = new DAOProducto();
 		try 
@@ -391,14 +391,14 @@ public class TMProducto {
 	}
 
 	////////////delete menu borra un menu
-	public void deleteMenu(Menu menu) throws Exception {
+	public void deleteMenu(String nombre, String restaurante) throws Exception {
 		DAOProducto daoProducto = new DAOProducto();
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
 			daoProducto.setConn(conn);
-			daoProducto.deleteMenu(menu);
+			daoProducto.deleteMenu(nombre, restaurante);
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
@@ -420,6 +420,8 @@ public class TMProducto {
 			}
 		}
 	}
+
+	
 
 
 }

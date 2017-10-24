@@ -118,12 +118,14 @@ public class DAOZona {
 
 	
 	public void addZona(Zona zona) throws SQLException, Exception {
-
+		
 		String sql = "INSERT INTO ZONA VALUES (";
 		sql += zona.getId() + ",";
-		sql += zona.getAbierto() + ",";
+		int abierto = zona.getAbierto()== true ? 0:1;
+		sql += abierto + ",";
 		sql += zona.getCapacidad() + ",";
-		sql += zona.getDiscapacitados() + ",'";
+		int discapacitados = zona.getDiscapacitados()== true ? 0:1;
+		sql += discapacitados + ",'";
 		sql += zona.getEspecialidad() + "')";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
@@ -149,10 +151,10 @@ public class DAOZona {
 	}
 
 
-	public void deleteZona(Zona zona) throws SQLException, Exception {
+	public void deleteZona(int PK) throws SQLException, Exception {
 
 		String sql = "DELETE FROM ZONA";
-		sql += " WHERE ID = " + zona.getId();
+		sql += " WHERE ID = " + PK;
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);

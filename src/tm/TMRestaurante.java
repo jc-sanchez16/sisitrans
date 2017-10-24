@@ -139,7 +139,7 @@ public class TMRestaurante {
 
 	////////get restaurante por su nombre
 
-	public Restaurante getRestauranteNombre(String nombre) throws Exception {
+	public Restaurante getRestaurantePK(String nombre) throws Exception {
 
 		Restaurante restaurante;
 		DAORestaurante daoRestaurante = new DAORestaurante();
@@ -241,14 +241,14 @@ public class TMRestaurante {
 	}
 
 	////////////delete restaurantes borra una restaurante
-	public void deleteRestaurante(Restaurante restaurante) throws Exception {
+	public void deleteRestaurante(String nombre) throws Exception {
 		DAORestaurante daoRestaurante = new DAORestaurante();
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
 			daoRestaurante.setConn(conn);
-			daoRestaurante.deleteRestaurante(restaurante);
+			daoRestaurante.deleteRestaurante(nombre);
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());

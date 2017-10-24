@@ -74,26 +74,14 @@ public class ProductoServices {
 	 * el error que se produjo
 	 */
 	@GET
-	@Path( "{nombre}")
+	@Path( "{nombre: [a-zA-Z]+}/{restaurante: [a-zA-Z]+}")
 	@Produces( { MediaType.APPLICATION_JSON } )
-	public Response getProductoPK(  @QueryParam("nombre") String name)
+	public Response getProductoPK(  @PathParam("nombre") String nombre, @PathParam("restaurante") String restaurante)
 	{
-		int pos= name.indexOf('-');
-		System.out.println("ini"+pos);
-		int posf = name.length()-1;
-		System.out.println("fin"+posf);
-		String copia = name;
-		name =name.substring(0,pos);
-		System.out.println("nombre"+name);
-		String restaurante = copia.substring(pos+1,posf-1);
-		System.out.println("restaurante"+restaurante);
-		
-		System.out.println("}}}}}}}}}}}}}}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]==============================="+name+restaurante);
 		TMProducto tm = new TMProducto( getPath( ) );
 		try
-		{
-			
-			Producto producto = tm.getProductoNombreYRestaurante(name, restaurante);
+		{			
+			Producto producto = tm.getProductoPK(nombre, restaurante);
 			return Response.status( 200 ).entity( producto ).build( );			
 		}
 		catch( Exception e )
@@ -151,120 +139,15 @@ public class ProductoServices {
 	@DELETE
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteProducto(Producto producto) {
+	@Path( "{nombre: [a-zA-Z]+}/{restaurante: [a-zA-Z]+}")
+	public Response deleteProducto(@PathParam("nombre") String nombre, @PathParam("restaurante") String restaurante) {
 		TMProducto tm = new TMProducto(getPath());
 		try {
-			tm.deleteProducto(producto);
+			tm.deleteProducto(nombre,restaurante);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
-		return Response.status(200).entity(producto).build();
+		return Response.status(200).entity(nombre+", "+restaurante).build();
 	}
 
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-	/**
-	 * Metodo que expone servicio REST usando GET que da todos los videos de la base de datos.
-	 * <b>URL: </b> http://"ip o nombre de host":8080/VideoAndes/rest/videos
-	 * @return Json con todos los videos de la base de datos o json con 
-	 * el error que se produjo
-	 */
-	@GET
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getMenus() {
-		TMProducto tm = new TMProducto(getPath());
-		List<Menu> menus;
-		try {
-			menus = tm.getMenus();
-		} catch (Exception e) {
-			return Response.status(500).entity(doErrorMessage(e)).build();
-		}
-		return Response.status(200).entity(menus).build();
 	}
-
-	/**
-	 * Metodo que expone servicio REST usando GET que busca el video con el id que entra como parametro
-	 * <b>URL: </b> http://"ip o nombre de host":8080/VideoAndes/rest/videos/<<id>>" para la busqueda"
-	 * @param name - Nombre del video a buscar que entra en la URL como parametro 
-	 * @return Json con el/los videos encontrados con el nombre que entra como parametro o json con 
-	 * el error que se produjo
-	 */
-	@GET
-	@Path( "{nombre}"+"/"+"{restaurante}")
-	@Produces( { MediaType.APPLICATION_JSON } )
-	public Response getMenuPk(  @QueryParam("nombre") String name, @QueryParam("restaurante") String restaurante )
-	{
-		TMProducto tm = new TMProducto( getPath( ) );
-		try
-		{
-			Menu menu = tm.getMenuNombreYRestaurante(name, restaurante);
-			return Response.status( 200 ).entity( menu ).build( );			
-		}
-		catch( Exception e )
-		{
-			return Response.status( 500 ).entity( doErrorMessage( e ) ).build( );
-		}
-	}
-
-
-	/**
-	 * Metodo que expone servicio REST usando POST que agrega el video que recibe en Json
-	 * <b>URL: </b> http://"ip o nombre de host":8080/VideoAndes/rest/videos/video
-	 * @param video - video a agregar
-	 * @return Json con el video que agrego o Json con el error que se produjo
-	 */
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response addMenu(Menu menu) {
-		TMProducto tm = new TMProducto(getPath());
-		try {
-			tm.addMenu(menu);
-		} catch (Exception e) {
-			return Response.status(500).entity(doErrorMessage(e)).build();
-		}
-		return Response.status(200).entity(menu).build();
-	}
-
-
-	/**
-	 * Metodo que expone servicio REST usando PUT que actualiza el video que recibe en Json
-	 * <b>URL: </b> http://"ip o nombre de host":8080/VideoAndes/rest/videos
-	 * @param menu - video a actualizar. 
-	 * @return Json con el video que actualizo o Json con el error que se produjo
-	 */
-	@PUT
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateMenu(Menu menu) {
-		TMProducto tm = new TMProducto(getPath());
-		try {
-			tm.updateMenu(menu);
-		} catch (Exception e) {
-			return Response.status(500).entity(doErrorMessage(e)).build();
-		}
-		return Response.status(200).entity(menu).build();
-	}
-
-	/**
-	 * Metodo que expone servicio REST usando DELETE que elimina el video que recibe en Json
-	 * <b>URL: </b> http://"ip o nombre de host":8080/VideoAndes/rest/videos
-	 * @param producto - video a aliminar. 
-	 * @return Json con el video que elimino o Json con el error que se produjo
-	 */
-	@DELETE
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteMenu(Menu menu) {
-		TMProducto tm = new TMProducto(getPath());
-		try {
-			tm.deleteMenu(menu);
-		} catch (Exception e) {
-			return Response.status(500).entity(doErrorMessage(e)).build();
-		}
-		return Response.status(200).entity(menu).build();
-	}
-	
-}

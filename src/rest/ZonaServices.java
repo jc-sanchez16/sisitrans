@@ -89,12 +89,12 @@ public class ZonaServices {
 	@GET
 	@Path( "{id: \\d+}" )
 	@Produces( { MediaType.APPLICATION_JSON } )
-	public Response getZona( @PathParam( "id" ) int id )
+	public Response getZonaPK( @PathParam( "id" ) int id )
 	{
 		TMZona tm = new TMZona( getPath( ) );
 		try
 		{
-			Zona zon = tm.getZonaPorID(id);
+			Zona zon = tm.getZonaPK(id);
 			return Response.status( 200 ).entity( zon ).build( );			
 		}
 		catch( Exception e )
@@ -115,6 +115,7 @@ public class ZonaServices {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addZona(Zona zona) {
 		TMZona tm = new TMZona(getPath());
+		System.out.println("hola");
 		try {
 			tm.addZona(zona);
 		} catch (Exception e) {
@@ -151,15 +152,16 @@ public class ZonaServices {
      */
 	@DELETE
 	@Consumes(MediaType.APPLICATION_JSON)
+	@Path( "{id: \\d+}" )
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteZona(Zona zona) {
+	public Response deleteZona( @PathParam( "id" ) int id ) {
 		TMZona tm = new TMZona(getPath());
 		try {
-			tm.deleteZona(zona);
+			tm.deleteZona(id);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
-		return Response.status(200).entity(zona).build();
+		return Response.status(200).entity(id).build();
 	}
 
 

@@ -146,7 +146,7 @@ public class TMZona {
 	}
 
 //////// get zona por su id
-	public Zona getZonaPorID(int id) throws Exception {
+	public Zona getZonaPK(int id) throws Exception {
 		Zona zona;
 		DAOZona daoZona = new DAOZona();
 		try 
@@ -245,14 +245,14 @@ public class TMZona {
 	}
 
 //////////// delete zonas borra una zona
-	public void deleteZona(Zona zona) throws Exception {
+	public void deleteZona(int id) throws Exception {
 		DAOZona daoZona = new DAOZona();
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
 			daoZona.setConn(conn);
-			daoZona.deleteZona(zona);
+			daoZona.deleteZona(id);
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());

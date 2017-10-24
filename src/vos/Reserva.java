@@ -26,6 +26,11 @@ public class Reserva {
 
 	private Menu menu;
 
+	public Reserva(@JsonProperty(value="invitados")int invitados, @JsonProperty(value="fecha")Date fecha) {
+		super();
+		this.invitados = invitados;
+		this.fecha = fecha;
+	}
 	public Reserva(int invitados, Date fecha, int zona, int usuario, Menu menu) {
 		super();
 		this.invitados = invitados;
@@ -34,6 +39,7 @@ public class Reserva {
 		this.usuario = usuario;
 		this.menu = menu;
 	}
+
 
 	public int getInvitados() {
 		return invitados;

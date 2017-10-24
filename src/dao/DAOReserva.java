@@ -73,14 +73,14 @@ public class DAOReserva {
 	}
 
 
-	public Reserva getReservaPK(long PK1, int PK2) throws SQLException, Exception 
+	public Reserva getReservaPK(int PK1, Date PK2) throws SQLException, Exception 
 	{
 		Reserva lista = null;
 		DAOProducto daoProducto = new DAOProducto();
 		try
 		{
 			daoProducto.setConn(conn);
-			String sql = "SELECT * FROM RESERVA WHERE FECHA = "+PK1+" AND CLIENTE = "+PK2;
+			String sql = "SELECT * FROM RESERVA WHERE FECHA = "+PK2.getTime()+" AND CLIENTE = "+PK2;
 
 			PreparedStatement prepStmt = conn.prepareStatement(sql);
 			recursos.add(prepStmt);
@@ -107,7 +107,7 @@ public class DAOReserva {
 	
 	public void addReserva(Reserva reserva) throws SQLException, Exception {
 
-		String sql = "INSERT INTO ZONA VALUES (";
+		String sql = "INSERT INTO RESERVA VALUES (";
 		sql += reserva.getFecha() + ",";
 		sql += reserva.getUsuario() + ",'";
 		sql += reserva.getMenu().getNombre() + "','";
@@ -120,7 +120,7 @@ public class DAOReserva {
 
 	}
 
-	public void updateZona(Reserva reserva) throws SQLException, Exception {
+	public void updateReserva(Reserva reserva) throws SQLException, Exception {
 
 		String sql = "UPDATE RESERVA SET ";
 		sql += "FECHA="+reserva.getFecha() + ",";
@@ -137,10 +137,10 @@ public class DAOReserva {
 	}
 
 
-	public void deleteZona(Reserva reserva) throws SQLException, Exception {
+	public void deleteReserva(int id, Date fecha) throws SQLException, Exception {
 
 		String sql = "DELETE FROM RESERVA";
-		sql += "WHERE FECHA = "+reserva.getFecha()+" AND CLIENTE = "+reserva.getUsuario();
+		sql += "WHERE FECHA = "+fecha.getTime()+" AND CLIENTE = "+id;
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);

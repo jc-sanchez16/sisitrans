@@ -82,15 +82,14 @@ public class DAOProducto {
 
 
 
-	public Producto getProductoPK(String PK1, String PK2) throws SQLException, Exception 
+	public Producto getProductoPK(String nombr, String restaurant) throws SQLException, Exception 
 	{
 		Producto lista = null;
 		DAOIngrediente daoIngrediente = new DAOIngrediente();
-		System.out.println("lllllllllllllllllllllllllllllll"+PK1+PK2);
 		try
 		{
 			daoIngrediente.setConn(conn);
-			String sql = "SELECT * FROM PRODUCTO WHERE MENU = 1 AND NOMBRE ='"+PK1+"' AND RESTAURANTE ='"+PK2+"'";
+			String sql = "SELECT * FROM PRODUCTO WHERE MENU = 1 AND NOMBRE ='"+nombr+"' AND RESTAURANTE ='"+restaurant+"'";
 
 			PreparedStatement prepStmt = conn.prepareStatement(sql);
 			recursos.add(prepStmt);
@@ -176,7 +175,7 @@ public class DAOProducto {
 
 	public void updateProducto(Producto producto) throws SQLException, Exception {
 
-		String sql = "UPDATE ZONA SET ";
+		String sql = "UPDATE PRODUCTO SET ";
 		sql += "NOMBRE='"+producto.getNombre() + "',";
 		sql += "RESTAURANTE'"+producto.getRestaurante() + "',";
 		sql += "COSTO="+producto.getCosto() + ",";
@@ -194,10 +193,10 @@ public class DAOProducto {
 	}
 
 
-	public void deleteProducto(Producto producto) throws SQLException, Exception {
+	public void deleteProducto(String nombr, String restaurant) throws SQLException, Exception {
 
-		String sql = "DELETE FROM ZONA";
-		sql += " WHERE NOMBRE ='" + producto.getNombre()+"' AND RESTAURANTE = '"+ producto.getRestaurante()+"'";
+		String sql = "DELETE FROM PRODUCTO";
+		sql += " WHERE NOMBRE ='" + nombr+"' AND RESTAURANTE = '"+ restaurant+"'";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
@@ -329,11 +328,11 @@ public class DAOProducto {
 	}
 
 
-	public void deleteMenu(Menu menu) throws SQLException, Exception {
+	public void deleteMenu(String nombre, String restaurante) throws SQLException, Exception {
 
 		String sql = "DELETE FROM PRODUCTO";
-		sql += " WHERE NOMBRE ='" + menu.getNombre()+"' AND RESTAURANTE = '"+ menu.getRestaurante()+"'";
-		deletePlatos(menu);
+		sql += " WHERE NOMBRE ='" + nombre+"' AND RESTAURANTE = '"+ restaurante +"'";
+		deletePlatos(nombre, restaurante);
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
@@ -341,9 +340,9 @@ public class DAOProducto {
 	}
 
 
-	private void deletePlatos(Menu menu) throws SQLException {
+	private void deletePlatos(String nombre, String restaurante) throws SQLException {
 		String sql = "DELETE FROM MENU";
-		sql += " WHERE NOMBRE ='" + menu.getNombre()+"' AND RESTAURANTE = '"+ menu.getRestaurante()+"'";
+		sql += " WHERE NOMBRE ='" + nombre+"' AND RESTAURANTE = '"+ restaurante+"'";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
@@ -441,7 +440,7 @@ public class DAOProducto {
 	private ArrayList<Producto> getPlatos(String nombre, String restaurante) throws Exception 
 	{
 		ArrayList<Producto> lista = new ArrayList<Producto>();
-		String sql = "SELECT * FROM EQUIVALENCIA_PRODUCTO WHERE NOMBRE ='" + nombre+"' AND RESTAURANTE = '"+ restaurante+"'";
+		String sql = "SELECT * FROM MENU WHERE NOMBRE ='" + nombre+"' AND RESTAURANTE = '"+ restaurante+"'";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);

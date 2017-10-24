@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -131,7 +132,7 @@ public class TMReserva {
 	}
 	
 	//////// get reserva por su fecha y id del cliente 
-	public Reserva getReservaPorFechaYIDCliente(long fecha,int id_cliente) throws Exception {
+	public Reserva getReservaPK(int id, Date fecha) throws Exception {
 		Reserva reserva;
 		DAOReserva daoReserva = new DAOReserva();
 		try 
@@ -139,7 +140,7 @@ public class TMReserva {
 			//////transaccion
 			this.conn = darConexion();
 			daoReserva.setConn(conn);
-			reserva = daoReserva.getReservaPK(fecha, id_cliente);
+			reserva = daoReserva.getReservaPK(id, fecha);
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
@@ -206,7 +207,7 @@ public class TMReserva {
 			//////transaccion
 			this.conn = darConexion();
 			daoReserva.setConn(conn);
-			daoReserva.updateZona(reserva);
+			daoReserva.updateReserva(reserva);
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
@@ -230,14 +231,14 @@ public class TMReserva {
 	}
 
 	//////////// delete reservas borra una reserva
-	public void deleteReserva(Reserva reserva) throws Exception {
+	public void deleteReserva(int id, Date fecha) throws Exception {
 		DAOReserva daoReserva = new DAOReserva();
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
 			daoReserva.setConn(conn);
-			daoReserva.deleteZona(reserva);
+			daoReserva.deleteReserva(id, fecha);
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());

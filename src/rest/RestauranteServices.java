@@ -73,15 +73,14 @@ public class RestauranteServices {
 	 * el error que se produjo
 	 */
 	@GET
-	@Path( "{nombre}" )
+	@Path( "{nombre: [a-zA_Z]+}" )
 	@Produces( { MediaType.APPLICATION_JSON } )
-	public Response getRestaurante( @QueryParam("nombre") String name )
+	public Response getRestaurantePK( @PathParam("nombre") String nombre )
 	{
-		System.out.println("}}}}}}}}}}}}}}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]==============================="+name);
 		TMRestaurante tm = new TMRestaurante( getPath( ) );
 		try
 		{
-			Restaurante rest = tm.getRestauranteNombre(name);
+			Restaurante rest = tm.getRestaurantePK(nombre);
 			return Response.status( 200 ).entity( rest ).build( );			
 		}
 		catch( Exception e )
@@ -139,14 +138,15 @@ public class RestauranteServices {
 	@DELETE
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteRestaurante(Restaurante restaurante) {
+	@Path( "{nombre: [a-zA_Z]+}" )
+	public Response deleteRestaurante( @PathParam("nombre") String nombre ) {
 		TMRestaurante tm = new TMRestaurante(getPath());
 		try {
-			tm.deleteRestaurante(restaurante);
+			tm.deleteRestaurante(nombre);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
-		return Response.status(200).entity(restaurante).build();
+		return Response.status(200).entity(nombre).build();
 	}
 
 }

@@ -32,7 +32,11 @@ public class Orden {
 	
 	private ArrayList<Producto> productos;
 
-	public Orden(@JsonProperty(value="mesa")int mesa, @JsonProperty(value="fecha")Date fecha, ArrayList<Integer> usuarios, ArrayList<Menu> menus,
+	public Orden(@JsonProperty(value="mesa")int mesa, @JsonProperty(value="fecha")Date fecha) {
+		this.mesa = mesa;
+		this.fecha = fecha;
+	}
+	public Orden(int mesa, Date fecha, ArrayList<Integer> usuarios, ArrayList<Menu> menus,
 			ArrayList<Producto> productos) {
 		this.mesa = mesa;
 		this.fecha = fecha;

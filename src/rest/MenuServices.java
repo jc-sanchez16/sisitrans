@@ -9,6 +9,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
@@ -69,14 +70,14 @@ public class MenuServices {
 	 * el error que se produjo
 	 */
 	@GET
-	@Path( "{nombre}"+"/"+"{restaurante}")
+	@Path( "{nombre: [a-zA-Z]+}/{restaurante: [a-zA-Z]+}")
 	@Produces( { MediaType.APPLICATION_JSON } )
-	public Response getMenuPk(  @QueryParam("nombre") String name, @QueryParam("restaurante") String restaurante )
+	public Response getMenuPk(  @PathParam("nombre") String nombre, @PathParam("restaurante") String restaurante )
 	{
 		TMProducto tm = new TMProducto( getPath( ) );
 		try
 		{
-			Menu menu = tm.getMenuNombreYRestaurante(name, restaurante);
+			Menu menu = tm.getMenuPK(nombre, restaurante);
 			return Response.status( 200 ).entity( menu ).build( );			
 		}
 		catch( Exception e )
@@ -134,14 +135,15 @@ public class MenuServices {
 	@DELETE
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteMenu(Menu menu) {
+	@Path( "{nombre: [a-zA-Z]+}/{restaurante: [a-zA-Z]+}")
+	public Response deleteMenu( @PathParam("nombre") String nombre, @PathParam("restaurante") String restaurante) {
 		TMProducto tm = new TMProducto(getPath());
 		try {
-			tm.deleteMenu(menu);
+			tm.deleteMenu(nombre, restaurante);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
-		return Response.status(200).entity(menu).build();
+		return Response.status(200).entity(nombre+", "+restaurante).build();
 	}
 
 }

@@ -43,9 +43,18 @@ public class Zona {
 	
 
 	
+
 	
-	
-	public Zona(@JsonProperty(value="id") int id,@JsonProperty(value="abierto") boolean abierto,@JsonProperty(value="capacida") int capacidad, @JsonProperty(value="discapacitados")boolean discapacitados, @JsonProperty(value="especialidad")String especialidad, ArrayList<Reserva> reservas, ArrayList<String> condiciones, ArrayList<Restaurante> restaurantes) {
+
+public Zona(@JsonProperty(value="id") int id,@JsonProperty(value="abierto") boolean abierto,@JsonProperty(value="capacidad") int capacidad, @JsonProperty(value="discapacitados")boolean discapacitados, @JsonProperty(value="especialidad")String especialidad) {
+		
+		this.id = id;
+		this.abierto = abierto;
+		this.capacidad = capacidad;
+		this.discapacitados = discapacitados;
+		this.especialidad = especialidad;
+	}
+	public Zona(int id, boolean abierto,int capacidad, boolean discapacitados,String especialidad, ArrayList<Reserva> reservas, ArrayList<String> condiciones, ArrayList<Restaurante> restaurantes) {
 		
 		this.id = id;
 		this.abierto = abierto;
@@ -56,7 +65,6 @@ public class Zona {
 		this.condiciones = condiciones;
 		this.restaurantes = restaurantes;
 	}
-
 
 	public int getId() {
 		return id;
