@@ -86,10 +86,11 @@ public class DAOProducto {
 	{
 		Producto lista = null;
 		DAOIngrediente daoIngrediente = new DAOIngrediente();
+		System.out.println("lllllllllllllllllllllllllllllll"+PK1+PK2);
 		try
 		{
 			daoIngrediente.setConn(conn);
-			String sql = "SELECT * FROM PRODUCTO WHERE MENU = 1 AND NOMBRE ='"+PK1+"' AND RESTAURANTE = '"+ PK2+"'";
+			String sql = "SELECT * FROM PRODUCTO WHERE MENU = 1 AND NOMBRE ='"+PK1+"' AND RESTAURANTE ='"+PK2+"'";
 
 			PreparedStatement prepStmt = conn.prepareStatement(sql);
 			recursos.add(prepStmt);
@@ -137,7 +138,7 @@ public class DAOProducto {
 				int tipo = rs.getInt("TIPO");
 				String descripcionE = rs.getString("DESCRIPCION_E");
 				String descripcionEn = rs.getString("DESCRIPCION_EN");
-				int tiempoPreparacion = rs.getInt("TIEMPO_PREP");
+				int tiempoPreparacion = rs.getInt("TIEMPO_PREPARACION");
 				ArrayList<Ingrediente> ingredientes =  daoIngrediente.getIngredientesProducto();
 				ArrayList<String> tipoComida = getTipoComida(nombre, restaurante);
 				ArrayList<Producto> equivalencias =new ArrayList<Producto>();
@@ -447,9 +448,9 @@ public class DAOProducto {
 		ResultSet rs = prepStmt.executeQuery();
 
 		while (rs.next()) {
-			for (int i = 2; i < 7; i++)
+			for (int i =0; i <2; i++)
 			{
-				String nom = rs.getString(i);
+				String nom = rs.getString(i+1);
 				if(nom!= "null")
 					lista.add(getProductoPK(nom, restaurante));	
 				else

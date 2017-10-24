@@ -20,8 +20,10 @@ public class Reserva {
 	
 	private int zona;
 	
+	
 	private int usuario;
 	
+
 	private Menu menu;
 
 	public Reserva(int invitados, Date fecha, int zona, int usuario, Menu menu) {
