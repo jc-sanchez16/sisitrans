@@ -64,7 +64,7 @@ public class DAOProducto {
 				String descripcionE = rs.getString("DESCRIPCION_E");
 				String descripcionEn = rs.getString("DESCRIPCION_EN");
 				int tiempoPreparacion = rs.getInt("TIEMPO_PREPARACION");
-				ArrayList<Ingrediente> ingredientes =  daoIngrediente.getIngredientesProducto();
+				ArrayList<Ingrediente> ingredientes =  daoIngrediente.getIngredientesProducto(nombre,restaurante);
 				ArrayList<String> tipoComida = getTipoComida(nombre, restaurante);
 				ArrayList<Producto> equivalencias = getEquivalencias(nombre, restaurante);
 				lista.add(new Producto(nombre, restaurante, costo, tipo, descripcionE, descripcionEn, tiempoPreparacion, precio, tipoComida, equivalencias, ingredientes));
@@ -104,7 +104,7 @@ public class DAOProducto {
 				String descripcionE = rs.getString("DESCRIPCION_E");
 				String descripcionEn = rs.getString("DESCRIPCION_EN");
 				int tiempoPreparacion = rs.getInt("TIEMPO_PREP");
-				ArrayList<Ingrediente> ingredientes =  daoIngrediente.getIngredientesProducto();
+				ArrayList<Ingrediente> ingredientes =  daoIngrediente.getIngredientesProducto(nombre, restaurante);
 				ArrayList<String> tipoComida = getTipoComida(nombre, restaurante);
 				ArrayList<Producto> equivalencias = getEquivalencias(nombre, restaurante);
 				lista = (new Producto(nombre, restaurante, costo, tipo, descripcionE, descripcionEn, tiempoPreparacion, precio, tipoComida, equivalencias, ingredientes));
@@ -138,7 +138,7 @@ public class DAOProducto {
 				String descripcionE = rs.getString("DESCRIPCION_E");
 				String descripcionEn = rs.getString("DESCRIPCION_EN");
 				int tiempoPreparacion = rs.getInt("TIEMPO_PREPARACION");
-				ArrayList<Ingrediente> ingredientes =  daoIngrediente.getIngredientesProducto();
+				ArrayList<Ingrediente> ingredientes =  daoIngrediente.getIngredientesProducto(nombre, restaurante);
 				ArrayList<String> tipoComida = getTipoComida(nombre, restaurante);
 				ArrayList<Producto> equivalencias =new ArrayList<Producto>();
 				lista = (new Producto(nombre, restaurante, costo, tipo, descripcionE, descripcionEn, tiempoPreparacion, precio, tipoComida, equivalencias, ingredientes));
@@ -372,7 +372,7 @@ public class DAOProducto {
 				String descripcionE = rs.getString("DESCRIPCION_E");
 				String descripcionEn = rs.getString("DESCRIPCION_EN");
 				int tiempoPreparacion = rs.getInt("TIEMPO_PREPARACION");
-				ArrayList<Ingrediente> ingredientes =  daoIngrediente.getIngredientesProducto();
+				ArrayList<Ingrediente> ingredientes =  daoIngrediente.getIngredientesProducto(nombre, restaurante);
 				ArrayList<String> tipoComida = getTipoComida(nombre, restaurante);
 				ArrayList<Producto> equivalencias = getEquivalencias(nombre, restaurante);
 				lista.add(new Producto(nombre, restaurante, costo, tipo, descripcionE, descripcionEn, tiempoPreparacion, precio, tipoComida, equivalencias, ingredientes));

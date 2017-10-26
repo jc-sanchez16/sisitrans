@@ -63,7 +63,7 @@ public class DAOOrden {
 
 		while (rs.next()) {
 			int mesa = rs.getInt("MESA");
-			int f = rs.getInt("FECHA");
+			long f = rs.getInt("FECHA");
 			Date fecha = new Date(f);
 			ArrayList<Integer> usuarios = getUsuariosOrden(mesa, f);
 			ArrayList<Menu> menus= getMenusOrden(mesa,f);
@@ -77,8 +77,60 @@ public class DAOOrden {
 
 	public Orden getOrdenPK(int mesa, Date fecha) throws SQLException, Exception 
 	{
+		Orden lista = null;		
+		long f = fecha.getTime();
+		ArrayList<Integer> usuarios = getUsuariosOrden(mesa, f);
+		ArrayList<Menu> menus= getMenusOrden(mesa,f);
+		ArrayList<Producto> productos = getProductosOrden(mesa,f);
+		if(usuarios!= null && menus!= null && productos!= null)
+			lista = new Orden(mesa, fecha, usuarios, menus, productos);
+		return lista;
+	}
+
+
+
+
+	public void addOrden(Orden orden) throws SQLException, Exception {
+
+		String sql = "INSERT INTO ORDEN VALUES (";
+		sql += orden.getFecha().getTime() + ",";
+		sql += orden.getMesa() + ")";
+		
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+		addUsuarios(orden);
+		addMenus(orden);
+		addProductos(orden);
+
+	}
+
+	public void updateOrden(Orden orden) throws SQLException, Exception {
+
+		deleteUsuarios(orden.getMesa(), orden.getFecha().getTime());
+		deleteMenusYProductos(orden.getMesa(), orden.getFecha().getTime());
+		addUsuarios(orden);
+		addMenus(orden);
+		addProductos(orden);
+		
+	}
+
+
+	public void deleteOrden(int mesa, Date fecha) throws SQLException, Exception {
+
+		String sql = "DELETE FROM ORDEN";
+		sql += " WHERE MESA= " + mesa+ " AND FECHA = " + fecha.getTime();
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+	}
+
+
+	public ArrayList<Orden> getOrdenesUsuario(int id)  throws Exception{
 		ArrayList<Orden> lista = new ArrayList<Orden>();
-		String sql = "SELECT * FROM ORDEN WHERE ";
+		String sql = "SELECT * FROM ORDEN_USUARIO WHERE ID_CLIENTE ="+id;
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
@@ -86,84 +138,149 @@ public class DAOOrden {
 
 		while (rs.next()) {
 			int mesa = rs.getInt("MESA");
-			int f = rs.getInt("FECHA");
-			Date fecha = new Date(f);
-			ArrayList<Integer> usuarios = getUsuariosOrden(mesa, f);
-			ArrayList<Menu> menus= getMenusOrden(mesa,f);
-			ArrayList<Producto> productos = getProductosOrden(mesa,f);
-			lista.add(new Orden(mesa, fecha, usuarios, menus, productos));
+			long f = rs.getInt("FECHA");
+			Date fecha = new Date(f);			
+			lista.add(getOrdenPK(mesa,fecha));
 		}
 
 		return lista;
 	}
 
 
+	private ArrayList<Integer> getUsuariosOrden(int mesa, long f) throws Exception {
+		ArrayList<Integer> lista = new ArrayList<Integer>();
+		String sql = "SELECT * FROM ORDEN_USUARIO WHERE MESA = "+mesa+" AND FECHA = "+f;
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		while (rs.next()) {		
+			lista.add(rs.getInt("ID_CLIENTE"));
+		}
+
+		return lista;
+	}
 
 
-	public void addZona(Zona zona) throws SQLException, Exception {
+	private ArrayList<Menu> getMenusOrden(int mesa, long f) throws Exception {		
+		ArrayList<Menu> lista = new ArrayList<Menu>();
+		DAOProducto daoProducto = new DAOProducto();
+		try
+		{
+			daoProducto.setConn(conn);
+			String sql = "SELECT * FROM ORDEN_PRODUCTO WHERE MESA = "+mesa+" AND FECHA = "+f;
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			ResultSet rs = prepStmt.executeQuery();
+			while (rs.next()) {		
+				String nombre = rs.getString("NOMBRE");
+				String restaurante = rs.getString("RESTAURANTE");
+				Menu menu = daoProducto.getMenuPK(nombre, restaurante);
+				if(menu!= null)	
+					lista.add(menu);
+			}
+		}
+		finally
+		{
+			daoProducto.cerrarRecursos();
+		}
+		return lista;
+	}
 
-		String sql = "INSERT INTO ZONA VALUES (";
-		sql += zona.getId() + ",";
-		sql += zona.getAbierto() + ",";
-		sql += zona.getCapacidad() + ",";
-		sql += zona.getDiscapacitados() + ",'";
-		sql += zona.getEspecialidad() + "')";
+
+	private ArrayList<Producto> getProductosOrden(int mesa, long f)throws Exception {
+		ArrayList<Producto> lista = new ArrayList<Producto>();
+		DAOProducto daoProducto = new DAOProducto();
+		try
+		{
+			daoProducto.setConn(conn);
+			String sql = "SELECT * FROM ORDEN_PRODUCTO WHERE MESA = "+mesa+" AND FECHA = "+f;
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			ResultSet rs = prepStmt.executeQuery();
+			while (rs.next()) {		
+				String nombre = rs.getString("NOMBRE");
+				String restaurante = rs.getString("RESTAURANTE");
+				Producto producto = daoProducto.getProductoPK(nombre, restaurante);
+				if(producto!= null)	
+					lista.add(producto);
+			}
+		}
+		finally
+		{
+			daoProducto.cerrarRecursos();
+		}
+		return lista;
+	}
+	private void addUsuarios(Orden orden) throws Exception {
+		ArrayList<Integer> usuarios = orden.getUsuarios(); 
+		for (int j = 0; j < usuarios.size(); j++) 
+		{
+			String sql = "INSERT INTO ORDEN_USUARIOS VALUES (";
+			sql += orden.getFecha().getTime() + ",";
+			sql += orden.getMesa() + ",";
+			sql += usuarios.get(j) +")";
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			prepStmt.executeQuery();
+		}
+	}
+
+
+	private void addMenus(Orden orden)throws Exception {
+		ArrayList<Menu> menus = orden.getMenus(); 
+		for (int j = 0; j < menus.size(); j++) 
+		{
+			Menu menu = menus.get(j);
+			String sql = "INSERT INTO ORDEN_PRODUCTOS VALUES ('";
+			sql += menu.getRestaurante()+"','";
+			sql += menu.getNombre()+"',";
+			sql += orden.getFecha().getTime() + ",";
+			sql += orden.getMesa() + ")";
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			prepStmt.executeQuery();
+		}
+	}
+
+
+	private void addProductos(Orden orden) throws Exception 
+	{
+		ArrayList<Producto> productos = orden.getProductos(); 
+		for (int j = 0; j < productos.size(); j++) 
+		{
+			Producto producto = productos.get(j);
+			String sql = "INSERT INTO ORDEN_PRODUCTOS VALUES ('";
+			sql += producto.getRestaurante()+"','";
+			sql += producto.getNombre()+"',";
+			sql += orden.getFecha().getTime() + ",";
+			sql += orden.getMesa() + ")";
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			prepStmt.executeQuery();
+		}
+	}
+	
+	private void deleteUsuarios(int mesa, long f)throws Exception 
+	{
+		String sql = "DELETE FROM ORDEN_USUARIOS";
+		sql += " WHERE MESA = "+mesa+" AND FECHA = "+f;
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
-
 	}
 
-	public void updateZona(Zona zona) throws SQLException, Exception {
 
-		String sql = "UPDATE ZONA SET ";
-		sql += "ID="+zona.getId() + ",";
-		sql += "ABIERTO="+zona.getAbierto() + ",";
-		sql += "CAPACIDAD="+zona.getCapacidad() + ",";
-		sql += "DISCAPACITADOS="+zona.getDiscapacitados() + ",";
-		sql += "ESPECIALIDAD='"+zona.getEspecialidad() ;
-		sql += "' WHERE ID = " + zona.getId();
-
+	private void deleteMenusYProductos(int mesa, long f)throws Exception 
+	{
+		String sql = "DELETE FROM ORDEN_PRODUCTOS";
+		sql += " WHERE MESA = "+mesa+" AND FECHA = "+f;
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
-	}
-
-
-	public void deleteZona(Zona zona) throws SQLException, Exception {
-
-		String sql = "DELETE FROM ZONA";
-		sql += " WHERE ID = " + zona.getId();
-
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
-	}
-
-
-	public ArrayList<Orden> getOrdenesUsuario(int id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	private ArrayList<Integer> getUsuariosOrden(int mesa, int f) {
-		// TODO Auto-generated method stub
-		return nul;
-	}
-
-
-	private ArrayList<Menu> getMenusOrden(int mesa, int f) {
-		// TODO Auto-generated method stub
-		return nul;
-	}
-
-
-	private ArrayList<Producto> getProductosOrden(int mesa, int f) {
-		// TODO Auto-generated method stub
-		return nul;
 	}
 
 }

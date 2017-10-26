@@ -51,90 +51,56 @@ public class DAOIngrediente {
 	}
 
 
-//	public ArrayList<Zona> getZonas() throws SQLException, Exception 
-//	{
-//		ArrayList<Zona> lista = new ArrayList<Zona>();
-//		DAOReserva daoReserva = new DAOReserva();
-//		DAORestaurante daoRestaurante = new DAORestaurante();
-//		try
-//		{
-//			daoReserva.setConn(conn);
-//			daoRestaurante.setConn(conn);
-//			String sql = "SELECT * FROM ZONA";
-//
-//			PreparedStatement prepStmt = conn.prepareStatement(sql);
-//			recursos.add(prepStmt);
-//			ResultSet rs = prepStmt.executeQuery();
-//
-//			while (rs.next()) {
-//				int id = rs.getInt("ID");
-//				boolean abierto =((rs.getInt("ABIERTO") == 0) ? true:false);
-//				int capacidad = rs.getInt("CAPACIDAD");
-//				boolean discapacitados =((rs.getInt("DISCAPACITADOS") == 0) ? true:false);
-//				String especialidad =rs.getString("ESPECIALIDAD") ;
-//				ArrayList<Reserva> reservas =  daoReserva.getReservasZona(id);
-//				ArrayList<String> condiciones = getCondiciones(id);
-//				ArrayList<Restaurante> restaurantes = daoRestaurante.getRestaurantesZona(id);
-//				String name  rs.getString("NAME");
-//				lista.add(new Zona(id, abierto, capacidad, discapacitados, especialidad, reservas, condiciones, restaurantes));
-//			}
-//		}
-//		finally
-//		{
-//			daoReserva.cerrarRecursos();
-//			daoRestaurante.cerrarRecursos();
-//		}
-//		return lista;
-//	}
-//
+	public ArrayList<Ingrediente> getIngredientes() throws SQLException, Exception 
+	{
+		ArrayList<Ingrediente> lista = new ArrayList<Ingrediente>();
+		String sql = "SELECT * FROM INGREDIENTE";
 
-//	public Zona getZonaPK(int PK) throws SQLException, Exception 
-//	{
-//		Zona lista = null;
-//		DAOReserva daoReserva = new DAOReserva();
-//		DAORestaurante daoRestaurante = new DAORestaurante();
-//		try
-//		{
-//			daoReserva.setConn(conn);
-//			daoRestaurante.setConn(conn);
-//			String sql = "SELECT * FROM ZONA WHERE ID = "+PK;
-//
-//			PreparedStatement prepStmt = conn.prepareStatement(sql);
-//			recursos.add(prepStmt);
-//			ResultSet rs = prepStmt.executeQuery();
-//
-//			while (rs.next()) {
-//				int id = rs.getInt("ID");
-//				boolean abierto =((rs.getInt("ABIERTO") == 0) ? true:false);
-//				int capacidad = rs.getInt("CAPACIDAD");
-//				boolean discapacitados =((rs.getInt("DISCAPACITADOS") == 0) ? true:false);
-//				String especialidad =rs.getString("ESPECIALIDAD") ;
-//				ArrayList<Reserva> reservas =  daoReserva.getReservasZona(id);
-//				ArrayList<String> condiciones = getCondiciones(id);
-//				ArrayList<Restaurante> restaurantes = daoRestaurante.getRestaurantesZona(id);
-//				String name  rs.getString("NAME");
-//				lista=(new Zona(id, abierto, capacidad, discapacitados, especialidad, reservas, condiciones, restaurantes));
-//			}
-//		}
-//		finally
-//		{
-//			daoReserva.cerrarRecursos();
-//			daoRestaurante.cerrarRecursos();
-//		}
-//		return lista;
-//	}
-//
-//	
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
 
-	
-	public void addZona(Zona zona) throws SQLException, Exception {
+		while (rs.next()) {
+			String nombre = rs.getString("NOMBRE");
+			String descripcionE = rs.getString("DESCRIPCION_E");
+			String descripcionEn = rs.getString("DESCRIPCION_EN");
+			ArrayList<String> equivalencias = getEquivalencias(nombre);
+			lista.add(new Ingrediente(nombre, descripcionE, descripcionEn, equivalencias));
+		}
 
-		String sql = "INSERT INTO ZONA VALUES (";
-		sql += zona.getId() + ",";
-		sql += zona.getAbierto() + ",";
-		sql += zona.getCapacidad() + ",";
-		sql += zona.getDiscapacitados() + ",'";
-		sql += zona.getEspecialidad() + "')";
+		return lista;
+	}
+
+
+	public Ingrediente getIngredientePK(String PK) throws SQLException, Exception 
+	{
+		Ingrediente lista = null;
+		String sql = "SELECT * FROM INGREDIENTE WHERE NOMBRE = '"+PK+"'";
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		while (rs.next()) {
+			String nombre = rs.getString("NOMBRE");
+			String descripcionE = rs.getString("DESCRIPCION_E");
+			String descripcionEn = rs.getString("DESCRIPCION_EN");
+			ArrayList<String> equivalencias = getEquivalencias(nombre);
+			lista=(new Ingrediente(nombre, descripcionE, descripcionEn, equivalencias));
+		}
+
+		return lista;
+	}
+
+
+
+
+	public void addIngrediente(Ingrediente ingrediente) throws SQLException, Exception {
+
+		String sql = "INSERT INTO INGREDIENTE VALUES ('";
+		sql += ingrediente.getNombre() + "','";
+		sql += ingrediente.getDescripcionE() + "','";
+		sql += ingrediente.getDescripcionEn() + "')";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
@@ -153,9 +119,37 @@ public class DAOIngrediente {
 	}
 
 
-	public ArrayList<Ingrediente> getIngredientesProducto() {
-		// TODO Auto-generated method stub
-		return null;
+	public ArrayList<Ingrediente> getIngredientesProducto(String nombre, String restaurante) throws Exception{
+		ArrayList<Ingrediente> lista = new ArrayList<Ingrediente>();
+		String sql = "SELECT * FROM INGREDIENTE_PRODUCTO WHERE ID_PRODUCTO = '"+nombre+"' AND RESTAURANTE = '"+restaurante+"'";
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		while (rs.next()) {
+			
+			lista.add(getIngredientePK(rs.getString("ID_INGREDIENTE")));
+		}
+
+		return lista;
+	}
+
+
+	private ArrayList<String> getEquivalencias(String nombre) throws Exception{
+		ArrayList<String> lista = new ArrayList<String>();
+		String sql = "SELECT * FROM EQUIVALENCIA_INGREDIENTES WHERE NOMBRE='"+ nombre+"'";
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		while (rs.next()) {
+			
+			lista.add(rs.getString("NOMBRE_EQUIVALENCIA"));
+		}
+
+		return lista;
 	}
 
 }

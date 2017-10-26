@@ -19,7 +19,7 @@ public class Ingrediente {
 
 	
 	@JsonProperty(value="nombre")
-	private int nombre;
+	private String nombre;
 	
 	@JsonProperty(value="descripcionE")
 	private String descripcionE;
@@ -27,25 +27,25 @@ public class Ingrediente {
 	@JsonProperty(value="descripcionEn")
 	private String descripcionEn;
 	
-	private ArrayList<Producto> equivalencias;
+	private ArrayList<String> equivalencias;
 
-	public Ingrediente(@JsonProperty(value="nombre")int nombre, @JsonProperty(value="descripcionE")String descripcionE, @JsonProperty(value="descripcionEn")String descripcionEn) {
+	public Ingrediente(@JsonProperty(value="nombre")String nombre, @JsonProperty(value="descripcionE")String descripcionE, @JsonProperty(value="descripcionEn")String descripcionEn) {
 		this.nombre = nombre;
 		this.descripcionE = descripcionE;
 		this.descripcionEn = descripcionEn;
 	}
-	public Ingrediente(int nombre,String descripcionE, String descripcionEn, ArrayList<Producto> equivalencias) {
+	public Ingrediente(String nombre,String descripcionE, String descripcionEn, ArrayList<String> equivalencias) {
 		this.nombre = nombre;
 		this.descripcionE = descripcionE;
 		this.descripcionEn = descripcionEn;
 		this.equivalencias = equivalencias;
 	}
 
-	public int getNombre() {
+	public String getNombre() {
 		return nombre;
 	}
 
-	public void setNombre(int nombre) {
+	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
 
@@ -65,11 +65,11 @@ public class Ingrediente {
 		this.descripcionEn = descripcionEn;
 	}
 
-	public ArrayList<Producto> getEquivalencias() {
+	public ArrayList<String> getEquivalencias() {
 		return equivalencias;
 	}
 
-	public void setEquivalencias(ArrayList<Producto> equivalencias) {
+	public void setEquivalencias(ArrayList<String> equivalencias) {
 		this.equivalencias = equivalencias;
 	}	
 }
