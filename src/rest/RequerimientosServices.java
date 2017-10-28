@@ -104,8 +104,8 @@ public class RequerimientosServices {
 		@JsonProperty(value="productos")
 		public ArrayList<String> productos;
 		@JsonProperty(value="usuarios")
-		public ArrayList<String> usuarios;
-		public Respuesta(@JsonProperty(value="productos")ArrayList<String> productos,@JsonProperty(value="usuarios") ArrayList<String> usuarios) {
+		public ArrayList<Integer> usuarios;
+		public Respuesta(@JsonProperty(value="productos")ArrayList<String> productos,@JsonProperty(value="usuarios") ArrayList<Integer> usuarios) {
 			this.productos = productos;
 			this.usuarios = usuarios;
 		}

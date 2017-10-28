@@ -324,7 +324,6 @@ public class DAOOrden {
 				PreparedStatement prepStmt = conn.prepareStatement(sql);
 				recursos.add(prepStmt);
 				prepStmt.executeQuery();
-				daoProducto.restarUnidad(nombre, restaurante,cambios);
 			}
 			else 
 			{

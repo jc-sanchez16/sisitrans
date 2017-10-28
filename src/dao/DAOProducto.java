@@ -586,7 +586,7 @@ public class DAOProducto {
 				for (int i =1; i <6; i++)
 				{
 					String nom = rs.getString(i+1);
-					if(cambios[i]!= null) {
+					if(!cambios[i].equals("")) {
 						verificarEquivalencia(nom,cambios[i],restaurante);
 						nom = cambios[i];					
 					}

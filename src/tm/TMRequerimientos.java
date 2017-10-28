@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Savepoint;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -267,10 +268,11 @@ public class TMRequerimientos {
 
 	public void registrarPedidoOrden(int mesa, Date fecha, ArrayList<String> productos, ArrayList<Integer> usuarios) throws Exception {
 		DAOOrden daoOrden = new DAOOrden();	
+		Savepoint save = null;
 		try 
 		{
 			this.conn = darConexion();			
-			conn.setSavepoint("sin orden");
+			save =conn.setSavepoint("sin orden");
 			daoOrden.setConn(conn);
 			daoOrden.addOrdenEnProceso(new Orden(mesa, fecha, usuarios, null, null, false));
 			for(int i = 0 ; i<productos.size(); i++)
@@ -288,6 +290,7 @@ public class TMRequerimientos {
 		} catch (Exception e) {
 			System.err.println("GeneralException:" + e.getMessage());
 			e.printStackTrace();
+			conn.rollback(save);;
 			throw e;
 		} finally {
 			try {
