@@ -99,9 +99,11 @@ public class DAOOrden {
 
 	public void addOrden(Orden orden) throws SQLException, Exception {
 
+		int aten = orden.getAtendido()==true?0:1;
 		String sql = "INSERT INTO ORDEN VALUES (";
 		sql += orden.getFecha().getTime() + ",";
-		sql += orden.getMesa() + ")";
+		sql += orden.getMesa() + ",";
+		sql += aten+")";
 
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
@@ -110,6 +112,21 @@ public class DAOOrden {
 		addUsuarios(orden);
 		addMenus(orden);
 		addProductos(orden);
+
+	}
+	public void addOrdenEnProceso(Orden orden) throws SQLException, Exception {
+
+		int aten = orden.getAtendido()==true?0:1;
+		String sql = "INSERT INTO ORDEN VALUES (";
+		sql += orden.getFecha().getTime() + ",";
+		sql += orden.getMesa() + ",";
+		sql += aten+")";
+
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+		addUsuarios(orden);
 
 	}
 
@@ -224,7 +241,7 @@ public class DAOOrden {
 		ArrayList<Integer> usuarios = orden.getUsuarios(); 
 		for (int j = 0; j < usuarios.size(); j++) 
 		{
-			String sql = "INSERT INTO ORDEN_USUARIOS VALUES (";
+			String sql = "INSERT INTO ORDEN_USUARIO VALUES (";
 			sql += orden.getFecha().getTime() + ",";
 			sql += orden.getMesa() + ",";
 			sql += usuarios.get(j) +")";
@@ -240,7 +257,7 @@ public class DAOOrden {
 		for (int j = 0; j < menus.size(); j++) 
 		{
 			Menu menu = menus.get(j);
-			String sql = "INSERT INTO ORDEN_PRODUCTOS VALUES ('";
+			String sql = "INSERT INTO ORDEN_PRODUCTO VALUES ('";
 			sql += menu.getRestaurante()+"','";
 			sql += menu.getNombre()+"',";
 			sql += orden.getFecha().getTime() + ",";
@@ -258,7 +275,7 @@ public class DAOOrden {
 		for (int j = 0; j < productos.size(); j++) 
 		{
 			Producto producto = productos.get(j);
-			String sql = "INSERT INTO ORDEN_PRODUCTOS VALUES ('";
+			String sql = "INSERT INTO ORDEN_PRODUCTO VALUES ('";
 			sql += producto.getRestaurante()+"','";
 			sql += producto.getNombre()+"',";
 			sql += orden.getFecha().getTime() + ",";
@@ -271,7 +288,7 @@ public class DAOOrden {
 
 	private void deleteUsuarios(int mesa, long f)throws Exception 
 	{
-		String sql = "DELETE FROM ORDEN_USUARIOS";
+		String sql = "DELETE FROM ORDEN_USUARIO";
 		sql += " WHERE MESA = "+mesa+" AND FECHA = "+f;
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
@@ -282,12 +299,42 @@ public class DAOOrden {
 
 	private void deleteMenusYProductos(int mesa, long f)throws Exception 
 	{
-		String sql = "DELETE FROM ORDEN_PRODUCTOS";
+		String sql = "DELETE FROM ORDEN_PRODUCTO";
 		sql += " WHERE MESA = "+mesa+" AND FECHA = "+f;
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
+	}
+
+
+	public void registrarPedidoProducto(String nombre, String restaurante, String[] cambios, int mesa, Date fecha) throws Exception
+	{
+		DAOProducto daoProducto = new DAOProducto();
+		try
+		{
+			daoProducto.setConn(conn);
+			if(daoProducto.verificarDisponibilidad(nombre,restaurante,cambios))
+			{
+				String sql = "INSERT INTO ORDEN_PRODUCTO VALUES ('";
+				sql += restaurante+"','";
+				sql += nombre+"',";
+				sql += fecha.getTime() + ",";
+				sql += mesa + ")";
+				PreparedStatement prepStmt = conn.prepareStatement(sql);
+				recursos.add(prepStmt);
+				prepStmt.executeQuery();
+				daoProducto.restarUnidad(nombre, restaurante,cambios);
+			}
+		}
+		catch(Exception e)
+		{
+			throw e;
+		}
+		finally
+		{
+			daoProducto.cerrarRecursos();
+		}
 	}
 
 }

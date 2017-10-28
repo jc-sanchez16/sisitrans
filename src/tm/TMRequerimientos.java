@@ -6,15 +6,18 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
 import vos.Menu;
+import vos.Orden;
 import vos.Producto;
 import vos.Zona;
 import dao.DAOIngrediente;
+import dao.DAOOrden;
 import dao.DAOProducto;
-import dao.DAOProducto;
+import dao.DAOOrden;
 import dao.DAOZona;
 
 public class TMRequerimientos {
@@ -231,16 +234,15 @@ public class TMRequerimientos {
 		return res;
 	}
 
-	public String RegistrarPedidoProducto(String nombre, String restaurante,String cambios) throws Exception {
-		DAOProducto daoProducto = new DAOProducto();
-		String res = "no se realizo la accion";		
+	public void registrarPedidoProducto(String nombre, String restaurante,String[] cambios, int mesa, Date fecha) throws Exception {
+		DAOOrden daoOrden = new DAOOrden();	
 		try 
 		{
-			//////transaccion
-			this.conn = darConexion();
-			daoProducto.setConn(conn);
-			res = daoProducto.surtirRestaurante(clave,restaurante);
+			this.conn = darConexion();			
+			daoOrden.setConn(conn);
+			daoOrden.registrarPedidoProducto(nombre,restaurante,cambios, mesa, fecha);
 			conn.commit();
+			
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
@@ -252,7 +254,7 @@ public class TMRequerimientos {
 			throw e;
 		} finally {
 			try {
-				daoProducto.cerrarRecursos();
+				daoOrden.cerrarRecursos();
 				if(this.conn!=null)
 					this.conn.close();
 			} catch (SQLException exception) {
@@ -261,7 +263,43 @@ public class TMRequerimientos {
 				throw exception;
 			}
 		}
-		return res;
+	}
+
+	public void registrarPedidoOrden(int mesa, Date fecha, ArrayList<String> productos, ArrayList<Integer> usuarios) {
+		DAOOrden daoOrden = new DAOOrden();	
+		try 
+		{
+			this.conn = darConexion();			
+			conn.setSavepoint("sin orden");
+			daoOrden.setConn(conn);
+			daoOrden.addOrdenEnProceso(new Orden(mesa, fecha, usuarios, null, null, false));
+			for(int i = 0 ; i<productos.size(); i++)
+			{
+				String[] producto = productos.get(i).split(";");
+				daoOrden.registrarPedidoProducto(producto[0],producto[1],producto[2].split("."), mesa, fecha);
+			}
+			conn.commit();
+			
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoOrden.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
 	}
 
 

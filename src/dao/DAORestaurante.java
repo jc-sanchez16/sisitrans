@@ -72,7 +72,7 @@ public class DAORestaurante {
 				String web =rs.getString("WEB") ;
 				int zona = rs.getInt("ZONA");
 
-				Usuario administrador =  daoUsuario.getAdministradorPK(rs.getInt("REPRESENTANTE"));
+				int administrador = rs.getInt("REPRESENTANTE");
 				ArrayList<Producto> productos = daoProducto.getProductosRestaurante(nombre);
 				ArrayList<Menu> menus = daoProducto.getMenusRestaurante(nombre);
 				ArrayList<Contrato> contratos= getContratos(nombre);
@@ -109,7 +109,7 @@ public class DAORestaurante {
 				String web =rs.getString("WEB") ;
 				int zona = rs.getInt("ZONA");
 
-				Usuario administrador =  daoUsuario.getAdministradorPK(rs.getInt("REPRESENTANTE"));
+				int administrador =  rs.getInt("REPRESENTANTE");
 				ArrayList<Producto> productos = daoProducto.getProductosRestaurante(nombre);
 				ArrayList<Menu> menus = daoProducto.getMenusRestaurante(nombre);
 				ArrayList<Contrato> contratos= getContratos(nombre);
@@ -191,7 +191,7 @@ public class DAORestaurante {
 				String web =rs.getString("WEB") ;
 				int zona = rs.getInt("ZONA");
 
-				Usuario administrador =  daoUsuario.getAdministradorPK(rs.getInt("REPRESENTANTE"));
+				int administrador = rs.getInt("REPRESENTANTE");
 				ArrayList<Producto> productos = daoProducto.getProductosRestaurante(nombre);
 				ArrayList<Menu> menus = daoProducto.getMenusRestaurante(nombre);
 				ArrayList<Contrato> contratos= getContratos(nombre);

@@ -63,7 +63,7 @@ public class DAOProducto {
 				int tipo = rs.getInt("TIPO");
 				String descripcionE = rs.getString("DESCRIPCION_E");
 				String descripcionEn = rs.getString("DESCRIPCION_EN");
-				int tiempoPreparacion = rs.getInt("TIEMPO_PREPARACION");
+				int tiempoPreparacion = rs.getInt("TIEMPO_PREP");
 				ArrayList<Ingrediente> ingredientes =  daoIngrediente.getIngredientesProducto(nombre,restaurante);
 				ArrayList<String> tipoComida = getTipoComida(nombre, restaurante);
 				ArrayList<Producto> equivalencias = getEquivalencias(nombre, restaurante);
@@ -139,7 +139,7 @@ public class DAOProducto {
 				int tipo = rs.getInt("TIPO");
 				String descripcionE = rs.getString("DESCRIPCION_E");
 				String descripcionEn = rs.getString("DESCRIPCION_EN");
-				int tiempoPreparacion = rs.getInt("TIEMPO_PREPARACION");
+				int tiempoPreparacion = rs.getInt("TIEMPO_PREP");
 				ArrayList<Ingrediente> ingredientes =  daoIngrediente.getIngredientesProducto(nombre, restaurante);
 				ArrayList<String> tipoComida = getTipoComida(nombre, restaurante);
 				ArrayList<Producto> equivalencias =new ArrayList<Producto>();
@@ -219,7 +219,7 @@ public class DAOProducto {
 			String restaurante = rs.getString("RESTAURANTE");
 			double costo = rs.getDouble("COSTO");
 			double precio = rs.getDouble("PRECIO");
-			int tiempoPreparacion = rs.getInt("TIEMPO_PREPARACION");
+			int tiempoPreparacion = rs.getInt("TIEMPO_PREP");
 			ArrayList<String> tipoComida = getTipoComida(nombre, restaurante);
 			ArrayList<Producto> productos = getPlatos(nombre, restaurante);
 			lista.add(new Menu(nombre, restaurante, costo, precio, tiempoPreparacion, tipoComida, productos));
@@ -241,7 +241,7 @@ public class DAOProducto {
 			String restaurante = rs.getString("RESTAURANTE");
 			double costo = rs.getDouble("COSTO");
 			double precio = rs.getDouble("PRECIO");
-			int tiempoPreparacion = rs.getInt("TIEMPO_PREPARACION");
+			int tiempoPreparacion = rs.getInt("TIEMPO_PREP");
 			ArrayList<String> tipoComida = getTipoComida(nombre, restaurante);
 			ArrayList<Producto> productos = getPlatos(nombre, restaurante);
 			lista=(new Menu(nombre, restaurante, costo, precio, tiempoPreparacion, tipoComida, productos));
@@ -374,7 +374,7 @@ public class DAOProducto {
 				int tipo = rs.getInt("TIPO");
 				String descripcionE = rs.getString("DESCRIPCION_E");
 				String descripcionEn = rs.getString("DESCRIPCION_EN");
-				int tiempoPreparacion = rs.getInt("TIEMPO_PREPARACION");
+				int tiempoPreparacion = rs.getInt("TIEMPO_PREP");
 				ArrayList<Ingrediente> ingredientes =  daoIngrediente.getIngredientesProducto(nombre, restaurante);
 				ArrayList<String> tipoComida = getTipoComida(nombre, restaurante);
 				ArrayList<Producto> equivalencias = getEquivalencias(nombre, restaurante);
@@ -403,7 +403,7 @@ public class DAOProducto {
 			String restaurante = rs.getString("RESTAURANTE");
 			double costo = rs.getDouble("COSTO");
 			double precio = rs.getDouble("PRECIO");
-			int tiempoPreparacion = rs.getInt("TIEMPO_PREPARACION");
+			int tiempoPreparacion = rs.getInt("TIEMPO_PREP");
 			ArrayList<String> tipoComida = getTipoComida(nombre, restaurante);
 			ArrayList<Producto> productos = getPlatos(nombre, restaurante);
 			lista.add(new Menu(nombre, restaurante, costo, precio, tiempoPreparacion, tipoComida, productos));
@@ -451,7 +451,7 @@ public class DAOProducto {
 		ResultSet rs = prepStmt.executeQuery();
 
 		while (rs.next()) {
-			for (int i =0; i <2; i++)
+			for (int i =1; i <6; i++)
 			{
 				String nom = rs.getString(i+1);
 				if(nom!= "null")
@@ -555,4 +555,92 @@ public class DAOProducto {
 
 
 	}
+
+
+	public boolean verificarDisponibilidad(String nombre, String restaurante, String[] cambios) throws Exception {
+
+		String sql = "SELECT * FROM PRODUCTO WHERE NOMBRE ='"+nombre+"' AND RESTAURANTE ='"+restaurante+"'";
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		while (rs.next()) {
+			if(rs.getInt("CANT_MAX")<=0)
+				return false;
+			if (rs.getInt("MENU")==0)
+			{
+				return verificarDisponibilidadPlatos(nombre,restaurante,cambios);
+			}
+		}
+		return false;
+	}
+
+
+	private boolean verificarDisponibilidadPlatos(String nombre, String restaurante, String[] cambios) throws Exception {
+
+		String sql = "SELECT * FROM MENU WHERE NOMBRE ='" + nombre+"' AND RESTAURANTE = '"+ restaurante+"'";
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		try {
+			while (rs.next()) {
+				for (int i =1; i <6; i++)
+				{
+					String nom = rs.getString(i+1);
+					if(cambios[i]!= null) {
+						verificarEquivalencia(nom,cambios[i],restaurante);
+						nom = cambios[i];					
+					}
+					if(!verificarDisponibilidad(nom, restaurante, null))
+						return false;
+				}
+				return true;
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+		return false;
+	}
+
+
+	private void verificarEquivalencia(String nom,String equi, String restaurante)throws Exception 
+	{
+		String sql = "SELECT * FROM EQUIVALENCIA_PRODUCTO WHERE NOMBRE ='" + nom+"' AND RESTAURANTE = '"+ restaurante+"'  AND NOMBRE_EQUIVALENCIA ='" +equi+"'";
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		if(!rs.next()) {
+			throw new Exception("no es una equivalencia");
+		}
+	}
+	
+
+	public void restarUnidad(String nombre, String restaurante, String[] cambios) 
+	{
+		String sql = "UPDATE PRODUCTO SET ";
+		sql += "CANT_ACTUAL="+ "CANT_ACTUAL -1" + " ,";
+		sql += "WHERE NOMBRE ='"+nombre+"' AND RESTAURANTE ='"+restaurante+"'";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+
+		while (rs.next()) {
+			if(rs.getInt("CANT_MAX")<=0)
+				return false;
+			if (rs.getInt("MENU")==0)
+			{
+				return verificarDisponibilidadPlatos(nombre,restaurante,cambios);
+			}
+		}
+	}
+
+
+
 }

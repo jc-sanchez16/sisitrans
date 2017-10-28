@@ -29,10 +29,11 @@ public class Restaurante {
 	@JsonProperty(value="web")
 	private String web;
 	
-	
+	@JsonProperty(value="zona")
 	private int zona;
 	
-	private Usuario administrador;
+	@JsonProperty(value="administrador")
+	private int administrador;
 	
 	private ArrayList<Contrato> contratos;
 	
@@ -40,7 +41,7 @@ public class Restaurante {
 	
 	private ArrayList<Menu> menus;
 
-	public Restaurante(String nombre, String tipoComida,String web, int zona, Usuario administrador,ArrayList<Contrato> contratos, ArrayList<Producto> productos, ArrayList<Menu> menus) {
+	public Restaurante(String nombre, String tipoComida,String web, int zona, int administrador,ArrayList<Contrato> contratos, ArrayList<Producto> productos, ArrayList<Menu> menus) {
 	
 		this.nombre = nombre;
 		this.tipoComida = tipoComida;
@@ -56,11 +57,13 @@ public class Restaurante {
 	public void setContratos(ArrayList<Contrato> contratos) {
 		this.contratos = contratos;
 	}
-	public Restaurante(@JsonProperty(value="nombre")String nombre, @JsonProperty(value="tipoComida")String tipoComida, @JsonProperty(value="web")String web) {
+	public Restaurante(@JsonProperty(value="nombre")String nombre, @JsonProperty(value="tipoComida")String tipoComida, @JsonProperty(value="web")String web,@JsonProperty(value="zona") int zona,@JsonProperty(value="administrador") int administrador) {
 		
 		this.nombre = nombre;
 		this.tipoComida = tipoComida;
 		this.web = web;
+		this.zona=zona;
+		this.administrador=administrador;
 	}
 
 	public String getNombre() {
@@ -95,11 +98,11 @@ public class Restaurante {
 		this.zona = zona;
 	}
 
-	public Usuario getAdministrador() {
+	public int getAdministrador() {
 		return administrador;
 	}
 
-	public void setAdministrador(Usuario administrador) {
+	public void setAdministrador(int administrador) {
 		this.administrador = administrador;
 	}
 

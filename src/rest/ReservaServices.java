@@ -76,7 +76,7 @@ public class ReservaServices {
 	@GET
 	@Path( "{id: \\d+}/{fecha: [0-9/]+}")
 	@Produces( { MediaType.APPLICATION_JSON } )
-	public Response getReserva( @PathParam( "id" ) int id ,@PathParam( "fecha" ) Date fecha )
+	public Response getReservaPK( @PathParam( "id" ) int id ,@PathParam( "fecha" ) Date fecha )
 	{
 		TMReserva tm = new TMReserva( getPath( ) );
 		try
