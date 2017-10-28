@@ -149,4 +149,17 @@ public class RequerimientosServices {
 		}
 		return Response.status(200).entity(res).build();
 	}
+	@GET
+	@Produces({ MediaType.APPLICATION_JSON })
+	@Path("C7")
+	public Response consultarConsumo(@QueryParam("clave") int clave,@QueryParam("peticion") int peticion, @QueryParam("usuario") int usuario) {
+		TMRequerimientos tm = new TMRequerimientos(getPath());
+		int res = null;
+		try {
+			res = tm.consultarConsumo(usuario,clave, peticion);
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(res).build();
+	}
 }

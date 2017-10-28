@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import org.codehaus.jackson.annotate.*;
 
 
-public class Menu {
+public class Menu implements Articulo{
 
 	
 	@JsonProperty(value="nombre")

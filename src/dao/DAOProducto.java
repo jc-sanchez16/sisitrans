@@ -250,6 +250,7 @@ public class DAOProducto {
 		return lista;
 	}
 
+	
 
 
 
@@ -637,6 +638,8 @@ public class DAOProducto {
 			restarUnidad(nom, plato.getRestaurante(), null);
 		}		
 	}
+
+
 
 
 

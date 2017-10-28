@@ -399,4 +399,33 @@ public class DAOOrden {
 		return res;
 	}
 
+
+	public String consultarConsumo(int usuario, int clave, int peticion) {
+		ArrayList<Articulo> res = new ArrayList<Articulo>();
+		DAOUsuario daoUsuario= new DAOUsuario();
+		DAOProducto daoProducto = new DAOProducto();		
+		try
+		{
+			daoUsuario.setConn(conn);
+			if(!(daoUsuario.verificar(usuario, clave,1)||(usuario==peticion && daoUsuario.verificar(usuario, clave, 0))))
+				throw new Exception("no es un usuario valido");
+			String sql = "SELECT * FROM ORDEN_PRODUCTO WHERE USUARIO = "+peticion;
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			ResultSet rs = prepStmt.executeQuery();
+			while (rs.next()) {		
+				String nombre = rs.getString("NOMBRE");
+				String restaurante = rs.getString("RESTAURANTE");
+				lista.add(
+						daoProducto.getProductoPK(nombre, restaurante);;
+			}
+		}
+		finally
+		{
+			daoUsuario.cerrarRecursos();
+			daoProducto.cerrarRecursos();
+		}
+		return lista;
+	}
+
 }

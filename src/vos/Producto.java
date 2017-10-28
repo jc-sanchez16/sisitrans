@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import org.codehaus.jackson.annotate.*;
 
 
-public class Producto {
+public class Producto implements Articulo{
 
 	
 	@JsonProperty(value="nombre")

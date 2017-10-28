@@ -330,6 +330,33 @@ public class TMRequerimientos {
 		return res;
 	}
 
+	public int consultarConsumo(int usuario, int clave, int peticion) {
+		String res = "no se realizo la accion";
+		DAOOrden daoOrden = new DAOOrden();	
+		try 
+		{
+			this.conn = darConexion();			
+			daoOrden.setConn(conn);
+			res = daoOrden.consultarConsumo(usuario, clave, peticion);
+			conn.commit();
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoOrden.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return res;
+	}
+
 
 
 
