@@ -308,5 +308,14 @@ public class DAOUsuario {
 		return lista;
 	}
 
+
+	public boolean verificar(int usuario, int clave, int tipo) throws SQLException {
+		String sql = "SELECT CLAVE FROM PERSONA WHERE NUMERO_ID ="+usuario+" AND CLAVE = "+clave+" AND TIPO ="+tipo;
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		return rs.next();
+	}
+
 	
 }

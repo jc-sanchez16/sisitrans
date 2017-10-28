@@ -117,20 +117,35 @@ public class DAOZona {
 	
 
 	
-	public void addZona(Zona zona) throws SQLException, Exception {
+	public void addZona(Zona zona, int usuario, int clave, int tipo) throws SQLException, Exception {
 		
-		String sql = "INSERT INTO ZONA VALUES (";
-		sql += zona.getId() + ",";
-		int abierto = zona.getAbierto()== true ? 0:1;
-		sql += abierto + ",";
-		sql += zona.getCapacidad() + ",";
-		int discapacitados = zona.getDiscapacitados()== true ? 0:1;
-		sql += discapacitados + ",'";
-		sql += zona.getEspecialidad() + "')";
+		DAOUsuario daoUsuario = new DAOUsuario();
+		try
+		{
+			daoUsuario.setConn(conn);
+			if(!daoUsuario.verificar(usuario,clave,tipo))
+			throw new Exception("usuario no valido");
+			String sql = "INSERT INTO ZONA VALUES (";
+			sql += zona.getId() + ",";
+			int abierto = zona.getAbierto()== true ? 0:1;
+			sql += abierto + ",";
+			sql += zona.getCapacidad() + ",";
+			int discapacitados = zona.getDiscapacitados()== true ? 0:1;
+			sql += discapacitados + ",'";
+			sql += zona.getEspecialidad() + "')";
 
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			prepStmt.executeQuery();
+			
+		}
+		finally
+		{
+			daoUsuario.cerrarRecursos();
+		}
+	
+		
+		
 
 	}
 

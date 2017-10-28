@@ -265,7 +265,7 @@ public class TMRequerimientos {
 		}
 	}
 
-	public void registrarPedidoOrden(int mesa, Date fecha, ArrayList<String> productos, ArrayList<Integer> usuarios) {
+	public void registrarPedidoOrden(int mesa, Date fecha, ArrayList<String> productos, ArrayList<Integer> usuarios) throws Exception {
 		DAOOrden daoOrden = new DAOOrden();	
 		try 
 		{

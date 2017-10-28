@@ -87,9 +87,8 @@ public class ZonaServices {
      * el error que se produjo
      */
 	@GET
-	@Path( "{id: \\d+}" )
 	@Produces( { MediaType.APPLICATION_JSON } )
-	public Response getZonaPK( @PathParam( "id" ) int id )
+	public Response getZonaPK( @QueryParam( "id" ) int id )
 	{
 		TMZona tm = new TMZona( getPath( ) );
 		try
@@ -113,11 +112,11 @@ public class ZonaServices {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addZona(Zona zona) {
+	public Response addZona(Zona zona, @QueryParam("usuario") int usuario,@QueryParam("clave") int clave) {
 		TMZona tm = new TMZona(getPath());
 		System.out.println("hola");
 		try {
-			tm.addZona(zona);
+			tm.addZona(zona,usuario, clave);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}

@@ -326,6 +326,10 @@ public class DAOOrden {
 				prepStmt.executeQuery();
 				daoProducto.restarUnidad(nombre, restaurante,cambios);
 			}
+			else 
+			{
+				throw new Exception("no hay unidades disponible");
+			}
 		}
 		catch(Exception e)
 		{

@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+
+import dao.DAOUsuario;
 import dao.DAOZona;
 
 import vos.Zona;
@@ -180,14 +182,14 @@ public class TMZona {
 
 
 /////////// agregar una zona
-	public void addZona(Zona zona) throws Exception {
+	public void addZona(Zona zona, int usuario, int clave) throws Exception {
 		DAOZona daoZona = new DAOZona();
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
 			daoZona.setConn(conn);
-			daoZona.addZona(zona);
+			daoZona.addZona(zona,usuario, clave, DAOUsuario.ADMINISTRADOR);
 			conn.commit();
 
 		} catch (SQLException e) {
