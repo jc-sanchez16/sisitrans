@@ -71,11 +71,12 @@ public class DAORestaurante {
 				String tipoComida =rs.getString("TIPO_COMIDA") ;
 				String web =rs.getString("WEB") ;
 				int zona = rs.getInt("ZONA");
-				
-				Administrador administrador =  daoUsuario.getAdministradorPK(rs.getInt("ID_ADMIN"));
+
+				Usuario administrador =  daoUsuario.getAdministradorPK(rs.getInt("REPRESENTANTE"));
 				ArrayList<Producto> productos = daoProducto.getProductosRestaurante(nombre);
 				ArrayList<Menu> menus = daoProducto.getMenusRestaurante(nombre);
-				lista.add(new Restaurante(nombre, tipoComida, web, zona, administrador, productos, menus));
+				ArrayList<Contrato> contratos= getContratos(nombre);
+				lista.add(new Restaurante(nombre, tipoComida, web, zona, administrador, contratos, productos, menus));
 			}
 		}
 		finally
@@ -107,11 +108,12 @@ public class DAORestaurante {
 				String tipoComida =rs.getString("TIPO_COMIDA") ;
 				String web =rs.getString("WEB") ;
 				int zona = rs.getInt("ZONA");
-				
-				Administrador administrador =  daoUsuario.getAdministradorPK(rs.getInt("ID_ADMIN"));
+
+				Usuario administrador =  daoUsuario.getAdministradorPK(rs.getInt("REPRESENTANTE"));
 				ArrayList<Producto> productos = daoProducto.getProductosRestaurante(nombre);
 				ArrayList<Menu> menus = daoProducto.getMenusRestaurante(nombre);
-				lista=(new Restaurante(nombre, tipoComida, web, zona, administrador, productos, menus));
+				ArrayList<Contrato> contratos= getContratos(nombre);
+				lista=(new Restaurante(nombre, tipoComida, web, zona, administrador,contratos, productos, menus));
 			}
 		}
 		finally
@@ -122,17 +124,18 @@ public class DAORestaurante {
 		return lista;
 	}
 
-	
 
-	
-	public void addRestaurante(Restaurante restaurante) throws SQLException, Exception {
+
+
+	public void addRestaurante(Restaurante restaurante,int clave) throws SQLException, Exception {
 
 		String sql = "INSERT INTO RESTAURANTE VALUES ('";
-		sql += restaurante.getNombre() + "','";
+		sql += restaurante.getNombre() + "',";
+		sql += restaurante.getZona() + ",'";
 		sql += restaurante.getTipoComida() + "','";
 		sql += restaurante.getWeb() + "',";
-		sql += restaurante.getZona() + ",";
-		sql += restaurante.getAdministrador() + "')";
+		sql += clave + ",";
+		sql += restaurante.getAdministrador() + ")";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
@@ -147,7 +150,7 @@ public class DAORestaurante {
 		sql += "TIPO_COMIDA='"+restaurante.getTipoComida() + "',";
 		sql += "WEB='"+restaurante.getWeb() + "',";
 		sql +="ZONA=" +restaurante.getZona() + ",";
-		sql += "ID_ADMIN="+restaurante.getAdministrador();
+		sql += "REPRESENTANTE="+restaurante.getAdministrador();
 		sql += "WHERE NOMBRE = " + restaurante.getNombre();
 
 
@@ -187,11 +190,12 @@ public class DAORestaurante {
 				String tipoComida =rs.getString("TIPO_COMIDA") ;
 				String web =rs.getString("WEB") ;
 				int zona = rs.getInt("ZONA");
-				
-				Administrador administrador =  daoUsuario.getAdministradorPK(rs.getInt("ID_ADMIN"));
+
+				Usuario administrador =  daoUsuario.getAdministradorPK(rs.getInt("REPRESENTANTE"));
 				ArrayList<Producto> productos = daoProducto.getProductosRestaurante(nombre);
 				ArrayList<Menu> menus = daoProducto.getMenusRestaurante(nombre);
-				lista.add(new Restaurante(nombre, tipoComida, web, zona, administrador, productos, menus));
+				ArrayList<Contrato> contratos= getContratos(nombre);
+				lista.add(new Restaurante(nombre, tipoComida, web, zona, administrador, contratos, productos, menus));
 			}
 		}
 		finally
@@ -202,4 +206,54 @@ public class DAORestaurante {
 		return lista;
 	}
 
+
+
+
+	public boolean verificar(String restaurante, int clave) throws SQLException {
+
+		String sql = "SELECT CLAVE FROM RESTAURANTE WHERE NOMBRE ='"+restaurante+"'";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		if(rs.getInt(1)!= clave)
+			return false;
+		return true;
+	}
+
+
+	public boolean verificar(int clave) throws SQLException {
+
+		String sql = "SELECT CLAVE FROM RESTAURANTE";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		while (rs.next()) {
+
+			if(rs.getInt(1)==clave)
+				return true;
+		}
+
+		return false;
+	}
+
+	private ArrayList<Contrato> getContratos(String nombre) throws SQLException {
+		ArrayList<Contrato> lista = new ArrayList<Contrato>();
+			String sql = "SELECT * FROM CONTRATOS";
+
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			ResultSet rs = prepStmt.executeQuery();
+
+			while (rs.next()) {
+				int id = rs.getInt("NUM_CONTRATO");
+				String descripcion = rs.getString("DESCRIPCION");
+				String restaurante =rs.getString("RESTAURANTE") ;
+				lista.add(new Contrato(id, descripcion, restaurante));
+			}
+		return lista;
+	}
+
+
+	
 }

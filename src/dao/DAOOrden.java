@@ -68,7 +68,8 @@ public class DAOOrden {
 			ArrayList<Integer> usuarios = getUsuariosOrden(mesa, f);
 			ArrayList<Menu> menus= getMenusOrden(mesa,f);
 			ArrayList<Producto> productos = getProductosOrden(mesa,f);
-			lista.add(new Orden(mesa, fecha, usuarios, menus, productos));
+			boolean atendido = rs.getInt("ATENDIDO")==0? true: false;
+			lista.add(new Orden(mesa, fecha, usuarios, menus, productos, atendido));
 		}
 
 		return lista;
@@ -79,11 +80,17 @@ public class DAOOrden {
 	{
 		Orden lista = null;		
 		long f = fecha.getTime();
-		ArrayList<Integer> usuarios = getUsuariosOrden(mesa, f);
-		ArrayList<Menu> menus= getMenusOrden(mesa,f);
-		ArrayList<Producto> productos = getProductosOrden(mesa,f);
-		if(usuarios!= null && menus!= null && productos!= null)
-			lista = new Orden(mesa, fecha, usuarios, menus, productos);
+		String sql = "SELECT * FROM ORDEN WHERE MESA ="+mesa+" AND FECHA = "+f;
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		while (rs.next()) {
+			ArrayList<Integer> usuarios = getUsuariosOrden(mesa, f);
+			ArrayList<Menu> menus= getMenusOrden(mesa,f);
+			ArrayList<Producto> productos = getProductosOrden(mesa,f);
+			boolean atendido = rs.getInt("ATENDIDO")==0? true: false;
+			lista = new Orden(mesa, fecha, usuarios, menus, productos, atendido);
+		}
 		return lista;
 	}
 
@@ -95,7 +102,7 @@ public class DAOOrden {
 		String sql = "INSERT INTO ORDEN VALUES (";
 		sql += orden.getFecha().getTime() + ",";
 		sql += orden.getMesa() + ")";
-		
+
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
@@ -113,7 +120,7 @@ public class DAOOrden {
 		addUsuarios(orden);
 		addMenus(orden);
 		addProductos(orden);
-		
+
 	}
 
 
@@ -261,7 +268,7 @@ public class DAOOrden {
 			prepStmt.executeQuery();
 		}
 	}
-	
+
 	private void deleteUsuarios(int mesa, long f)throws Exception 
 	{
 		String sql = "DELETE FROM ORDEN_USUARIOS";

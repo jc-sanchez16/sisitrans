@@ -17,7 +17,6 @@ import javax.ws.rs.core.Response;
 
 import tm.TMUsuario;
 import tm.TMZona;
-import vos.Administrador;
 import vos.Usuario;
 import vos.Zona;
 
@@ -101,12 +100,13 @@ public class UsuarioServices {
 	 * @return Json con el video que agrego o Json con el error que se produjo
 	 */
 	@POST
+	@Path( "{claven: \\d+}" )
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addUsuario(Usuario user) {
+	public Response addUsuario(Usuario user, @PathParam("claven") int claven) {
 		TMUsuario tm = new TMUsuario(getPath());
 		try {
-			tm.addUsuario(user);
+			tm.addUsuario(user, claven);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
@@ -151,6 +151,92 @@ public class UsuarioServices {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
 		return Response.status(200).entity(id).build();
+	}
+	/**
+	 * Metodo que expone servicio REST usando GET que da todos los videos de la base de datos.
+	 * <b>URL: </b> http://"ip o nombre de host":8080/VideoAndes/rest/videos
+	 * @return Json con todos los videos de la base de datos o json con 
+	 * el error que se produjo
+	 */
+	@GET
+	@Path("admin")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getAdministradores() {
+		TMUsuario tm = new TMUsuario(getPath());
+		List<Usuario> administradores;
+		try {
+			administradores = tm.getAdministradores();
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(administradores).build();
+	}
+
+	/**
+	 * Metodo que expone servicio REST usando GET que busca el video con el id que entra como parametro
+	 * <b>URL: </b> http://"ip o nombre de host":8080/VideoAndes/rest/videos/<<id>>" para la busqueda"
+	 * @param name - Nombre del video a buscar que entra en la URL como parametro 
+	 * @return Json con el/los videos encontrados con el nombre que entra como parametro o json con 
+	 * el error que se produjo
+	 */
+	@GET
+	@Path( "admin/{id: \\d+}" )
+	@Produces( { MediaType.APPLICATION_JSON } )
+	public Response getAdministradorPK( @PathParam( "id" ) int id )
+	{
+		TMUsuario tm = new TMUsuario( getPath( ) );
+		try
+		{
+			Usuario admin = tm.getAdministradorPK(id);
+			return Response.status( 200 ).entity( admin ).build( );			
+		}
+		catch( Exception e )
+		{
+			return Response.status( 500 ).entity( doErrorMessage( e ) ).build( );
+		}
+	}
+	/**
+	 * Metodo que expone servicio REST usando GET que da todos los videos de la base de datos.
+	 * <b>URL: </b> http://"ip o nombre de host":8080/VideoAndes/rest/videos
+	 * @return Json con todos los videos de la base de datos o json con 
+	 * el error que se produjo
+	 */
+	@GET
+	@Path("representantes")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getRepresentantes() {
+		TMUsuario tm = new TMUsuario(getPath());
+		List<Usuario> administradores;
+		try {
+			administradores = tm.getRepresentantes();
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(administradores).build();
+	}
+
+	/**
+	 * Metodo que expone servicio REST usando GET que busca el video con el id que entra como parametro
+	 * <b>URL: </b> http://"ip o nombre de host":8080/VideoAndes/rest/videos/<<id>>" para la busqueda"
+	 * @param name - Nombre del video a buscar que entra en la URL como parametro 
+	 * @return Json con el/los videos encontrados con el nombre que entra como parametro o json con 
+	 * el error que se produjo
+	 */
+	@GET
+	@Path( "representantes/{id: \\d+}" )
+	@Produces( { MediaType.APPLICATION_JSON } )
+	public Response getRepresentantePK( @PathParam( "id" ) int id )
+	{
+		TMUsuario tm = new TMUsuario( getPath( ) );
+		try
+		{
+			Usuario admin = tm.getRepresentantesPK(id);
+			return Response.status( 200 ).entity( admin ).build( );			
+		}
+		catch( Exception e )
+		{
+			return Response.status( 500 ).entity( doErrorMessage( e ) ).build( );
+		}
 	}
 
 

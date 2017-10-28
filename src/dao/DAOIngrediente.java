@@ -152,4 +152,44 @@ public class DAOIngrediente {
 		return lista;
 	}
 
+
+	public String AddEquivalenciaIngrediente(int clave, ArrayList<String> ingredientes) throws Exception {
+		String res = "no se realizo la accion";
+		DAORestaurante daoRestaurante = new DAORestaurante();
+		try
+		{
+			daoRestaurante.setConn(conn);
+			if(!daoRestaurante.verificar( clave))
+				throw new Exception("No es un usuario valido");
+			for (int i = 0; i < ingredientes.size(); i++) 
+			{
+				for (int j = 0; j <ingredientes.size(); j++) 
+				{
+					if(i!=j)
+					{
+						
+						String sql = "INSERT INTO EQUIVALENCIAS_INGREDIENTE VALUES ('";
+						sql += ingredientes.get(i)+"','";
+						sql += ingredientes.get(j)+"',)'";
+
+						PreparedStatement prepStmt = conn.prepareStatement(sql);
+						recursos.add(prepStmt);
+						prepStmt.executeQuery();
+						res="se realizo la accion";
+					}
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			res = "no se realizo la accion";
+			throw e;
+		}
+		finally
+		{
+			daoRestaurante.cerrarRecursos();
+		}
+		return res;
+	}
+
 }

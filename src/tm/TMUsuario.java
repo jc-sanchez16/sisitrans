@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Properties;
 
-import vos.Administrador;
 import vos.Usuario;
 import vos.Zona;
 import dao.DAOUsuario;
@@ -168,14 +167,14 @@ public class TMUsuario {
 
 
 	/////////// agregar una usuario
-	public void addUsuario(Usuario usuario) throws Exception {
+	public void addUsuario(Usuario usuario, int clave) throws Exception {
 		DAOUsuario daoUsuario = new DAOUsuario();
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
 			daoUsuario.setConn(conn);
-			daoUsuario.addUsuario(usuario);
+			daoUsuario.addUsuario(usuario, clave);
 			conn.commit();
 
 		} catch (SQLException e) {
@@ -262,8 +261,8 @@ public class TMUsuario {
 	}
 
 	/////////////get administradores
-	public List<Administrador> getAdministradores() throws Exception {
-		List<Administrador> administradores;
+	public List<Usuario> getAdministradores() throws Exception {
+		List<Usuario> administradores;
 		DAOUsuario daoUsuario = new DAOUsuario();
 		try 
 		{
@@ -295,8 +294,8 @@ public class TMUsuario {
 	}
 
 	////////get administrador por su numero de identificacion
-	public Administrador getAdministradorPK(int id) throws Exception {
-		Administrador administrador;
+	public Usuario getAdministradorPK(int id) throws Exception {
+		Usuario administrador;
 		DAOUsuario daoUsuario = new DAOUsuario();
 		try 
 		{
@@ -326,17 +325,15 @@ public class TMUsuario {
 		}
 		return administrador;
 	}
-
-	/////////// agregar un administrador
-	public void addAdministrador(Administrador administrador) throws Exception {
+	public List<Usuario> getRepresentantes() throws Exception {
+		List<Usuario> administradores;
 		DAOUsuario daoUsuario = new DAOUsuario();
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
 			daoUsuario.setConn(conn);
-			daoUsuario.addAdministrador(administrador);
-			conn.commit();
+			administradores = daoUsuario.getRepresentantes();
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
@@ -357,17 +354,19 @@ public class TMUsuario {
 				throw exception;
 			}
 		}
+		return administradores;
 	}
 
-	/////////////// udate administrador actualiza un adminisrador
-	public void updateAdministrador(Administrador administrador) throws Exception {
+	////////get administrador por su numero de identificacion
+	public Usuario getRepresentantesPK(int id) throws Exception {
+		Usuario administrador;
 		DAOUsuario daoUsuario = new DAOUsuario();
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
 			daoUsuario.setConn(conn);
-			daoUsuario.updateAdministrador(administrador);
+			administrador = daoUsuario.getRepresentantesPK(id);
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
@@ -388,38 +387,10 @@ public class TMUsuario {
 				throw exception;
 			}
 		}
+		return administrador;
 	}
 
-	////////////delete administradores borra un administrador
-	public void deleteAdministrador(int id) throws Exception {
-		DAOUsuario daoUsuario = new DAOUsuario();
-		try 
-		{
-			//////transaccion
-			this.conn = darConexion();
-			daoUsuario.setConn(conn);
-			daoUsuario.deleteUsuario(id);
-
-		} catch (SQLException e) {
-			System.err.println("SQLException:" + e.getMessage());
-			e.printStackTrace();
-			throw e;
-		} catch (Exception e) {
-			System.err.println("GeneralException:" + e.getMessage());
-			e.printStackTrace();
-			throw e;
-		} finally {
-			try {
-				daoUsuario.cerrarRecursos();
-				if(this.conn!=null)
-					this.conn.close();
-			} catch (SQLException exception) {
-				System.err.println("SQLException closing resources:" + exception.getMessage());
-				exception.printStackTrace();
-				throw exception;
-			}
-		}
-	}
+	
 
 
 }

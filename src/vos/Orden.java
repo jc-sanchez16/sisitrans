@@ -31,20 +31,31 @@ public class Orden {
 	private ArrayList<Menu> menus;
 	
 	private ArrayList<Producto> productos;
+	
+	@JsonProperty(value="atendido")
+	private Boolean atendido;
 
-	public Orden(@JsonProperty(value="mesa")int mesa, @JsonProperty(value="fecha")Date fecha) {
+	public Orden(@JsonProperty(value="mesa")int mesa, @JsonProperty(value="fecha")Date fecha,@JsonProperty(value="atendido") Boolean atendido) {
 		this.mesa = mesa;
 		this.fecha = fecha;
+		this.atendido = atendido;
 	}
 	public Orden(int mesa, Date fecha, ArrayList<Integer> usuarios, ArrayList<Menu> menus,
-			ArrayList<Producto> productos) {
+			ArrayList<Producto> productos,Boolean atendido) {
 		this.mesa = mesa;
 		this.fecha = fecha;
 		this.usuarios = usuarios;
 		this.menus = menus;
 		this.productos = productos;
+		this.atendido = atendido;
 	}
 
+	public Boolean getAtendido() {
+		return atendido;
+	}
+	public void setAtendido(Boolean atendido) {
+		this.atendido = atendido;
+	}
 	public int getMesa() {
 		return mesa;
 	}

@@ -35,16 +35,19 @@ public class Usuario {
 	private ArrayList<String> preferencias;
 	
 	private ArrayList<Reserva> reservas;
+	
+	private int tipo;
 
-	public Usuario(@JsonProperty(value="id")int id, @JsonProperty(value="nombre")String nombre, @JsonProperty(value="edad")int edad) {
+	public Usuario(@JsonProperty(value="id")int id, @JsonProperty(value="nombre")String nombre, @JsonProperty(value="edad")int edad, @JsonProperty(value="tipo")int tipo) {
 	
 		this.id = id;
 		this.nombre = nombre;
 		this.edad = edad;
+		this.tipo = tipo;
 	}
 
 	public Usuario(int id, String nombre,int edad, ArrayList<Orden> ordenes, ArrayList<String> preferencias,
-			ArrayList<Reserva> reservas) {
+			ArrayList<Reserva> reservas, int tipo) {
 	
 		this.id = id;
 		this.nombre = nombre;
@@ -52,6 +55,15 @@ public class Usuario {
 		this.ordenes = ordenes;
 		this.preferencias = preferencias;
 		this.reservas = reservas;
+		this.tipo = tipo;
+	}
+
+	public int getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(int tipo) {
+		this.tipo = tipo;
 	}
 
 	public int getId() {

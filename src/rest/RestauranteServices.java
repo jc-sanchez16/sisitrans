@@ -99,10 +99,11 @@ public class RestauranteServices {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addRestaurante(Restaurante restaurante) {
+	@Path( "{claven: \\d+}" )
+	public Response addRestaurante(Restaurante restaurante, @PathParam("claven")int claven) {
 		TMRestaurante tm = new TMRestaurante(getPath());
 		try {
-			tm.addRestaurante(restaurante);
+			tm.addRestaurante(restaurante, claven);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}

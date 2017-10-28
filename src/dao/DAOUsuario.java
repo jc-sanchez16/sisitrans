@@ -13,6 +13,9 @@ import vos.*;
 
 public class DAOUsuario {
 
+	public static final int USUARIO = 0;
+	public static final int ADMINISTRADOR = 1;
+	public static final int REPRESENTANTE = 2;
 
 	private ArrayList<Object> recursos;
 
@@ -61,10 +64,11 @@ public class DAOUsuario {
 				int id = rs.getInt("NUMERO_ID");
 				String nombre =rs.getString("NOMBRE") ;
 				int edad = rs.getInt("EDAD");
+				int tipo = rs.getInt("TIPO");
 				ArrayList<Orden> ordenes = daoOrden.getOrdenesUsuario(id);
 				ArrayList<String> preferencias = getPreferencias(id);
 				ArrayList<Reserva> reservas =  daoReserva.getReservasUsuario(id);
-				lista.add(new Usuario(id, nombre, edad, ordenes, preferencias, reservas));
+				lista.add(new Usuario(id, nombre, edad, ordenes, preferencias, reservas, tipo));
 			}
 		}
 		finally
@@ -95,10 +99,11 @@ public class DAOUsuario {
 				int id = rs.getInt("NUMERO_ID");
 				String nombre =rs.getString("NOMBRE") ;
 				int edad = rs.getInt("EDAD");
+				int tipo = rs.getInt("TIPO");
 				ArrayList<Orden> ordenes = daoOrden.getOrdenesUsuario(id);
 				ArrayList<String> preferencias = getPreferencias(id);
 				ArrayList<Reserva> reservas =  daoReserva.getReservasUsuario(id);
-				lista=(new Usuario(id, nombre, edad, ordenes, preferencias, reservas));
+				lista=(new Usuario(id, nombre, edad, ordenes, preferencias, reservas,tipo));
 			}
 		}
 		finally
@@ -109,17 +114,14 @@ public class DAOUsuario {
 		return lista;
 	}
 
-	
-
-	
-
-
-	public void addUsuario(Usuario usuario) throws SQLException, Exception {
+	public void addUsuario(Usuario usuario, int clave) throws SQLException, Exception {
 
 		String sql = "INSERT INTO PERSONA VALUES (";
 		sql += usuario.getId() + ",'";
 		sql += usuario.getNombre() + "',";
-		sql += usuario.getEdad() + ")";
+		sql += usuario.getEdad() + ",";
+		sql += clave +",";
+		sql += usuario.getTipo()+")";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
@@ -133,7 +135,7 @@ public class DAOUsuario {
 		sql += "NUMERO_ID="+usuario.getId() + ",";
 		sql += "NOMBRE='"+usuario.getNombre() + "',";
 		sql += "EDAD="+usuario.getEdad();
-
+		sql += "TIPO ="+ usuario.getTipo()+",";
 		sql += " WHERE NUMERO_ID = " + usuario.getId();
 
 
@@ -153,16 +155,16 @@ public class DAOUsuario {
 	}
 
 
-	public ArrayList<Administrador> getAdministradores() throws SQLException, Exception 
+	public ArrayList<Usuario> getAdministradores() throws SQLException, Exception 
 	{
-		ArrayList<Administrador> lista = new ArrayList<Administrador>();
+		ArrayList<Usuario> lista = new ArrayList<Usuario>();
 		DAOReserva daoReserva = new DAOReserva();
 		DAOOrden daoOrden = new DAOOrden();
 		try
 		{
 			daoReserva.setConn(conn);
 			daoOrden.setConn(conn);
-			String sql = "SELECT * FROM PERSONA WHERE CLAVE IS NOT NULL";
+			String sql = "SELECT * FROM PERSONA WHERE TIPO = 1";
 
 			PreparedStatement prepStmt = conn.prepareStatement(sql);
 			recursos.add(prepStmt);
@@ -172,11 +174,11 @@ public class DAOUsuario {
 				int id = rs.getInt("NUMERO_ID");
 				String nombre =rs.getString("NOMBRE") ;
 				int edad = rs.getInt("EDAD");
+				int tipo = rs.getInt("TIPO");
 				ArrayList<Orden> ordenes = daoOrden.getOrdenesUsuario(id);
 				ArrayList<String> preferencias = getPreferencias(id);
 				ArrayList<Reserva> reservas =  daoReserva.getReservasUsuario(id);
-				String clave = rs.getString("CLAVE");
-				lista.add(new Administrador(id, nombre, edad, ordenes, preferencias, reservas, clave));
+				lista.add(new Usuario(id, nombre, edad, ordenes, preferencias, reservas, tipo));
 			}
 		}
 		finally
@@ -188,16 +190,16 @@ public class DAOUsuario {
 	}
 
 
-	public Administrador getAdministradorPK(int PK) throws SQLException, Exception 
+	public Usuario getAdministradorPK(int PK) throws SQLException, Exception 
 	{
-		Administrador lista = null;
+		Usuario lista = null;
 		DAOReserva daoReserva = new DAOReserva();
 		DAOOrden daoOrden = new DAOOrden();
 		try
 		{
 			daoReserva.setConn(conn);
 			daoOrden.setConn(conn);
-			String sql = "SELECT * FROM PERSONA WHERE NUMERO_ID = "+PK+" AND CLAVE IS NOT NULL";
+			String sql = "SELECT * FROM PERSONA WHERE NUMERO_ID = "+PK+" AND TIPO = 1";
 
 			PreparedStatement prepStmt = conn.prepareStatement(sql);
 			recursos.add(prepStmt);
@@ -207,11 +209,11 @@ public class DAOUsuario {
 				int id = rs.getInt("NUMERO_ID");
 				String nombre =rs.getString("NOMBRE") ;
 				int edad = rs.getInt("EDAD");
+				int tipo = rs.getInt("TIPO");
 				ArrayList<Orden> ordenes = daoOrden.getOrdenesUsuario(id);
 				ArrayList<String> preferencias = getPreferencias(id);
 				ArrayList<Reserva> reservas =  daoReserva.getReservasUsuario(id);
-				String clave = rs.getString("CLAVE");
-				lista=(new Administrador(id, nombre, edad, ordenes, preferencias, reservas, clave));
+				lista=(new Usuario(id, nombre, edad, ordenes, preferencias, reservas, tipo));
 			}
 		}
 		finally
@@ -220,41 +222,6 @@ public class DAOUsuario {
 			daoOrden.cerrarRecursos();
 		}
 		return lista;
-	}
-
-	
-
-	
-
-
-	public void addAdministrador(Administrador administrador) throws SQLException, Exception {
-
-		String sql = "INSERT INTO PERSONA VALUES (";
-		sql += administrador.getId() + ",'";
-		sql += administrador.getNombre() + "',";
-		sql += administrador.getEdad() + ",'";
-		sql += administrador.getClave() + "')";
-
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
-
-	}
-
-	public void updateAdministrador(Administrador administrador) throws SQLException, Exception {
-
-		String sql = "UPDATE PERSONA SET ";
-		sql += "NUMERO_ID="+administrador.getId() + ",";
-		sql += "NOMBRE='"+administrador.getNombre() + "',";
-		sql += "EDAD="+administrador.getEdad()+ ",";
-		sql += "CLAVE='"+administrador.getClave();
-
-		sql += "' WHERE NUMERO_ID = " + administrador.getId() + "AND CLAVE IS NOT NULL";
-
-
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
 	}
 
 	private ArrayList<String> getPreferencias(int id) throws Exception {
@@ -271,4 +238,75 @@ public class DAOUsuario {
 	
 	return lista;
 	}
+	
+	public ArrayList<Usuario> getRepresentantes() throws SQLException, Exception 
+	{
+		ArrayList<Usuario> lista = new ArrayList<Usuario>();
+		DAOReserva daoReserva = new DAOReserva();
+		DAOOrden daoOrden = new DAOOrden();
+		try
+		{
+			daoReserva.setConn(conn);
+			daoOrden.setConn(conn);
+			String sql = "SELECT * FROM PERSONA WHERE TIPO = 2";
+
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			ResultSet rs = prepStmt.executeQuery();
+
+			while (rs.next()) {
+				int id = rs.getInt("NUMERO_ID");
+				String nombre =rs.getString("NOMBRE") ;
+				int edad = rs.getInt("EDAD");
+				int tipo = rs.getInt("TIPO");
+				ArrayList<Orden> ordenes = daoOrden.getOrdenesUsuario(id);
+				ArrayList<String> preferencias = getPreferencias(id);
+				ArrayList<Reserva> reservas =  daoReserva.getReservasUsuario(id);
+				lista.add(new Usuario(id, nombre, edad, ordenes, preferencias, reservas, tipo));
+			}
+		}
+		finally
+		{
+			daoReserva.cerrarRecursos();
+			daoOrden.cerrarRecursos();
+		}
+		return lista;
+	}
+
+
+	public Usuario getRepresentantesPK(int PK) throws SQLException, Exception 
+	{
+		Usuario lista = null;
+		DAOReserva daoReserva = new DAOReserva();
+		DAOOrden daoOrden = new DAOOrden();
+		try
+		{
+			daoReserva.setConn(conn);
+			daoOrden.setConn(conn);
+			String sql = "SELECT * FROM PERSONA WHERE NUMERO_ID = "+PK+" AND TIPO = 2";
+
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			ResultSet rs = prepStmt.executeQuery();
+
+			while (rs.next()) {
+				int id = rs.getInt("NUMERO_ID");
+				String nombre =rs.getString("NOMBRE") ;
+				int edad = rs.getInt("EDAD");
+				int tipo = rs.getInt("TIPO");
+				ArrayList<Orden> ordenes = daoOrden.getOrdenesUsuario(id);
+				ArrayList<String> preferencias = getPreferencias(id);
+				ArrayList<Reserva> reservas =  daoReserva.getReservasUsuario(id);
+				lista=(new Usuario(id, nombre, edad, ordenes, preferencias, reservas, tipo));
+			}
+		}
+		finally
+		{
+			daoReserva.cerrarRecursos();
+			daoOrden.cerrarRecursos();
+		}
+		return lista;
+	}
+
+	
 }

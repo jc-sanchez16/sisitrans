@@ -5,20 +5,20 @@ import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import vos.Restaurante;
+import vos.Menu;
+import vos.Producto;
 import vos.Zona;
-import dao.DAORestaurante;
+import dao.DAOIngrediente;
+import dao.DAOProducto;
+import dao.DAOProducto;
 import dao.DAOZona;
 
-/**
- * Transaction Manager de la aplicacion (TM)
- * Fachada en patron singleton de la aplicacion
- */
+public class TMRequerimientos {
 
-public class TMRestaurante {
 	/**
 	 * Atributo estatico que contiene el path relativo del archivo que tiene los datos de la conexion
 	 */
@@ -62,7 +62,7 @@ public class TMRestaurante {
 	 * inicializa los atributos que se usan par la conexion a la base de datos.
 	 * @param contextPathP - path absoluto en el servidor del contexto del deploy actual
 	 */
-	public TMRestaurante(String contextPathP) {
+	public TMRequerimientos(String contextPathP) {
 		connectionDataPath = contextPathP + CONNECTION_DATA_FILE_NAME_REMOTE;
 		initConnectionData();
 	}
@@ -101,89 +101,15 @@ public class TMRestaurante {
 
 
 
-	/////////////get restaurantes todos los restaurantes
-	public List<Restaurante> getRestaurantes() throws Exception {
 
-		List<Restaurante> restaurantes;
-		DAORestaurante daoRestaurante = new DAORestaurante();
+	public void addProducto(Producto producto) throws Exception {
+		DAOProducto daoProducto = new DAOProducto();
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
-			daoRestaurante.setConn(conn);
-
-			restaurantes = daoRestaurante.getRestaurantes();
-
-
-		} catch (SQLException e) {
-			System.err.println("SQLException:" + e.getMessage());
-			e.printStackTrace();
-			throw e;
-		} catch (Exception e) {
-			System.err.println("GeneralException:" + e.getMessage());
-			e.printStackTrace();
-			throw e;
-		} finally {
-			try {
-				daoRestaurante.cerrarRecursos();
-				if(this.conn!=null)
-					this.conn.close();
-			} catch (SQLException exception) {
-				System.err.println("SQLException closing resources:" + exception.getMessage());
-				exception.printStackTrace();
-				throw exception;
-			}
-		}
-		return restaurantes;
-	}
-
-	////////get restaurante por su nombre
-
-	public Restaurante getRestaurantePK(String nombre) throws Exception {
-
-		Restaurante restaurante;
-		DAORestaurante daoRestaurante = new DAORestaurante();
-		try 
-		{
-			//////transaccion
-			this.conn = darConexion();
-			daoRestaurante.setConn(conn);
-			restaurante = daoRestaurante.getRestaurantePK(nombre);
-
-		} catch (SQLException e) {
-			System.err.println("SQLException:" + e.getMessage());
-			e.printStackTrace();
-			throw e;
-		} catch (Exception e) {
-			System.err.println("GeneralException:" + e.getMessage());
-			e.printStackTrace();
-			throw e;
-		} finally {
-			try {
-				daoRestaurante.cerrarRecursos();
-				if(this.conn!=null)
-					this.conn.close();
-			} catch (SQLException exception) {
-				System.err.println("SQLException closing resources:" + exception.getMessage());
-				exception.printStackTrace();
-				throw exception;
-			}
-		}
-		return restaurante;
-	}
-
-
-	/////////// agregar un restaurante
-
-	public void addRestaurante(Restaurante restaurante, int claven) throws Exception {
-
-		DAORestaurante daoRestaurante = new DAORestaurante();
-		try 
-		{
-			//////transaccion
-			this.conn = darConexion();
-			daoRestaurante.setConn(conn);
-			daoRestaurante.addRestaurante(restaurante, claven);
+			daoProducto.setConn(conn);
+			daoProducto.addProducto(producto);
 			conn.commit();
 
 		} catch (SQLException e) {
@@ -196,7 +122,7 @@ public class TMRestaurante {
 			throw e;
 		} finally {
 			try {
-				daoRestaurante.cerrarRecursos();
+				daoProducto.cerrarRecursos();
 				if(this.conn!=null)
 					this.conn.close();
 			} catch (SQLException exception) {
@@ -207,17 +133,16 @@ public class TMRestaurante {
 		}
 	}
 
-
-
-	/////////////// udate restaurante actualiza una restaurante
-	public void updateRestaurante(Restaurante restaurante) throws Exception {
-		DAORestaurante daoRestaurante = new DAORestaurante();
+	public String addEquivalenciaIngrediente(int clave, ArrayList<String> ingredientes) throws Exception {
+		DAOIngrediente daoIngrediente = new DAOIngrediente();
+		String res = "no se realizo la accion";
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
-			daoRestaurante.setConn(conn);
-			daoRestaurante.updateRestaurante(restaurante);
+			daoIngrediente.setConn(conn);
+			res = daoIngrediente.AddEquivalenciaIngrediente(clave, ingredientes);
+			conn.commit();
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
@@ -229,26 +154,27 @@ public class TMRestaurante {
 			throw e;
 		} finally {
 			try {
-				daoRestaurante.cerrarRecursos();
+				daoIngrediente.cerrarRecursos();
 				if(this.conn!=null)
 					this.conn.close();
 			} catch (SQLException exception) {
 				System.err.println("SQLException closing resources:" + exception.getMessage());
 				exception.printStackTrace();
 				throw exception;
-			}
+			}			
 		}
+		return res;
 	}
-
-	////////////delete restaurantes borra una restaurante
-	public void deleteRestaurante(String nombre) throws Exception {
-		DAORestaurante daoRestaurante = new DAORestaurante();
+	public String addEquivalenciaProducto(int clave, String restaurante, ArrayList<String> productos)throws Exception {
+		DAOProducto daoProducto = new DAOProducto();
+		String res = "no se realizo la accion";		
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
-			daoRestaurante.setConn(conn);
-			daoRestaurante.deleteRestaurante(nombre);
+			daoProducto.setConn(conn);
+			res = daoProducto.addEquivalenciaProducto(clave,restaurante,productos);
+			conn.commit();
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
@@ -260,7 +186,7 @@ public class TMRestaurante {
 			throw e;
 		} finally {
 			try {
-				daoRestaurante.cerrarRecursos();
+				daoProducto.cerrarRecursos();
 				if(this.conn!=null)
 					this.conn.close();
 			} catch (SQLException exception) {
@@ -269,7 +195,76 @@ public class TMRestaurante {
 				throw exception;
 			}
 		}
+		return res;
 	}
+
+	public String surtirRestaurante(int clave, String restaurante) throws Exception {
+		DAOProducto daoProducto = new DAOProducto();
+		String res = "no se realizo la accion";		
+		try 
+		{
+			//////transaccion
+			this.conn = darConexion();
+			daoProducto.setConn(conn);
+			res = daoProducto.surtirRestaurante(clave,restaurante);
+			conn.commit();
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoProducto.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return res;
+	}
+
+	public String RegistrarPedidoProducto(String nombre, String restaurante,String cambios) throws Exception {
+		DAOProducto daoProducto = new DAOProducto();
+		String res = "no se realizo la accion";		
+		try 
+		{
+			//////transaccion
+			this.conn = darConexion();
+			daoProducto.setConn(conn);
+			res = daoProducto.surtirRestaurante(clave,restaurante);
+			conn.commit();
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoProducto.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return res;
+	}
+
+
 
 
 }

@@ -67,7 +67,8 @@ public class DAOProducto {
 				ArrayList<Ingrediente> ingredientes =  daoIngrediente.getIngredientesProducto(nombre,restaurante);
 				ArrayList<String> tipoComida = getTipoComida(nombre, restaurante);
 				ArrayList<Producto> equivalencias = getEquivalencias(nombre, restaurante);
-				lista.add(new Producto(nombre, restaurante, costo, tipo, descripcionE, descripcionEn, tiempoPreparacion, precio, tipoComida, equivalencias, ingredientes));
+				int cantidadMaxima = rs.getInt("CANT_MAX");
+				lista.add(new Producto(nombre, restaurante, costo, tipo, descripcionE, descripcionEn, tiempoPreparacion, precio, tipoComida, equivalencias, ingredientes, cantidadMaxima));
 			}
 		}
 		finally
@@ -107,7 +108,8 @@ public class DAOProducto {
 				ArrayList<Ingrediente> ingredientes =  daoIngrediente.getIngredientesProducto(nombre, restaurante);
 				ArrayList<String> tipoComida = getTipoComida(nombre, restaurante);
 				ArrayList<Producto> equivalencias = getEquivalencias(nombre, restaurante);
-				lista = (new Producto(nombre, restaurante, costo, tipo, descripcionE, descripcionEn, tiempoPreparacion, precio, tipoComida, equivalencias, ingredientes));
+				int cantidadMaxima = rs.getInt("CANT_MAX");
+				lista = (new Producto(nombre, restaurante, costo, tipo, descripcionE, descripcionEn, tiempoPreparacion, precio, tipoComida, equivalencias, ingredientes,cantidadMaxima));
 			}
 		}
 		finally
@@ -141,7 +143,8 @@ public class DAOProducto {
 				ArrayList<Ingrediente> ingredientes =  daoIngrediente.getIngredientesProducto(nombre, restaurante);
 				ArrayList<String> tipoComida = getTipoComida(nombre, restaurante);
 				ArrayList<Producto> equivalencias =new ArrayList<Producto>();
-				lista = (new Producto(nombre, restaurante, costo, tipo, descripcionE, descripcionEn, tiempoPreparacion, precio, tipoComida, equivalencias, ingredientes));
+				int cantidadMaxima = rs.getInt("CANT_MAX");
+				lista = (new Producto(nombre, restaurante, costo, tipo, descripcionE, descripcionEn, tiempoPreparacion, precio, tipoComida, equivalencias, ingredientes,cantidadMaxima));
 			}
 		}
 		finally
@@ -151,9 +154,9 @@ public class DAOProducto {
 		return lista;
 	}
 
-	
 
-	
+
+
 	public void addProducto(Producto producto) throws SQLException, Exception {
 
 		String sql = "INSERT INTO PRODUCTO VALUES ('";
@@ -205,51 +208,51 @@ public class DAOProducto {
 	public ArrayList<Menu> getMenus() throws SQLException, Exception 
 	{
 		ArrayList<Menu> lista = new ArrayList<Menu>();
-			String sql = "SELECT * FROM PRODUCTO WHERE MENU = 0";
+		String sql = "SELECT * FROM PRODUCTO WHERE MENU = 0";
 
-			PreparedStatement prepStmt = conn.prepareStatement(sql);
-			recursos.add(prepStmt);
-			ResultSet rs = prepStmt.executeQuery();
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
 
-			while (rs.next()) {
-				String nombre = rs.getString("NOMBRE");
-				String restaurante = rs.getString("RESTAURANTE");
-				double costo = rs.getDouble("COSTO");
-				double precio = rs.getDouble("PRECIO");
-				int tiempoPreparacion = rs.getInt("TIEMPO_PREPARACION");
-				ArrayList<String> tipoComida = getTipoComida(nombre, restaurante);
-				ArrayList<Producto> productos = getPlatos(nombre, restaurante);
-				lista.add(new Menu(nombre, restaurante, costo, precio, tiempoPreparacion, tipoComida, productos));
-			}
-	
+		while (rs.next()) {
+			String nombre = rs.getString("NOMBRE");
+			String restaurante = rs.getString("RESTAURANTE");
+			double costo = rs.getDouble("COSTO");
+			double precio = rs.getDouble("PRECIO");
+			int tiempoPreparacion = rs.getInt("TIEMPO_PREPARACION");
+			ArrayList<String> tipoComida = getTipoComida(nombre, restaurante);
+			ArrayList<Producto> productos = getPlatos(nombre, restaurante);
+			lista.add(new Menu(nombre, restaurante, costo, precio, tiempoPreparacion, tipoComida, productos));
+		}
+
 		return lista;
 	}
 	public Menu getMenuPK(String PK1, String PK2) throws SQLException, Exception 
 	{
 		Menu lista = null;
-			String sql = "SELECT * FROM PRODUCTO WHERE MENU = 0 AND NOMBRE ='"+PK1+"' AND RESTAURANTE = '"+ PK2+"'";
+		String sql = "SELECT * FROM PRODUCTO WHERE MENU = 0 AND NOMBRE ='"+PK1+"' AND RESTAURANTE = '"+ PK2+"'";
 
-			PreparedStatement prepStmt = conn.prepareStatement(sql);
-			recursos.add(prepStmt);
-			ResultSet rs = prepStmt.executeQuery();
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
 
-			while (rs.next()) {
-				String nombre = rs.getString("NOMBRE");
-				String restaurante = rs.getString("RESTAURANTE");
-				double costo = rs.getDouble("COSTO");
-				double precio = rs.getDouble("PRECIO");
-				int tiempoPreparacion = rs.getInt("TIEMPO_PREPARACION");
-				ArrayList<String> tipoComida = getTipoComida(nombre, restaurante);
-				ArrayList<Producto> productos = getPlatos(nombre, restaurante);
-				lista=(new Menu(nombre, restaurante, costo, precio, tiempoPreparacion, tipoComida, productos));
-			}
-	
+		while (rs.next()) {
+			String nombre = rs.getString("NOMBRE");
+			String restaurante = rs.getString("RESTAURANTE");
+			double costo = rs.getDouble("COSTO");
+			double precio = rs.getDouble("PRECIO");
+			int tiempoPreparacion = rs.getInt("TIEMPO_PREPARACION");
+			ArrayList<String> tipoComida = getTipoComida(nombre, restaurante);
+			ArrayList<Producto> productos = getPlatos(nombre, restaurante);
+			lista=(new Menu(nombre, restaurante, costo, precio, tiempoPreparacion, tipoComida, productos));
+		}
+
 		return lista;
 	}
 
-	
 
-	
+
+
 	public void addMenu(Menu menu)  throws SQLException, Exception {
 
 		String sql = "INSERT INTO PRODUCTO VALUES ('";
@@ -284,7 +287,7 @@ public class DAOProducto {
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
-		
+
 	}
 
 
@@ -324,7 +327,7 @@ public class DAOProducto {
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
-		
+
 	}
 
 
@@ -347,7 +350,7 @@ public class DAOProducto {
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
-		
+
 	}
 
 
@@ -375,7 +378,8 @@ public class DAOProducto {
 				ArrayList<Ingrediente> ingredientes =  daoIngrediente.getIngredientesProducto(nombre, restaurante);
 				ArrayList<String> tipoComida = getTipoComida(nombre, restaurante);
 				ArrayList<Producto> equivalencias = getEquivalencias(nombre, restaurante);
-				lista.add(new Producto(nombre, restaurante, costo, tipo, descripcionE, descripcionEn, tiempoPreparacion, precio, tipoComida, equivalencias, ingredientes));
+				int cantidadMaxima = rs.getInt("CANT_MAX");
+				lista.add(new Producto(nombre, restaurante, costo, tipo, descripcionE, descripcionEn, tiempoPreparacion, precio, tipoComida, equivalencias, ingredientes,cantidadMaxima));
 			}
 		}
 		finally
@@ -405,7 +409,7 @@ public class DAOProducto {
 			lista.add(new Menu(nombre, restaurante, costo, precio, tiempoPreparacion, tipoComida, productos));
 		}
 
-	return lista;
+		return lista;
 	}
 
 	private ArrayList<String> getTipoComida(String nombre, String restaurante) throws SQLException {
@@ -417,24 +421,24 @@ public class DAOProducto {
 		ResultSet rs = prepStmt.executeQuery();
 
 		while (rs.next()) {
-			
+
 			lista.add(rs.getString("TIPO"));
 		}
 
-	return lista;
+		return lista;
 	}
 	private ArrayList<Producto> getEquivalencias(String nombre, String restaurante) throws Exception {
 		ArrayList<Producto> lista = new ArrayList<Producto>();
-			String sql = "SELECT * FROM EQUIVALENCIA_PRODUCTO WHERE NOMBRE ='" + nombre+"' AND RESTAURANTE = '"+ restaurante+"'";
+		String sql = "SELECT * FROM EQUIVALENCIA_PRODUCTO WHERE NOMBRE ='" + nombre+"' AND RESTAURANTE = '"+ restaurante+"'";
 
-			PreparedStatement prepStmt = conn.prepareStatement(sql);
-			recursos.add(prepStmt);
-			ResultSet rs = prepStmt.executeQuery();
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
 
-			while (rs.next()) {
-				lista.add(getProductoPKSE(rs.getString("NOMBRE_EQUIVALENCIA"), restaurante));
-			}
-		
+		while (rs.next()) {
+			lista.add(getProductoPKSE(rs.getString("NOMBRE_EQUIVALENCIA"), restaurante));
+		}
+
 		return lista;
 	}
 	private ArrayList<Producto> getPlatos(String nombre, String restaurante) throws Exception 
@@ -456,7 +460,99 @@ public class DAOProducto {
 					lista.add(null);
 			}
 		}
-	
-	return lista;
+
+		return lista;
+	}
+
+	private int darTipo(String restaurante, String nombre) throws SQLException {
+		int lista = 0;
+		String sql = "SELECT TIPO FROM MENU WHERE NOMBRE ='" + nombre+"' AND RESTAURANTE = '"+ restaurante+"'";
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		while (rs.next()) {
+			lista = rs.getInt(1);
+		}
+
+		return lista;
+	}
+
+	public String addEquivalenciaProducto(int clave, String restaurante, ArrayList<String> productos) throws Exception {
+
+		String res = "no se realizo la accion";
+		DAORestaurante daoRestaurante = new DAORestaurante();
+		int tipo = darTipo(restaurante, productos.get(0));
+		try
+		{
+			daoRestaurante.setConn(conn);
+			if(!daoRestaurante.verificar(restaurante, clave))
+				throw new Exception("No es un usuario valido");
+			for (int i = 0; i < productos.size(); i++) 
+			{
+				String sql = "INSERT ALL ";
+				for (int j = 0; j <productos.size(); j++) 
+				{
+					if(i!=j)
+					{
+						if(tipo !=darTipo(restaurante, productos.get(j)))
+							throw new Exception("Los productos no son del mismo tipo");
+						sql += "INTO EQUIVALENCIAS_PRODUCTO VALUES ('";
+						sql += productos.get(i)+"','";
+						sql += productos.get(j)+"','";
+						sql += restaurante+"') ";
+
+						PreparedStatement prepStmt = conn.prepareStatement(sql);
+						recursos.add(prepStmt);
+						prepStmt.executeQuery();
+						res="se realizo la accion";
+					}
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			res = "no se realizo la accion";
+			throw e;
+		}
+		finally
+		{
+			daoRestaurante.cerrarRecursos();
+		}
+		return res;
+	}
+
+
+	public String surtirRestaurante(int clave, String restaurante)throws Exception {
+		String res = "No se realizo la accion";
+		DAORestaurante daoRestaurante = new DAORestaurante();
+		try {
+			daoRestaurante.setConn(conn);
+			if (!daoRestaurante.verificar(restaurante, clave))
+				throw new Exception("El usuario no tiene permisos para realizar esta accion");
+			else
+			{
+				String sql ="UPDATE PRODUCTO SET CANT_ACTUAL =CANT_MAX";
+				sql += " WHERE RESTAURANTE = '"+ restaurante+"'";		
+
+				PreparedStatement prepStmt = conn.prepareStatement(sql);
+				recursos.add(prepStmt);
+				prepStmt.executeQuery();
+				res="Se realizo la accion";
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			throw e;
+		}
+		finally
+		{
+			daoRestaurante.cerrarRecursos();
+		}
+		return res;
+
+
 	}
 }
