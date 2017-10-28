@@ -454,10 +454,7 @@ public class DAOProducto {
 			for (int i =1; i <6; i++)
 			{
 				String nom = rs.getString(i+1);
-				if(nom!= "null")
-					lista.add(getProductoPK(nom, restaurante));	
-				else
-					lista.add(null);
+				lista.add(getProductoPK(nom, restaurante));				
 			}
 		}
 
@@ -622,7 +619,7 @@ public class DAOProducto {
 	}
 	
 
-	public void restarUnidad(String nombre, String restaurante, String[] cambios) 
+	public void restarUnidad(String nombre, String restaurante, String[] cambios) throws SQLException 
 	{
 		String sql = "UPDATE PRODUCTO SET ";
 		sql += "CANT_ACTUAL="+ "CANT_ACTUAL -1" + " ,";
@@ -630,15 +627,7 @@ public class DAOProducto {
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
-
-		while (rs.next()) {
-			if(rs.getInt("CANT_MAX")<=0)
-				return false;
-			if (rs.getInt("MENU")==0)
-			{
-				return verificarDisponibilidadPlatos(nombre,restaurante,cambios);
-			}
-		}
+		
 	}
 
 
