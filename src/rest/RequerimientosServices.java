@@ -123,5 +123,30 @@ public class RequerimientosServices {
 		}
 		return Response.status(200).entity(res).build();
 	}
-
+	@PUT
+	@Produces({ MediaType.APPLICATION_JSON })
+	@Path("16")
+	public Response registrarServicio(@QueryParam("clave") int clave,@QueryParam("restaurante") String restaurante, @QueryParam("fecha") Date fecha,@QueryParam("mesa") int mesa) {
+		TMRequerimientos tm = new TMRequerimientos(getPath());
+		String res = "No se realizo la accion";
+		try {
+			res = tm.registrarServicio(clave, restaurante, fecha, mesa);
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(res).build();
+	}
+	@DELETE
+	@Produces({ MediaType.APPLICATION_JSON })
+	@Path("17")
+	public Response cancelarServicio(@QueryParam("clave") int clave,@QueryParam("restaurante") String restaurante, @QueryParam("fecha") Date fecha,@QueryParam("mesa") int mesa) {
+		TMRequerimientos tm = new TMRequerimientos(getPath());
+		String res = "No se realizo la accion";
+		try {
+			res = tm.cancelarServicio(clave, restaurante, fecha, mesa);
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(res).build();
+	}
 }

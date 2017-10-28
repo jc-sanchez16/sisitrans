@@ -68,7 +68,7 @@ public class DAOProducto {
 				ArrayList<String> tipoComida = getTipoComida(nombre, restaurante);
 				ArrayList<Producto> equivalencias = getEquivalencias(nombre, restaurante);
 				int cantidadMaxima = rs.getInt("CANT_MAX");
-				lista.add(new Producto(nombre, restaurante, costo, tipo, descripcionE, descripcionEn, tiempoPreparacion, precio, tipoComida, equivalencias, ingredientes, cantidadMaxima));
+				lista.add(new Producto(nombre, restaurante, costo, tipo, descripcionE, descripcionEn, tiempoPreparacion, precio, tipoComida, equivalencias, ingredientes, cantidadMaxima, null));
 			}
 		}
 		finally
@@ -109,7 +109,7 @@ public class DAOProducto {
 				ArrayList<String> tipoComida = getTipoComida(nombre, restaurante);
 				ArrayList<Producto> equivalencias = getEquivalencias(nombre, restaurante);
 				int cantidadMaxima = rs.getInt("CANT_MAX");
-				lista = (new Producto(nombre, restaurante, costo, tipo, descripcionE, descripcionEn, tiempoPreparacion, precio, tipoComida, equivalencias, ingredientes,cantidadMaxima));
+				lista = (new Producto(nombre, restaurante, costo, tipo, descripcionE, descripcionEn, tiempoPreparacion, precio, tipoComida, equivalencias, ingredientes,cantidadMaxima, null));
 			}
 		}
 		finally
@@ -144,7 +144,7 @@ public class DAOProducto {
 				ArrayList<String> tipoComida = getTipoComida(nombre, restaurante);
 				ArrayList<Producto> equivalencias =new ArrayList<Producto>();
 				int cantidadMaxima = rs.getInt("CANT_MAX");
-				lista = (new Producto(nombre, restaurante, costo, tipo, descripcionE, descripcionEn, tiempoPreparacion, precio, tipoComida, equivalencias, ingredientes,cantidadMaxima));
+				lista = (new Producto(nombre, restaurante, costo, tipo, descripcionE, descripcionEn, tiempoPreparacion, precio, tipoComida, equivalencias, ingredientes,cantidadMaxima, null));
 			}
 		}
 		finally
@@ -379,7 +379,7 @@ public class DAOProducto {
 				ArrayList<String> tipoComida = getTipoComida(nombre, restaurante);
 				ArrayList<Producto> equivalencias = getEquivalencias(nombre, restaurante);
 				int cantidadMaxima = rs.getInt("CANT_MAX");
-				lista.add(new Producto(nombre, restaurante, costo, tipo, descripcionE, descripcionEn, tiempoPreparacion, precio, tipoComida, equivalencias, ingredientes,cantidadMaxima));
+				lista.add(new Producto(nombre, restaurante, costo, tipo, descripcionE, descripcionEn, tiempoPreparacion, precio, tipoComida, equivalencias, ingredientes,cantidadMaxima, null));
 			}
 		}
 		finally
@@ -563,7 +563,7 @@ public class DAOProducto {
 		ResultSet rs = prepStmt.executeQuery();
 
 		while (rs.next()) {
-			if(rs.getInt("CANT_MAX")<=0)
+			if(rs.getInt("CANT_ACTUAL")<=0)
 				return false;
 			if (rs.getInt("MENU")==0)
 			{
@@ -619,7 +619,7 @@ public class DAOProducto {
 	}
 	
 
-	public void restarUnidad(String nombre, String restaurante, String[] cambios) throws SQLException 
+	public void restarUnidad(String nombre, String restaurante, String[] cambios) throws Exception 
 	{
 		String sql = "UPDATE PRODUCTO SET ";
 		sql += "CANT_ACTUAL="+ "CANT_ACTUAL -1" + " ,";
@@ -627,7 +627,15 @@ public class DAOProducto {
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
-		
+		ArrayList<Producto> platos = getPlatos(nombre, restaurante);
+		for (int i = 0; i < platos.size(); i++) 
+		{
+			Producto plato = platos.get(i);
+			String nom = plato.getNombre();
+			if(!cambios[i].equals("") && cambios.length>1)
+				nom =cambios[i];
+			restarUnidad(nom, plato.getRestaurante(), null);
+		}		
 	}
 
 

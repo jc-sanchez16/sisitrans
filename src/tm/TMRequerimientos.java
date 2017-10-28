@@ -234,38 +234,6 @@ public class TMRequerimientos {
 		}
 		return res;
 	}
-
-	public void registrarPedidoProducto(String nombre, String restaurante,String[] cambios, int mesa, Date fecha) throws Exception {
-		DAOOrden daoOrden = new DAOOrden();	
-		try 
-		{
-			this.conn = darConexion();			
-			daoOrden.setConn(conn);
-			daoOrden.registrarPedidoProducto(nombre,restaurante,cambios, mesa, fecha);
-			conn.commit();
-			
-
-		} catch (SQLException e) {
-			System.err.println("SQLException:" + e.getMessage());
-			e.printStackTrace();
-			throw e;
-		} catch (Exception e) {
-			System.err.println("GeneralException:" + e.getMessage());
-			e.printStackTrace();
-			throw e;
-		} finally {
-			try {
-				daoOrden.cerrarRecursos();
-				if(this.conn!=null)
-					this.conn.close();
-			} catch (SQLException exception) {
-				System.err.println("SQLException closing resources:" + exception.getMessage());
-				exception.printStackTrace();
-				throw exception;
-			}
-		}
-	}
-
 	public void registrarPedidoOrden(int mesa, Date fecha, ArrayList<String> productos, ArrayList<Integer> usuarios) throws Exception {
 		DAOOrden daoOrden = new DAOOrden();	
 		Savepoint save = null;
@@ -281,16 +249,12 @@ public class TMRequerimientos {
 				daoOrden.registrarPedidoProducto(producto[0],producto[1],producto[2].split("."), mesa, fecha);
 			}
 			conn.commit();
-			
 
-		} catch (SQLException e) {
-			System.err.println("SQLException:" + e.getMessage());
-			e.printStackTrace();
-			throw e;
+
 		} catch (Exception e) {
 			System.err.println("GeneralException:" + e.getMessage());
 			e.printStackTrace();
-			conn.rollback(save);;
+			conn.rollback(save);
 			throw e;
 		} finally {
 			try {
@@ -303,6 +267,67 @@ public class TMRequerimientos {
 				throw exception;
 			}
 		}
+	}
+
+	public String registrarServicio(int clave, String restaurante, Date fecha, int mesa) throws Exception {
+		String res = "no se realizo la accion";
+		DAOOrden daoOrden = new DAOOrden();	
+		Savepoint save = null;
+		try 
+		{
+			this.conn = darConexion();			
+			save =conn.setSavepoint("sin orden");
+			daoOrden.setConn(conn);
+			res = daoOrden.registrarServicio(clave,restaurante,fecha,mesa);
+			conn.commit();
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();			
+			conn.rollback(save);
+			throw e;
+		} finally {
+			try {
+				daoOrden.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return res;
+	}
+
+	public String cancelarServicio(int clave, String restaurante, Date fecha, int mesa) throws Exception 
+	{
+		String res = "no se realizo la accion";
+		DAOOrden daoOrden = new DAOOrden();	
+		Savepoint save = null;
+		try 
+		{
+			this.conn = darConexion();			
+			save =conn.setSavepoint("sin orden");
+			daoOrden.setConn(conn);
+			res = daoOrden.cancelarServicio(clave,restaurante,fecha,mesa);
+			conn.commit();
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();			
+			conn.rollback(save);
+			throw e;
+		} finally {
+			try {
+				daoOrden.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return res;
 	}
 
 

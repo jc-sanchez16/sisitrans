@@ -50,6 +50,9 @@ public class Producto {
 	private ArrayList<Producto> equivalencias;
 
 	private ArrayList<Ingrediente> ingredientes;
+	
+
+	private String cambios;
 
 	public Producto(@JsonProperty(value="nombre") String nombre, @JsonProperty(value="restaurante")String restaurante,@JsonProperty(value="costo") double costo,@JsonProperty(value="tipo") int tipo, @JsonProperty(value="descripcionE")String descripcionE, @JsonProperty(value="descripcionEn")String descripcionEn,
 			@JsonProperty(value="tiempoPreparacion")int tiempoPreparacion, @JsonProperty(value="precio")double precio, @JsonProperty(value="cantidadMaxima") int cantidadMaxima) {
@@ -65,7 +68,7 @@ public class Producto {
 	}
 	public Producto( String nombre, String restaurante, double costo, int tipo,String descripcionE,String descripcionEn,
 	int tiempoPreparacion,double precio, ArrayList<String> tipoComida, ArrayList<Producto> equivalencias,
-	ArrayList<Ingrediente> ingredientes, int cantidadMaxima) {
+	ArrayList<Ingrediente> ingredientes, int cantidadMaxima, String cambios) {
 		this.nombre = nombre;
 		this.restaurante = restaurante;
 		this.costo = costo;
@@ -78,8 +81,15 @@ public class Producto {
 		this.equivalencias = equivalencias;
 		this.ingredientes = ingredientes;
 		this.cantidadMaxima = cantidadMaxima;
+		this.cambios = cambios;
 	}
 
+	public String getCambios() {
+		return cambios;
+	}
+	public void setCambios(String cambios) {
+		this.cambios = cambios;
+	}
 	public int getCantidadMaxima() {
 		return cantidadMaxima;
 	}

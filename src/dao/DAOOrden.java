@@ -227,6 +227,8 @@ public class DAOOrden {
 				String nombre = rs.getString("NOMBRE");
 				String restaurante = rs.getString("RESTAURANTE");
 				Producto producto = daoProducto.getProductoPK(nombre, restaurante);
+				String cambios = rs.getString("CAMBIOS");
+				producto.setCambios(cambios);
 				if(producto!= null)	
 					lista.add(producto);
 			}
@@ -338,6 +340,63 @@ public class DAOOrden {
 		{
 			daoProducto.cerrarRecursos();
 		}
+	}
+
+
+	public String registrarServicio(int clave, String restaurante, Date fecha, int mesa) throws Exception 
+	{
+		String res = "no se realizo la accion";
+		DAOProducto daoProducto = new DAOProducto();
+		DAORestaurante daoRestaurante = new DAORestaurante();
+		try
+		{
+			daoProducto.setConn(conn);
+			daoRestaurante.setConn(conn);
+			if(!daoRestaurante.verificar(restaurante, clave))
+				throw new Exception("no es un usuario valido");
+			String sql = "UPDATE ORDEN SET ";
+			sql += "ATENDIDO ="+ 0+",";
+			sql += " WHERE FECHA = " + fecha.getTime()+" AND MESA ="+mesa;
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			prepStmt.executeQuery();
+			ArrayList<Producto> productos = getProductosOrden(mesa, fecha.getTime());
+			for (int i = 0; i < productos.size(); i++) 
+			{
+				Producto producto = productos.get(i);
+				daoProducto.restarUnidad(producto.getNombre(), producto.getRestaurante(), producto.getCambios().split("."));
+			}
+			res= "se realizo la accion";
+		}
+		finally
+		{
+			daoProducto.cerrarRecursos();
+			daoRestaurante.cerrarRecursos();
+		}
+		return res;
+	}
+
+
+	public String cancelarServicio(int clave, String restaurante, Date fecha, int mesa) throws SQLException, Exception {
+		String res = "no se realizo la accion";
+		DAORestaurante daoRestaurante = new DAORestaurante();
+		try
+		{
+			if(getOrdenPK(mesa, fecha).getAtendido())
+				throw new Exception("La orden ya estaba finalizada");
+			if(!daoRestaurante.verificar(restaurante, clave))
+				throw new Exception("no es un usuario valido");
+			String sql = "DELETE FROM ORDEN WHERE FECHA = " + fecha.getTime()+" AND MESA ="+mesa;
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			prepStmt.executeQuery();
+			res= "se realizo la accion";
+		}
+		finally
+		{
+			daoRestaurante.cerrarRecursos();
+		}
+		return res;
 	}
 
 }
