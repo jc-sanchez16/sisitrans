@@ -96,18 +96,5 @@ public class RequerimientosServices {
 		return Response.status(200).entity(res).build();
 	}
 	
-	@POST
-	@Produces({ MediaType.APPLICATION_JSON })
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Path( "12/{restaurante:[a-zA-Z]+}/{clave: \\d+}")
-	public Response AddEquivalenciaProducto(Message hola) {
-		TMRequerimientos tm = new TMRequerimientos(getPath());
-		String res = "No se realizo la accion";
-		try {
-			res = tm.addEquivalenciaProducto(clave, restaurante, productos);
-		} catch (Exception e) {
-			return Response.status(500).entity(doErrorMessage(e)).build();
-		}
-		return Response.status(200).entity(res).build();
-	}
+	
 }
