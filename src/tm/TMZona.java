@@ -216,14 +216,14 @@ public class TMZona {
 
 
 /////////////// udate zonas actualiza una zona
-	public void updateZona(Zona zona) throws Exception {
+	public void updateZona(Zona zona, int usuario, int clave) throws Exception {
 		DAOZona daoZona = new DAOZona();
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
 			daoZona.setConn(conn);
-			daoZona.updateZona(zona);
+			daoZona.updateZona(zona,usuario,clave,DAOUsuario.ADMINISTRADOR);
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());

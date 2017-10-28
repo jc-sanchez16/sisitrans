@@ -45,15 +45,19 @@ public class DAOUsuario {
 	}
 
 
-	public ArrayList<Usuario> getUsuarios() throws SQLException, Exception 
+	public ArrayList<Usuario> getUsuarios(int usuario2, int clave, int administrador2) throws SQLException, Exception 
 	{
 		ArrayList<Usuario> lista = new ArrayList<Usuario>();
 		DAOReserva daoReserva = new DAOReserva();
+		DAOUsuario daoUsuario = new DAOUsuario();
 		DAOOrden daoOrden = new DAOOrden();
 		try
 		{
 			daoReserva.setConn(conn);
 			daoOrden.setConn(conn);
+			daoUsuario.setConn(conn);
+			if(!daoUsuario.verificar(usuario2, clave, administrador2))
+			throw new Exception("No es un usuario valido");	
 			String sql = "SELECT * FROM PERSONA";
 
 			PreparedStatement prepStmt = conn.prepareStatement(sql);
@@ -75,6 +79,7 @@ public class DAOUsuario {
 		{
 			daoReserva.cerrarRecursos();
 			daoOrden.cerrarRecursos();
+			daoUsuario.cerrarRecursos();
 		}
 		return lista;
 	}
@@ -89,7 +94,7 @@ public class DAOUsuario {
 		{
 			daoReserva.setConn(conn);
 			daoOrden.setConn(conn);
-			String sql = "SELECT * FROM PERSONA WHERE NUMERO_ID = "+PK;
+			String sql = "SELECT * FROM PERSONA WHERE CLAVE = "+PK;
 
 			PreparedStatement prepStmt = conn.prepareStatement(sql);
 			recursos.add(prepStmt);
@@ -114,44 +119,107 @@ public class DAOUsuario {
 		return lista;
 	}
 
-	public void addUsuario(Usuario usuario, int clave) throws SQLException, Exception {
+	public void addUsuario(Usuario usuario, int clave, int usuario2, int clave2) throws SQLException, Exception {
 
-		String sql = "INSERT INTO PERSONA VALUES (";
-		sql += usuario.getId() + ",'";
-		sql += usuario.getNombre() + "',";
-		sql += usuario.getEdad() + ",";
-		sql += clave +",";
-		sql += usuario.getTipo()+")";
+		
+		DAOUsuario daoUsuario = new DAOUsuario();
+		
+		try
+		{
+			daoUsuario.setConn(conn);
+			if(!daoUsuario.verificar(usuario2, clave2, DAOUsuario.ADMINISTRADOR))
+			throw new Exception("No es un usuario valido");	
+			String sql = "INSERT INTO PERSONA VALUES (";
+			sql += usuario.getId() + ",'";
+			sql += usuario.getNombre() + "',";
+			sql += usuario.getEdad() + ",";
+			sql += clave +",";
+			sql += usuario.getTipo()+")";
 
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			prepStmt.executeQuery();
 
+		}
+		finally
+		{
+			daoUsuario.cerrarRecursos();
+		}
+		
 	}
 
-	public void updateUsuario(Usuario usuario) throws SQLException, Exception {
+	public void updateUsuario(Usuario usuario, int usuario2, int clave) throws SQLException, Exception {
 
-		String sql = "UPDATE PERSONA SET ";
-		sql += "NUMERO_ID="+usuario.getId() + ",";
-		sql += "NOMBRE='"+usuario.getNombre() + "',";
-		sql += "EDAD="+usuario.getEdad();
-		sql += "TIPO ="+ usuario.getTipo()+",";
-		sql += " WHERE NUMERO_ID = " + usuario.getId();
+		
+DAOUsuario daoUsuario = new DAOUsuario();
+		
+		try
+		{
+			daoUsuario.setConn(conn);
+			if(usuario.getId()==usuario2)
+			{
+				if(!daoUsuario.verificar(usuario2, clave, DAOUsuario.USUARIO))
+					throw new Exception("No es un usuario valido");	
+				
+				String sql = "UPDATE PERSONA SET ";
+				sql += "NOMBRE='"+usuario.getNombre() + "',";
+				sql += "EDAD="+usuario.getEdad()+",";
+				sql += "TIPO ="+ usuario.getTipo();
+				sql += " WHERE NUMERO_ID = " + usuario.getId();
+				
+
+				PreparedStatement prepStmt = conn.prepareStatement(sql);
+				recursos.add(prepStmt);
+				prepStmt.executeQuery();
+				
+			}
+			else
+			{
+				if(!daoUsuario.verificar(usuario2, clave, DAOUsuario.ADMINISTRADOR))
+					throw new Exception("No es un usuario valido");	
+				String sql = "UPDATE PERSONA SET ";
+				sql += "NOMBRE='"+usuario.getNombre() + "',";
+				sql += "EDAD="+usuario.getEdad()+",";
+				sql += "TIPO ="+ usuario.getTipo();
+				sql += " WHERE NUMERO_ID = " + usuario.getId();
 
 
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
+				PreparedStatement prepStmt = conn.prepareStatement(sql);
+				recursos.add(prepStmt);
+				prepStmt.executeQuery();
+			}
+			
+		}
+		finally
+		{
+			daoUsuario.cerrarRecursos();
+		}
+	
 	}
 
-	public void deleteUsuario(int id) throws SQLException, Exception {
+	public void deleteUsuario(int id, int usuario2, int clave) throws SQLException, Exception {
 	
-		String sql = "DELETE FROM PERSONA";
-		sql += " WHERE NUMERO_ID = " + id;
-	
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
+		
+		DAOUsuario daoUsuario = new DAOUsuario();
+		
+		try
+		{
+			daoUsuario.setConn(conn);
+			if(!daoUsuario.verificar(usuario2, clave, DAOUsuario.ADMINISTRADOR))
+			throw new Exception("No es un usuario valido");	
+			String sql = "DELETE FROM PERSONA";
+			sql += " WHERE NUMERO_ID = " + id;
+		
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			prepStmt.executeQuery();
+
+		}
+		finally
+		{
+			daoUsuario.cerrarRecursos();
+		}
+
 	}
 
 
@@ -310,6 +378,7 @@ public class DAOUsuario {
 
 
 	public boolean verificar(int usuario, int clave, int tipo) throws SQLException {
+		
 		String sql = "SELECT CLAVE FROM PERSONA WHERE NUMERO_ID ="+usuario+" AND CLAVE = "+clave+" AND TIPO ="+tipo;
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);

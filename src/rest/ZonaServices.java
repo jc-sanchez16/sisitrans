@@ -133,10 +133,10 @@ public class ZonaServices {
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateZona(Zona zona) {
+	public Response updateZona(Zona zona, @QueryParam("usuario") int usuario,@QueryParam("clave") int clave) {
 		TMZona tm = new TMZona(getPath());
 		try {
-			tm.updateZona(zona);
+			tm.updateZona(zona,usuario,clave);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}

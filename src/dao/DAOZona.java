@@ -149,20 +149,35 @@ public class DAOZona {
 
 	}
 
-	public void updateZona(Zona zona) throws SQLException, Exception {
+	public void updateZona(Zona zona, int usuario, int clave,int tipo) throws SQLException, Exception {
 
-		String sql = "UPDATE ZONA SET ";
-		sql += "ID="+zona.getId() + ",";
-		sql += "ABIERTO="+zona.getAbierto() + ",";
-		sql += "CAPACIDAD="+zona.getCapacidad() + ",";
-		sql += "DISCAPACITADOS="+zona.getDiscapacitados() + ",";
-		sql += "ESPECIALIDAD='"+zona.getEspecialidad() ;
-		sql += "' WHERE ID = " + zona.getId();
+		DAOUsuario daoUsuario = new DAOUsuario();
+		try
+		{
+			daoUsuario.setConn(conn);
+			if(!daoUsuario.verificar(usuario,clave,tipo))
+			throw new Exception("usuario no valido");
+			String sql = "UPDATE ZONA SET ";
+			sql += "ID="+zona.getId() + ",";
+			int abierto = zona.getAbierto()== true ? 0:1;
+			sql += "ABIERTO="+abierto + ",";
+			sql += "CAPACIDAD="+zona.getCapacidad() + ",";
+			int discapacitados = zona.getDiscapacitados()== true ? 0:1;
+			sql += "DISCAPACITADOS="+discapacitados + ",";
+			sql += "ESPECIALIDAD='"+zona.getEspecialidad() ;
+			sql += "' WHERE ID = " + zona.getId();
 
 
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			prepStmt.executeQuery();
+			
+		}
+		finally
+		{
+			daoUsuario.cerrarRecursos();
+		}
+		
 	}
 
 

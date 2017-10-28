@@ -100,7 +100,7 @@ public class TMUsuario {
 
 
 	/////////////get usuarios
-	public List<Usuario> getUsuarios() throws Exception {
+	public List<Usuario> getUsuarios(int usuario, int clave) throws Exception {
 		List<Usuario> usuarios;
 		DAOUsuario daoUsuario = new DAOUsuario();
 		try 
@@ -108,7 +108,7 @@ public class TMUsuario {
 			//////transaccion
 			this.conn = darConexion();
 			daoUsuario.setConn(conn);
-			usuarios = daoUsuario.getUsuarios();
+			usuarios = daoUsuario.getUsuarios(usuario,clave,DAOUsuario.ADMINISTRADOR);
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
@@ -167,14 +167,14 @@ public class TMUsuario {
 
 
 	/////////// agregar una usuario
-	public void addUsuario(Usuario usuario, int clave) throws Exception {
+	public void addUsuario(Usuario usuario, int clave, int usuario2, int clave2) throws Exception {
 		DAOUsuario daoUsuario = new DAOUsuario();
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
 			daoUsuario.setConn(conn);
-			daoUsuario.addUsuario(usuario, clave);
+			daoUsuario.addUsuario(usuario, clave, usuario2, clave2);
 			conn.commit();
 
 		} catch (SQLException e) {
@@ -199,14 +199,14 @@ public class TMUsuario {
 	}
 
 	/////////////// udate usuario actualiza una usuario
-	public void updateUsuario(Usuario usuario) throws Exception {
+	public void updateUsuario(Usuario usuario, int usuario2, int clave) throws Exception {
 		DAOUsuario daoUsuario = new DAOUsuario();
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
 			daoUsuario.setConn(conn);
-			daoUsuario.updateUsuario(usuario);
+			daoUsuario.updateUsuario(usuario, usuario2, clave);
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
@@ -230,14 +230,14 @@ public class TMUsuario {
 	}
 
 	////////////delete usuarios borra un usuario
-	public void deleteUsuario(int id) throws Exception {
+	public void deleteUsuario(int id, int usuario, int clave) throws Exception {
 		DAOUsuario daoUsuario = new DAOUsuario();
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
 			daoUsuario.setConn(conn);
-			daoUsuario.deleteUsuario(id);
+			daoUsuario.deleteUsuario(id, usuario, clave);
 	
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
