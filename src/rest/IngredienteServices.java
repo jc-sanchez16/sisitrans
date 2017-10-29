@@ -74,9 +74,9 @@ public class IngredienteServices {
 	 * el error que se produjo
 	 */
 	@GET
-	@Path( "{nombre: [a-zA-Z]+}")
+	@Path("/PK")
 	@Produces( { MediaType.APPLICATION_JSON } )
-	public Response getIngredientePK(  @PathParam("nombre") String nombre)
+	public Response getIngredientePK(  @QueryParam("nombre") String nombre)
 	{
 		TMIngrediente tm = new TMIngrediente( getPath( ) );
 		try
@@ -100,10 +100,10 @@ public class IngredienteServices {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addIngrediente(Ingrediente ingrediente) {
+	public Response addIngrediente(Ingrediente ingrediente,@QueryParam("restaurante") String restaurante,@QueryParam("claveRestaurante") int claveRestaurante) {
 		TMIngrediente tm = new TMIngrediente(getPath());
 		try {
-			tm.addIngrediente(ingrediente);
+			tm.addIngrediente(ingrediente,restaurante,claveRestaurante);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
@@ -121,11 +121,10 @@ public class IngredienteServices {
 	@DELETE
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path( "{nombre: [a-zA-Z]+}")
-	public Response deleteIngrediente(@PathParam("nombre") String nombre) {
+	public Response deleteIngrediente(@QueryParam("nombre") String nombre,@QueryParam("restaurante") String restaurante,@QueryParam("claveRestaurante") int claveRestaurante) {
 		TMIngrediente tm = new TMIngrediente(getPath());
 		try {
-			tm.deleteIngrediente(nombre);
+			tm.deleteIngrediente(nombre,restaurante,claveRestaurante);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}

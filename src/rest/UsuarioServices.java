@@ -160,11 +160,11 @@ public class UsuarioServices {
 	@GET
 	@Path("admin")
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getAdministradores() {
+	public Response getAdministradores( @QueryParam("usuario") int usuario,@QueryParam("clave") int clave) {
 		TMUsuario tm = new TMUsuario(getPath());
 		List<Usuario> administradores;
 		try {
-			administradores = tm.getAdministradores();
+			administradores = tm.getAdministradores(usuario,clave);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
@@ -179,14 +179,13 @@ public class UsuarioServices {
 	 * el error que se produjo
 	 */
 	@GET
-	@Path( "admin/{id: \\d+}" )
 	@Produces( { MediaType.APPLICATION_JSON } )
-	public Response getAdministradorPK( @PathParam( "id" ) int id )
+	public Response getAdministradorPK( @QueryParam( "id" ) int id, @QueryParam("usuario") int usuario,@QueryParam("clave") int clave )
 	{
 		TMUsuario tm = new TMUsuario( getPath( ) );
 		try
 		{
-			Usuario admin = tm.getAdministradorPK(id);
+			Usuario admin = tm.getAdministradorPK(id,usuario,clave);
 			return Response.status( 200 ).entity( admin ).build( );			
 		}
 		catch( Exception e )
@@ -203,11 +202,12 @@ public class UsuarioServices {
 	@GET
 	@Path("representantes")
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getRepresentantes() {
+	public Response getRepresentantes(@QueryParam("usuario") int admin,@QueryParam("usuarioRep") int userRepresentante,
+			@QueryParam("claveUser") int claveUsuario, @QueryParam("claveRep") int claveRep) {
 		TMUsuario tm = new TMUsuario(getPath());
 		List<Usuario> administradores;
 		try {
-			administradores = tm.getRepresentantes();
+			administradores = tm.getRepresentantes(admin,userRepresentante,claveUsuario,claveRep);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
@@ -222,14 +222,14 @@ public class UsuarioServices {
 	 * el error que se produjo
 	 */
 	@GET
-	@Path( "representantes/{id: \\d+}" )
 	@Produces( { MediaType.APPLICATION_JSON } )
-	public Response getRepresentantePK( @PathParam( "id" ) int id )
+	public Response getRepresentantePK( @QueryParam( "id" ) int id,@QueryParam("usuario") int admin2,@QueryParam("usuarioRep") int userRepresentante,@QueryParam("restaurante") String restaurante,
+			@QueryParam("claveUser") int claveUsuario, @QueryParam("claveRep") int claveRep,@QueryParam("claveRestaurante") int claveRestaurante )
 	{
 		TMUsuario tm = new TMUsuario( getPath( ) );
 		try
 		{
-			Usuario admin = tm.getRepresentantesPK(id);
+			Usuario admin = tm.getRepresentantesPK(id,admin2,userRepresentante,restaurante,claveUsuario,claveRep,claveRestaurante);
 			return Response.status( 200 ).entity( admin ).build( );			
 		}
 		catch( Exception e )

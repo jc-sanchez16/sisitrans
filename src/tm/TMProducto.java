@@ -166,14 +166,14 @@ public class TMProducto {
 
 
 	/////////// agregar un producto
-	public void addProducto(Producto producto) throws Exception {
+	public void addProducto(Producto producto, String restaurante, int claveRestaurante) throws Exception {
 		DAOProducto daoProducto = new DAOProducto();
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
 			daoProducto.setConn(conn);
-			daoProducto.addProducto(producto);
+			daoProducto.addProducto(producto,restaurante,claveRestaurante);
 			conn.commit();
 
 		} catch (SQLException e) {
@@ -200,14 +200,14 @@ public class TMProducto {
 
 
 	/////////////// udate productos actualiza un producto
-	public void updateProducto(Producto producto) throws Exception {
+	public void updateProducto(Producto producto, String restaurante, int claveRestaurante) throws Exception {
 		DAOProducto daoProducto = new DAOProducto();
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
 			daoProducto.setConn(conn);
-			daoProducto.updateProducto(producto);
+			daoProducto.updateProducto(producto,restaurante,claveRestaurante);
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
@@ -231,14 +231,14 @@ public class TMProducto {
 	}
 
 	//////////// delete producto borra un producto
-	public void deleteProducto(String nombre,String restaurante) throws Exception {
+	public void deleteProducto(String nombre,String restaurante, String restaurante2, int claveRestaurante) throws Exception {
 		DAOProducto daoProducto = new DAOProducto();
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
 			daoProducto.setConn(conn);
-			daoProducto.deleteProducto(nombre, restaurante);
+			daoProducto.deleteProducto(nombre, restaurante,restaurante2,claveRestaurante);
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
@@ -328,14 +328,14 @@ public class TMProducto {
 	}
 
 	/////////// agregar un menu
-	public void addMenu(Menu menu) throws Exception {
+	public void addMenu(Menu menu, String restaurante, int claveRestaurante) throws Exception {
 		DAOProducto daoProducto = new DAOProducto();
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
 			daoProducto.setConn(conn);
-			daoProducto.addMenu(menu);
+			daoProducto.addMenu(menu,restaurante,claveRestaurante);
 			conn.commit();
 
 		} catch (SQLException e) {
@@ -360,14 +360,14 @@ public class TMProducto {
 	}
 
 	/////////////// udate menus actualiza un menu
-	public void updateMenu(Menu menu) throws Exception {
+	public void updateMenu(Menu menu, String restaurante, int claveRestaurante) throws Exception {
 		DAOProducto daoProducto = new DAOProducto();
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
 			daoProducto.setConn(conn);
-			daoProducto.updateMenu(menu);
+			daoProducto.updateMenu(menu,restaurante,claveRestaurante);
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
@@ -391,14 +391,14 @@ public class TMProducto {
 	}
 
 	////////////delete menu borra un menu
-	public void deleteMenu(String nombre, String restaurante) throws Exception {
+	public void deleteMenu(String nombre, String restaurante, String restaurante2, int claveRestaurante) throws Exception {
 		DAOProducto daoProducto = new DAOProducto();
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
 			daoProducto.setConn(conn);
-			daoProducto.deleteMenu(nombre, restaurante);
+			daoProducto.deleteMenu(nombre, restaurante,restaurante2,claveRestaurante);
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());

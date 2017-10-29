@@ -35,19 +35,23 @@ public class Menu implements Articulo{
 	@JsonProperty(value="tiempoPreparacion")
 	private int tiempoPreparacion;
 	
+	@JsonProperty(value="cantidadMaxima")
+	private int cantidadMaxima;
+	
 	private ArrayList<String> tipoComida;
 	
 	private ArrayList<Producto> productos;
 
-	public Menu(@JsonProperty(value="nombre")String nombre,@JsonProperty(value="restaurante") String restaurante, @JsonProperty(value="costo")double costo, @JsonProperty(value="precio")double precio, @JsonProperty(value="tiempoPreparacion")int tiempoPreparacion) {
+	public Menu(@JsonProperty(value="nombre")String nombre,@JsonProperty(value="restaurante") String restaurante, @JsonProperty(value="costo")double costo, @JsonProperty(value="precio")double precio, @JsonProperty(value="tiempoPreparacion")int tiempoPreparacion,@JsonProperty(value="cantidadMaxima")int cantidadMaxima) {
 		this.nombre = nombre;
 		this.restaurante = restaurante;
 		this.costo = costo;
 		this.precio = precio;
 		this.tiempoPreparacion = tiempoPreparacion;
+		this.cantidadMaxima = cantidadMaxima;
 	}
 	public Menu(String nombre,String restaurante, double costo, double precio, int tiempoPreparacion,
-			ArrayList<String> tipoComida, ArrayList<Producto> productos) {
+			ArrayList<String> tipoComida, ArrayList<Producto> productos,int cantidadMaxima) {
 		this.nombre = nombre;
 		this.restaurante = restaurante;
 		this.costo = costo;
@@ -55,8 +59,15 @@ public class Menu implements Articulo{
 		this.tiempoPreparacion = tiempoPreparacion;
 		this.tipoComida = tipoComida;
 		this.productos = productos;
+		this.cantidadMaxima=cantidadMaxima;
 	}
 
+	public int getCantidadMaxima() {
+		return cantidadMaxima;
+	}
+	public void setCantidadMaxima(int cantidadMaxima) {
+		this.cantidadMaxima = cantidadMaxima;
+	}
 	public String getNombre() {
 		return nombre;
 	}

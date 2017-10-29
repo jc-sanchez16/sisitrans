@@ -175,7 +175,7 @@ public class TMRestaurante {
 
 	/////////// agregar un restaurante
 
-	public void addRestaurante(Restaurante restaurante, int claven) throws Exception {
+	public void addRestaurante(Restaurante restaurante, int clave, int usuario, int contraseñaAd) throws Exception {
 
 		DAORestaurante daoRestaurante = new DAORestaurante();
 		try 
@@ -183,7 +183,7 @@ public class TMRestaurante {
 			//////transaccion
 			this.conn = darConexion();
 			daoRestaurante.setConn(conn);
-			daoRestaurante.addRestaurante(restaurante, claven);
+			daoRestaurante.addRestaurante(restaurante, clave, usuario,contraseñaAd);
 			conn.commit();
 
 		} catch (SQLException e) {
@@ -210,14 +210,14 @@ public class TMRestaurante {
 
 
 	/////////////// udate restaurante actualiza una restaurante
-	public void updateRestaurante(Restaurante restaurante) throws Exception {
+	public void updateRestaurante(Restaurante restaurante, int usuario, int contraseñaAd) throws Exception {
 		DAORestaurante daoRestaurante = new DAORestaurante();
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
 			daoRestaurante.setConn(conn);
-			daoRestaurante.updateRestaurante(restaurante);
+			daoRestaurante.updateRestaurante(restaurante,usuario,contraseñaAd);
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
@@ -241,14 +241,14 @@ public class TMRestaurante {
 	}
 
 	////////////delete restaurantes borra una restaurante
-	public void deleteRestaurante(String nombre) throws Exception {
+	public void deleteRestaurante(String nombre, int usuario, int contraseñaAd) throws Exception {
 		DAORestaurante daoRestaurante = new DAORestaurante();
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
 			daoRestaurante.setConn(conn);
-			daoRestaurante.deleteRestaurante(nombre);
+			daoRestaurante.deleteRestaurante(nombre,usuario,contraseñaAd);
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());

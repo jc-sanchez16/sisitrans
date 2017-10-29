@@ -261,7 +261,7 @@ public class TMUsuario {
 	}
 
 	/////////////get administradores
-	public List<Usuario> getAdministradores() throws Exception {
+	public List<Usuario> getAdministradores(int usuario, int clave) throws Exception {
 		List<Usuario> administradores;
 		DAOUsuario daoUsuario = new DAOUsuario();
 		try 
@@ -269,7 +269,7 @@ public class TMUsuario {
 			//////transaccion
 			this.conn = darConexion();
 			daoUsuario.setConn(conn);
-			administradores = daoUsuario.getAdministradores();
+			administradores = daoUsuario.getAdministradores(usuario,clave);
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
@@ -294,7 +294,7 @@ public class TMUsuario {
 	}
 
 	////////get administrador por su numero de identificacion
-	public Usuario getAdministradorPK(int id) throws Exception {
+	public Usuario getAdministradorPK(int id, int usuario, int clave) throws Exception {
 		Usuario administrador;
 		DAOUsuario daoUsuario = new DAOUsuario();
 		try 
@@ -302,7 +302,7 @@ public class TMUsuario {
 			//////transaccion
 			this.conn = darConexion();
 			daoUsuario.setConn(conn);
-			administrador = daoUsuario.getAdministradorPK(id);
+			administrador = daoUsuario.getAdministradorPK(id,usuario,clave);
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
@@ -325,7 +325,7 @@ public class TMUsuario {
 		}
 		return administrador;
 	}
-	public List<Usuario> getRepresentantes() throws Exception {
+	public List<Usuario> getRepresentantes(int admin, int userRepresentante, int claveUsuario, int claveRep) throws Exception {
 		List<Usuario> administradores;
 		DAOUsuario daoUsuario = new DAOUsuario();
 		try 
@@ -333,7 +333,7 @@ public class TMUsuario {
 			//////transaccion
 			this.conn = darConexion();
 			daoUsuario.setConn(conn);
-			administradores = daoUsuario.getRepresentantes();
+			administradores = daoUsuario.getRepresentantes(admin,userRepresentante,claveUsuario,claveRep);
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
@@ -358,7 +358,7 @@ public class TMUsuario {
 	}
 
 	////////get administrador por su numero de identificacion
-	public Usuario getRepresentantesPK(int id) throws Exception {
+	public Usuario getRepresentantesPK(int id, int admin2, int userRepresentante, String restaurante, int claveUsuario, int claveRep, int claveRestaurante) throws Exception {
 		Usuario administrador;
 		DAOUsuario daoUsuario = new DAOUsuario();
 		try 
@@ -366,7 +366,7 @@ public class TMUsuario {
 			//////transaccion
 			this.conn = darConexion();
 			daoUsuario.setConn(conn);
-			administrador = daoUsuario.getRepresentantesPK(id);
+			administrador = daoUsuario.getRepresentantesPK(id,admin2,userRepresentante,restaurante,claveUsuario,claveRep,claveRestaurante);
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());

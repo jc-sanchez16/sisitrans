@@ -166,14 +166,14 @@ public class TMIngrediente {
 
 
 	/////////// agregar un ingrediente
-	public void addIngrediente(Ingrediente ingrediente) throws Exception {
+	public void addIngrediente(Ingrediente ingrediente, String restaurante, int claveRestaurante) throws Exception {
 		DAOIngrediente daoIngrediente = new DAOIngrediente();
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
 			daoIngrediente.setConn(conn);
-			daoIngrediente.addIngrediente(ingrediente);
+			daoIngrediente.addIngrediente(ingrediente,restaurante,claveRestaurante);
 			conn.commit();
 
 		} catch (SQLException e) {
@@ -202,14 +202,14 @@ public class TMIngrediente {
 	
 
 	//////////// delete ingrediente borra un ingrediente
-	public void deleteIngrediente(String nombre) throws Exception {
+	public void deleteIngrediente(String nombre, String restaurante, int claveRestaurante) throws Exception {
 		DAOIngrediente daoIngrediente = new DAOIngrediente();
 		try 
 		{
 			//////transaccion
 			this.conn = darConexion();
 			daoIngrediente.setConn(conn);
-			daoIngrediente.deleteIngrediente(nombre);
+			daoIngrediente.deleteIngrediente(nombre,restaurante,claveRestaurante);
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());

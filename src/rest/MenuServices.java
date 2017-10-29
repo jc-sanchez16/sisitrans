@@ -70,9 +70,9 @@ public class MenuServices {
 	 * el error que se produjo
 	 */
 	@GET
-	@Path( "{nombre: [a-zA-Z]+}/{restaurante: [a-zA-Z]+}")
+	@Path("/PK")
 	@Produces( { MediaType.APPLICATION_JSON } )
-	public Response getMenuPk(  @PathParam("nombre") String nombre, @PathParam("restaurante") String restaurante )
+	public Response getMenuPk(  @QueryParam("nombre") String nombre, @QueryParam("restaurante") String restaurante )
 	{
 		TMProducto tm = new TMProducto( getPath( ) );
 		try
@@ -96,10 +96,10 @@ public class MenuServices {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addMenu(Menu menu) {
+	public Response addMenu(Menu menu,@QueryParam("restaurante") String restaurante,@QueryParam("claveRestaurante") int claveRestaurante) {
 		TMProducto tm = new TMProducto(getPath());
 		try {
-			tm.addMenu(menu);
+			tm.addMenu(menu, restaurante, claveRestaurante);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
@@ -116,10 +116,10 @@ public class MenuServices {
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateMenu(Menu menu) {
+	public Response updateMenu(Menu menu,@QueryParam("restaurante") String restaurante,@QueryParam("claveRestaurante") int claveRestaurante) {
 		TMProducto tm = new TMProducto(getPath());
 		try {
-			tm.updateMenu(menu);
+			tm.updateMenu(menu,restaurante,claveRestaurante);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
@@ -135,11 +135,10 @@ public class MenuServices {
 	@DELETE
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path( "{nombre: [a-zA-Z]+}/{restaurante: [a-zA-Z]+}")
-	public Response deleteMenu( @PathParam("nombre") String nombre, @PathParam("restaurante") String restaurante) {
+	public Response deleteMenu( @QueryParam("nombre") String nombre, @QueryParam("restaurante") String restaurante,@QueryParam("restauranteVerificar") String restaurante2,@QueryParam("claveRestaurante") int claveRestaurante) {
 		TMProducto tm = new TMProducto(getPath());
 		try {
-			tm.deleteMenu(nombre, restaurante);
+			tm.deleteMenu(nombre, restaurante,restaurante2,claveRestaurante);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}

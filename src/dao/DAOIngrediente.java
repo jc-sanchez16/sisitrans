@@ -95,27 +95,56 @@ public class DAOIngrediente {
 
 
 
-	public void addIngrediente(Ingrediente ingrediente) throws SQLException, Exception {
+	public void addIngrediente(Ingrediente ingrediente, String restaurante, int claveRestaurante) throws SQLException, Exception {
 
-		String sql = "INSERT INTO INGREDIENTE VALUES ('";
-		sql += ingrediente.getNombre() + "','";
-		sql += ingrediente.getDescripcionE() + "','";
-		sql += ingrediente.getDescripcionEn() + "')";
+		DAORestaurante daoRestaurante = new DAORestaurante();
+		try
+		{
+			daoRestaurante.setConn(conn);
+			
+				if(!daoRestaurante.verificarRest(restaurante, claveRestaurante))
+					throw new Exception("No es un usuario valido");
 
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
+			String sql = "INSERT INTO INGREDIENTE VALUES ('";
+			sql += ingrediente.getNombre() + "','";
+			sql += ingrediente.getDescripcionE() + "','";
+			sql += ingrediente.getDescripcionEn() + "')";
+
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			prepStmt.executeQuery();
+
+		}
+		finally
+		{
+			daoRestaurante.cerrarRecursos();
+		}
+
 
 	}
 
-	public void deleteIngrediente(String nombre) throws SQLException, Exception {
+	public void deleteIngrediente(String nombre, String restaurante, int claveRestaurante) throws SQLException, Exception {
 
-		String sql = "DELETE FROM INGREDIENTE";
-		sql += " WHERE ID = " + nombre;
+		DAORestaurante daoRestaurante = new DAORestaurante();
+		try
+		{
+			daoRestaurante.setConn(conn);
+			
+				if(!daoRestaurante.verificarRest(restaurante, claveRestaurante))
+					throw new Exception("No es un usuario valido");
 
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
+				String sql = "DELETE FROM INGREDIENTE";
+				sql += " WHERE NOMBRE='" + nombre+"'";
+
+				PreparedStatement prepStmt = conn.prepareStatement(sql);
+				recursos.add(prepStmt);
+				prepStmt.executeQuery();
+
+		}
+		finally
+		{
+			daoRestaurante.cerrarRecursos();
+		}
 	}
 
 

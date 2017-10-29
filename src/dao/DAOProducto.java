@@ -157,53 +157,120 @@ public class DAOProducto {
 
 
 
-	public void addProducto(Producto producto) throws SQLException, Exception {
+	public void addProducto(Producto producto, String restaurante, int claveRestaurante) throws SQLException, Exception {
 
-		String sql = "INSERT INTO PRODUCTO VALUES ('";
-		sql += producto.getNombre() + "','";
-		sql += producto.getRestaurante() + "',";
-		sql += producto.getCosto() + ",";
-		sql += producto.getTipo() + ",'";
-		sql += producto.getDescripcionE() + "','";
-		sql += producto.getDescripcionEn() + "',";
-		sql += producto.getTiempoPreparacion() + ",";
-		sql += producto.getPrecio() + ",";
-		sql +="1)";
+		DAORestaurante daoRestaurante = new DAORestaurante();
+		try
+		{
+			daoRestaurante.setConn(conn);
+			if(restaurante.equals(producto.getRestaurante()))
+			{
+				if(!daoRestaurante.verificarRest(restaurante, claveRestaurante))
+					throw new Exception("No es un usuario valido");
+			}
+			else
+			{
+				throw new Exception("No es un usuario valido");
+			}
 
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
+			String sql = "INSERT INTO PRODUCTO VALUES ('";
+			sql += producto.getNombre() + "','";
+			sql += producto.getRestaurante() + "',";
+			sql += producto.getCosto() + ",";
+			sql += producto.getTipo() + ",'";
+			sql += producto.getDescripcionE() + "','";
+			sql += producto.getDescripcionEn() + "',";
+			sql += producto.getTiempoPreparacion() + ",";
+			sql += producto.getPrecio() + ",";
+			sql +="1,";
+			sql +="0,";
+			sql += producto.getCantidadMaxima()+")";
+
+
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			prepStmt.executeQuery();
+
+		}
+		finally
+		{
+			daoRestaurante.cerrarRecursos();
+		}
 
 	}
 
-	public void updateProducto(Producto producto) throws SQLException, Exception {
+	public void updateProducto(Producto producto, String restaurante, int claveRestaurante) throws SQLException, Exception {
 
-		String sql = "UPDATE PRODUCTO SET ";
-		sql += "NOMBRE='"+producto.getNombre() + "',";
-		sql += "RESTAURANTE'"+producto.getRestaurante() + "',";
-		sql += "COSTO="+producto.getCosto() + ",";
-		sql += "TIPO="+producto.getTipo() + ",";
-		sql += "DESCRIPCION_E='"+producto.getDescripcionE() + "',";
-		sql += "DESCRIPCIPN_EN='"+producto.getDescripcionEn() + "',";
-		sql += "TIEMPO_PREP="+producto.getTiempoPreparacion() + ",";
-		sql += "PRECIO="+producto.getPrecio() + ",";
-		sql += "WHERE NOMBRE ='"+producto.getNombre()+"' AND RESTAURANTE = '"+ producto.getRestaurante()+"'";
+		DAORestaurante daoRestaurante = new DAORestaurante();
+		try
+		{
+			daoRestaurante.setConn(conn);
+			if(restaurante.equals(producto.getRestaurante()))
+			{
+				if(!daoRestaurante.verificarRest(restaurante, claveRestaurante))
+					throw new Exception("No es un usuario valido");
+			}
+			else
+			{
+				throw new Exception("No es un usuario valido");
+			}
+
+			String sql = "UPDATE PRODUCTO SET ";
+			sql += "NOMBRE='"+producto.getNombre() + "',";
+			sql += "RESTAURANTE='"+producto.getRestaurante() + "',";
+			sql += "COSTO="+producto.getCosto() + ",";
+			sql += "TIPO="+producto.getTipo() + ",";
+			sql += "DESCRIPCION_E='"+producto.getDescripcionE() + "',";
+			sql += "DESCRIPCION_EN='"+producto.getDescripcionEn() + "',";
+			sql += "TIEMPO_PREP="+producto.getTiempoPreparacion() + ",";
+			sql += "PRECIO="+producto.getPrecio() + ",";
+			sql += "CANT_MAX="+producto.getCantidadMaxima();
+			sql += "WHERE NOMBRE ='"+producto.getNombre()+"' AND RESTAURANTE = '"+ producto.getRestaurante()+"'";
 
 
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			prepStmt.executeQuery();
+
+		}
+		finally
+		{
+			daoRestaurante.cerrarRecursos();
+		}
+
 	}
 
 
-	public void deleteProducto(String nombr, String restaurant) throws SQLException, Exception {
+	public void deleteProducto(String nombr, String restaurant, String restaurante2, int claveRestaurante) throws SQLException, Exception {
 
-		String sql = "DELETE FROM PRODUCTO";
-		sql += " WHERE NOMBRE ='" + nombr+"' AND RESTAURANTE = '"+ restaurant+"'";
+		DAORestaurante daoRestaurante = new DAORestaurante();
+		try
+		{
+			daoRestaurante.setConn(conn);
+			if(restaurant.equals(restaurante2))
+			{
+				if(!daoRestaurante.verificarRest(restaurante2, claveRestaurante))
+					throw new Exception("No es un usuario valido");
+			}
+			else
+			{
+				throw new Exception("No es un usuario valido");
+			}
 
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
+
+			String sql = "DELETE FROM PRODUCTO";
+			sql += " WHERE NOMBRE ='" + nombr+"' AND RESTAURANTE = '"+ restaurant+"'";
+
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			prepStmt.executeQuery();
+		}
+		finally
+		{
+			daoRestaurante.cerrarRecursos();
+		}
+
+
 	}
 	public ArrayList<Menu> getMenus() throws SQLException, Exception 
 	{
@@ -220,9 +287,10 @@ public class DAOProducto {
 			double costo = rs.getDouble("COSTO");
 			double precio = rs.getDouble("PRECIO");
 			int tiempoPreparacion = rs.getInt("TIEMPO_PREP");
+			int cantidadMaxima = rs.getInt("CANT_MAX");
 			ArrayList<String> tipoComida = getTipoComida(nombre, restaurante);
 			ArrayList<Producto> productos = getPlatos(nombre, restaurante);
-			lista.add(new Menu(nombre, restaurante, costo, precio, tiempoPreparacion, tipoComida, productos));
+			lista.add(new Menu(nombre, restaurante, costo, precio, tiempoPreparacion, tipoComida, productos, cantidadMaxima));
 		}
 
 		return lista;
@@ -242,35 +310,61 @@ public class DAOProducto {
 			double costo = rs.getDouble("COSTO");
 			double precio = rs.getDouble("PRECIO");
 			int tiempoPreparacion = rs.getInt("TIEMPO_PREP");
+			int cantidadMaxima = rs.getInt("CANT_MAX");
 			ArrayList<String> tipoComida = getTipoComida(nombre, restaurante);
 			ArrayList<Producto> productos = getPlatos(nombre, restaurante);
-			lista=(new Menu(nombre, restaurante, costo, precio, tiempoPreparacion, tipoComida, productos));
+			lista=(new Menu(nombre, restaurante, costo, precio, tiempoPreparacion, tipoComida, productos, cantidadMaxima));
 		}
 
 		return lista;
 	}
 
-	
 
 
 
-	public void addMenu(Menu menu)  throws SQLException, Exception {
 
-		String sql = "INSERT INTO PRODUCTO VALUES ('";
-		sql += menu.getNombre() + "','";
-		sql += menu.getRestaurante() + "',";
-		sql += menu.getCosto() + ",";
-		sql += "NULL,";
-		sql += "NULL,'";
-		sql += "NULL,";
-		sql += menu.getTiempoPreparacion() + ",";
-		sql += menu.getPrecio() + ",";
-		sql +="0)";
-		addPlatos(menu);
+	public void addMenu(Menu menu, String restaurante, int claveRestaurante)  throws SQLException, Exception {
 
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
+		DAORestaurante daoRestaurante = new DAORestaurante();
+		try
+		{
+			daoRestaurante.setConn(conn);
+			if(restaurante.equals(menu.getRestaurante()))
+			{
+				if(!daoRestaurante.verificarRest(restaurante, claveRestaurante))
+					throw new Exception("No es un usuario valido");
+			}
+			else
+			{
+				throw new Exception("No es un usuario valido");
+			}
+
+			String sql = "INSERT INTO PRODUCTO VALUES ('";
+			sql += menu.getNombre() + "','";
+			sql += menu.getRestaurante() + "',";
+			sql += menu.getCosto() + ",";
+			sql += "NULL,";
+			sql += "NULL,";
+			sql += "NULL,";
+			sql += menu.getTiempoPreparacion() + ",";
+			sql += menu.getPrecio() + ",";
+			sql +="0,";
+			sql +="0,";
+			sql += menu.getCantidadMaxima()+")";
+			
+
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			prepStmt.executeQuery();
+			addPlatos(menu);
+		}
+		finally
+		{
+			daoRestaurante.cerrarRecursos();
+		}
+
+
+
 
 	}
 
@@ -278,11 +372,23 @@ public class DAOProducto {
 	{
 		String sql = "INSERT INTO MENU VALUES ('";
 		sql += menu.getNombre() + "',";
-		sql += menu.getProductos().get(0) + ",";
-		sql += menu.getProductos().get(1) + ",";
-		sql += menu.getProductos().get(2) + ",";
-		sql += menu.getProductos().get(3) + ",";
-		sql += menu.getProductos().get(4) + ",'";
+		if(menu.getProductos()!=null)
+		{
+
+				sql += "'"+menu.getProductos().get(0) + "',";
+				sql += "'"+menu.getProductos().get(1) + "',";
+				sql += "'"+menu.getProductos().get(2) + "',";
+				sql += "'"+menu.getProductos().get(3) + "',";
+				sql += "'"+menu.getProductos().get(4) + "','";
+		}
+		else
+		{
+			sql += "NULL,";
+			sql += "NULL,";
+			sql += "NULL,";
+			sql += "NULL,";
+			sql += "NULL,'";
+		}
 		sql += menu.getRestaurante() + "')";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
@@ -292,55 +398,112 @@ public class DAOProducto {
 	}
 
 
-	public void updateMenu(Menu menu) throws SQLException, Exception {
+	public void updateMenu(Menu menu, String restaurante, int claveRestaurante) throws SQLException, Exception {
 
-		String sql = "UPDATE PRODUCTO SET ";
-		sql += "NOMBRE="+menu.getNombre() + "',";
-		sql += "RESTAURANTE"+menu.getRestaurante() + "',";
-		sql += "COSTO="+menu.getCosto() + ",";
-		sql += "TIPO= NULL,";
-		sql += "DESCRIPCION_E= NULL,";
-		sql += "DESCRIPCIPN_EN= NULL,";
-		sql += "TIEMPO_PREP="+menu.getTiempoPreparacion() + ",";
-		sql += "PRECIO="+menu.getPrecio() + ",";
-		sql += "WHERE NOMBRE ='"+menu.getNombre()+"' AND RESTAURANTE = '"+ menu.getRestaurante()+"'";
-		updatePlatos(menu);
+		DAORestaurante daoRestaurante = new DAORestaurante();
+		try
+		{
+			daoRestaurante.setConn(conn);
+			if(restaurante.equals(menu.getRestaurante()))
+			{
+				if(!daoRestaurante.verificarRest(restaurante, claveRestaurante))
+					throw new Exception("No es un usuario valido");
+			}
+			else
+			{
+				throw new Exception("No es un usuario valido");
+			}
+
+			String sql = "UPDATE PRODUCTO SET ";
+			sql += "NOMBRE='"+menu.getNombre() + "',";
+			sql += "RESTAURANTE='"+menu.getRestaurante() + "',";
+			sql += "COSTO="+menu.getCosto() + ",";
+			sql += "TIPO= NULL,";
+			sql += "DESCRIPCION_E= NULL,";
+			sql += "DESCRIPCION_EN= NULL,";
+			sql += "TIEMPO_PREP="+menu.getTiempoPreparacion() + ",";
+			sql += "PRECIO="+menu.getPrecio() + ",";
+			sql += "CANT_MAX="+menu.getCantidadMaxima();
+			sql += " WHERE NOMBRE ='"+menu.getNombre()+"' AND RESTAURANTE = '"+ menu.getRestaurante()+"'";
+			updatePlatos(menu);
 
 
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			System.out.println(sql);
+			prepStmt.executeQuery();
+
+		}
+		finally
+		{
+			daoRestaurante.cerrarRecursos();
+		}
+
 	}
 
 
 	private void updatePlatos(Menu menu) throws Exception {
 		String sql = "UPDATE MENU SET ";
-		sql += "NOMBRE="+menu.getNombre() + "',";
-		sql += "COSTO="+menu.getProductos().get(0) + ",";
-		sql += "COSTO="+menu.getProductos().get(1) + ",";
-		sql += "COSTO="+menu.getProductos().get(2) + ",";
-		sql += "COSTO="+menu.getProductos().get(3) + ",";
-		sql += "COSTO="+menu.getProductos().get(4) + ",";		
-		sql += "RESTAURANTE'"+menu.getRestaurante() + "',";
+		sql += "NOMBRE='"+menu.getNombre() + "',";
+		if(menu.getProductos()!=null)
+		{
+			sql += "ENTRADA='"+menu.getProductos().get(0) + "',";
+			sql += "PLATO_FUERTE='"+menu.getProductos().get(1) + "',";
+			sql += "POSTRE='"+menu.getProductos().get(2) + "',";
+			sql += "BEBIDA='"+menu.getProductos().get(3) + "',";
+			sql += "ACOMPAÑAMIENTO='"+menu.getProductos().get(4) + "',";	
+				
+		}
+		else
+		{
+			sql += "ENTRADA="+"NULL,";
+			sql += "PLATO_FUERTE="+"NULL,";
+			sql += "POSTRE="+"NULL,";
+			sql += "BEBIDA="+"NULL,";
+			sql += "ACOMPAÑAMIENTO="+"NULL,";
+		}
+			
+		sql += "RESTAURANTE='"+menu.getRestaurante() + "'";
 		sql += "WHERE NOMBRE ='"+menu.getNombre()+"' AND RESTAURANTE = '"+ menu.getRestaurante()+"'";
 
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
+		System.out.println(sql);
 		prepStmt.executeQuery();
 
 	}
 
 
-	public void deleteMenu(String nombre, String restaurante) throws SQLException, Exception {
+	public void deleteMenu(String nombre, String restaurante, String restaurante2, int claveRestaurante) throws SQLException, Exception {
 
-		String sql = "DELETE FROM PRODUCTO";
-		sql += " WHERE NOMBRE ='" + nombre+"' AND RESTAURANTE = '"+ restaurante +"'";
-		deletePlatos(nombre, restaurante);
+		DAORestaurante daoRestaurante = new DAORestaurante();
+		try
+		{
+			daoRestaurante.setConn(conn);
+			if(restaurante.equals(restaurante2))
+			{
+				if(!daoRestaurante.verificarRest(restaurante2, claveRestaurante))
+					throw new Exception("No es un usuario valido");
+			}
+			else
+			{
+				throw new Exception("No es un usuario valido");
+			}
 
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
+			String sql = "DELETE FROM PRODUCTO";
+			sql += " WHERE NOMBRE ='" + nombre+"' AND RESTAURANTE = '"+ restaurante +"'";
+			deletePlatos(nombre, restaurante);
+
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			prepStmt.executeQuery();
+		}
+		finally
+		{
+			daoRestaurante.cerrarRecursos();
+		}
+
 	}
 
 
@@ -405,9 +568,10 @@ public class DAOProducto {
 			double costo = rs.getDouble("COSTO");
 			double precio = rs.getDouble("PRECIO");
 			int tiempoPreparacion = rs.getInt("TIEMPO_PREP");
+			int cantidadMaxima = rs.getInt("CANT_MAX");
 			ArrayList<String> tipoComida = getTipoComida(nombre, restaurante);
 			ArrayList<Producto> productos = getPlatos(nombre, restaurante);
-			lista.add(new Menu(nombre, restaurante, costo, precio, tiempoPreparacion, tipoComida, productos));
+			lista.add(new Menu(nombre, restaurante, costo, precio, tiempoPreparacion, tipoComida, productos,cantidadMaxima));
 		}
 
 		return lista;
@@ -618,7 +782,7 @@ public class DAOProducto {
 			throw new Exception("no es una equivalencia");
 		}
 	}
-	
+
 
 	public void restarUnidad(String nombre, String restaurante, String[] cambios) throws Exception 
 	{

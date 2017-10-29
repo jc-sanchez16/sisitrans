@@ -127,47 +127,90 @@ public class DAORestaurante {
 
 
 
-	public void addRestaurante(Restaurante restaurante,int clave) throws SQLException, Exception {
+	public void addRestaurante(Restaurante restaurante,int clave, int usuario, int contraseñaAd) throws SQLException, Exception {
 
-		String sql = "INSERT INTO RESTAURANTE VALUES ('";
-		sql += restaurante.getNombre() + "',";
-		sql += restaurante.getZona() + ",'";
-		sql += restaurante.getTipoComida() + "','";
-		sql += restaurante.getWeb() + "',";
-		sql += clave + ",";
-		sql += restaurante.getAdministrador() + ")";
+		DAOUsuario daoUsuario = new DAOUsuario();
+		
+		try
+		{
+			daoUsuario.setConn(conn);
+			if(!daoUsuario.verificar(usuario, contraseñaAd, DAOUsuario.ADMINISTRADOR))
+				throw new Exception("No es un usuario valido");
+			String sql = "INSERT INTO RESTAURANTE VALUES ('";
+			sql += restaurante.getNombre() + "',";
+			sql += restaurante.getZona() + ",'";
+			sql += restaurante.getTipoComida() + "','";
+			sql += restaurante.getWeb() + "',";
+			sql += clave + ",";
+			sql += restaurante.getAdministrador() + ")";
 
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			prepStmt.executeQuery();
+
+		}
+		finally
+		{
+			daoUsuario.cerrarRecursos();
+		}
 
 	}
 
-	public void updateRestaurante(Restaurante restaurante) throws SQLException, Exception {
+	public void updateRestaurante(Restaurante restaurante, int usuario, int contraseñaAd) throws SQLException, Exception {
 
-		String sql = "UPDATE RESTAURANTE SET ";
-		sql += "NOMBRE='"+restaurante.getNombre() + "',";
-		sql += "TIPO_COMIDA='"+restaurante.getTipoComida() + "',";
-		sql += "WEB='"+restaurante.getWeb() + "',";
-		sql +="ZONA=" +restaurante.getZona() + ",";
-		sql += "REPRESENTANTE="+restaurante.getAdministrador();
-		sql += "WHERE NOMBRE = " + restaurante.getNombre();
+		DAOUsuario daoUsuario = new DAOUsuario();
+		try
+		{
+			daoUsuario.setConn(conn);
+			if(!daoUsuario.verificar(usuario, contraseñaAd, DAOUsuario.ADMINISTRADOR))
+				throw new Exception("No es un usuario valido");
+			
+			String sql = "UPDATE RESTAURANTE SET ";
+			sql += "NOMBRE='"+restaurante.getNombre() + "',";
+			sql += "TIPO_COMIDA='"+restaurante.getTipoComida() + "',";
+			sql += "WEB='"+restaurante.getWeb() + "',";
+			sql +="ZONA=" +restaurante.getZona() + ",";
+			sql += "REPRESENTANTE="+restaurante.getAdministrador();
+			sql += "WHERE NOMBRE = '" + restaurante.getNombre()+"'";
 
 
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			prepStmt.executeQuery();
+			
+		}
+		finally
+		{
+			daoUsuario.cerrarRecursos();
+		}
+		
 	}
 
 
-	public void deleteRestaurante(String nombre) throws SQLException, Exception {
+	public void deleteRestaurante(String nombre, int usuario, int contraseñaAd) throws SQLException, Exception {
 
-		String sql = "DELETE FROM RESTAURANTE";
-		sql += " WHERE NOMBRE = '" + nombre+"'";
+		DAOUsuario daoUsuario = new DAOUsuario();
+		try
+		{
+			daoUsuario.setConn(conn);
+			if(!daoUsuario.verificar(usuario, contraseñaAd, DAOUsuario.ADMINISTRADOR))
+				throw new Exception("No es un usuario valido");
+			
+			String sql = "DELETE FROM RESTAURANTE";
+			sql += " WHERE NOMBRE = '" + nombre+"'";
 
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			prepStmt.executeQuery();
+			
+		}
+		finally
+		{
+			daoUsuario.cerrarRecursos();
+		}
+		
+		
+		
 	}
 
 
@@ -219,7 +262,16 @@ public class DAORestaurante {
 			return false;
 		return true;
 	}
+	
+	public boolean verificarRest(String restaurante, int clave) throws SQLException {
 
+		String sql = "SELECT CLAVE FROM RESTAURANTE WHERE NOMBRE ='"+restaurante+"' AND CLAVE="+clave;
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		return rs.next();
+	}
+	
 
 	public boolean verificar(int clave) throws SQLException {
 
@@ -239,21 +291,28 @@ public class DAORestaurante {
 
 	private ArrayList<Contrato> getContratos(String nombre) throws SQLException {
 		ArrayList<Contrato> lista = new ArrayList<Contrato>();
-			String sql = "SELECT * FROM CONTRATOS";
+		String sql = "SELECT * FROM CONTRATOS";
 
-			PreparedStatement prepStmt = conn.prepareStatement(sql);
-			recursos.add(prepStmt);
-			ResultSet rs = prepStmt.executeQuery();
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
 
-			while (rs.next()) {
-				int id = rs.getInt("NUM_CONTRATO");
-				String descripcion = rs.getString("DESCRIPCION");
-				String restaurante =rs.getString("RESTAURANTE") ;
-				lista.add(new Contrato(id, descripcion, restaurante));
-			}
+		while (rs.next()) {
+			int id = rs.getInt("NUM_CONTRATO");
+			String descripcion = rs.getString("DESCRIPCION");
+			String restaurante =rs.getString("RESTAURANTE") ;
+			lista.add(new Contrato(id, descripcion, restaurante));
+		}
 		return lista;
 	}
 
+	public boolean verificar(String nombre, int clave, int representante) throws SQLException {
 
-	
+		String sql = "SELECT CLAVE FROM RESTAURANTE WHERE NOMBRE ='"+nombre+"' AND CLAVE = "+clave+" AND REPRESENTANTE ="+representante;
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		return rs.next();
+	}
+
 }
