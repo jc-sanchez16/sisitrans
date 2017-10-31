@@ -5,9 +5,12 @@ import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Savepoint;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+
+import com.sun.xml.internal.stream.buffer.sax.SAXBufferProcessor;
 
 import vos.Menu;
 import vos.Orden;
@@ -163,102 +166,5 @@ public class TMOrden {
 			}
 		}
 		return orden;
-	}
-
-
-	/////////// agregar un orden
-	public void addOrden(Orden orden) throws Exception {
-		DAOOrden daoOrden = new DAOOrden();
-		try 
-		{
-			//////transaccion
-			this.conn = darConexion();
-			daoOrden.setConn(conn);
-			daoOrden.addOrden(orden);
-			conn.commit();
-
-		} catch (SQLException e) {
-			System.err.println("SQLException:" + e.getMessage());
-			e.printStackTrace();
-			throw e;
-		} catch (Exception e) {
-			System.err.println("GeneralException:" + e.getMessage());
-			e.printStackTrace();
-			throw e;
-		} finally {
-			try {
-				daoOrden.cerrarRecursos();
-				if(this.conn!=null)
-					this.conn.close();
-			} catch (SQLException exception) {
-				System.err.println("SQLException closing resources:" + exception.getMessage());
-				exception.printStackTrace();
-				throw exception;
-			}
-		}
-	}
-
-
-
-	/////////////// udate ordenes actualiza un orden
-	public void updateOrden(Orden orden) throws Exception {
-		DAOOrden daoOrden = new DAOOrden();
-		try 
-		{
-			//////transaccion
-			this.conn = darConexion();
-			daoOrden.setConn(conn);
-			daoOrden.updateOrden(orden);
-
-		} catch (SQLException e) {
-			System.err.println("SQLException:" + e.getMessage());
-			e.printStackTrace();
-			throw e;
-		} catch (Exception e) {
-			System.err.println("GeneralException:" + e.getMessage());
-			e.printStackTrace();
-			throw e;
-		} finally {
-			try {
-				daoOrden.cerrarRecursos();
-				if(this.conn!=null)
-					this.conn.close();
-			} catch (SQLException exception) {
-				System.err.println("SQLException closing resources:" + exception.getMessage());
-				exception.printStackTrace();
-				throw exception;
-			}
-		}
-	}
-
-	//////////// delete orden borra un orden
-	public void deleteOrden(int mesa,Date fecha) throws Exception {
-		DAOOrden daoOrden = new DAOOrden();
-		try 
-		{
-			//////transaccion
-			this.conn = darConexion();
-			daoOrden.setConn(conn);
-			daoOrden.deleteOrden(mesa, fecha);
-
-		} catch (SQLException e) {
-			System.err.println("SQLException:" + e.getMessage());
-			e.printStackTrace();
-			throw e;
-		} catch (Exception e) {
-			System.err.println("GeneralException:" + e.getMessage());
-			e.printStackTrace();
-			throw e;
-		} finally {
-			try {
-				daoOrden.cerrarRecursos();
-				if(this.conn!=null)
-					this.conn.close();
-			} catch (SQLException exception) {
-				System.err.println("SQLException closing resources:" + exception.getMessage());
-				exception.printStackTrace();
-				throw exception;
-			}
-		}
 	}
 }

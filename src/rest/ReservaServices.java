@@ -12,6 +12,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -74,14 +75,14 @@ public class ReservaServices {
 	 * el error que se produjo
 	 */
 	@GET
-	@Path( "{id: \\d+}/{fecha: [0-9/]+}")
+	@Path( "PK")
 	@Produces( { MediaType.APPLICATION_JSON } )
-	public Response getReservaPK( @PathParam( "id" ) int id ,@PathParam( "fecha" ) Date fecha )
+	public Response getReservaPK( @QueryParam( "id" ) int id ,@QueryParam( "fecha" ) String fecha )
 	{
 		TMReserva tm = new TMReserva( getPath( ) );
 		try
 		{
-			Reserva reserva = tm.getReservaPK(id, fecha);
+			Reserva reserva = tm.getReservaPK(id,  new Date(fecha));
 			return Response.status( 200 ).entity( reserva ).build( );			
 		}
 		catch( Exception e )
@@ -139,11 +140,10 @@ public class ReservaServices {
 	@DELETE
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path( "{id: \\d+}/{fecha: [0-9/]+}")
-	public Response deleteReserva( @PathParam( "id" ) int id ,@PathParam( "fecha" ) Date fecha ) {
+	public Response deleteReserva( @QueryParam( "id" ) int id ,@QueryParam( "fecha" ) String fecha ) {
 		TMReserva tm = new TMReserva(getPath());
 		try {
-			tm.deleteReserva(id, fecha);
+			tm.deleteReserva(id,  new Date(fecha));
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}

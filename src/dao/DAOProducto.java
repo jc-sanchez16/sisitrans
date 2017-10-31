@@ -628,7 +628,7 @@ public class DAOProducto {
 
 	private int darTipo(String restaurante, String nombre) throws SQLException {
 		int lista = 0;
-		String sql = "SELECT TIPO FROM MENU WHERE NOMBRE ='" + nombre+"' AND RESTAURANTE = '"+ restaurante+"'";
+		String sql = "SELECT TIPO FROM PRODUCTO WHERE NOMBRE ='" + nombre+"' AND RESTAURANTE = '"+ restaurante+"'";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
@@ -649,29 +649,31 @@ public class DAOProducto {
 		try
 		{
 			daoRestaurante.setConn(conn);
-			if(!daoRestaurante.verificar(restaurante, clave))
+			if(!daoRestaurante.verificarRest(restaurante, clave))
 				throw new Exception("No es un usuario valido");
+			String sql = "INSERT ALL ";
 			for (int i = 0; i < productos.size(); i++) 
 			{
-				String sql = "INSERT ALL ";
 				for (int j = 0; j <productos.size(); j++) 
 				{
 					if(i!=j)
 					{
 						if(tipo !=darTipo(restaurante, productos.get(j)))
 							throw new Exception("Los productos no son del mismo tipo");
-						sql += "INTO EQUIVALENCIAS_PRODUCTO VALUES ('";
+						sql += "INTO EQUIVALENCIA_PRODUCTO VALUES ('";
 						sql += productos.get(i)+"','";
 						sql += productos.get(j)+"','";
 						sql += restaurante+"') ";
 
-						PreparedStatement prepStmt = conn.prepareStatement(sql);
-						recursos.add(prepStmt);
-						prepStmt.executeQuery();
-						res="se realizo la accion";
+						
 					}
 				}
 			}
+			sql += " SELECT * FROM DUAL";
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			prepStmt.executeQuery();
+			res="se realizo la accion";
 		}
 		catch(Exception e)
 		{
@@ -691,7 +693,7 @@ public class DAOProducto {
 		DAORestaurante daoRestaurante = new DAORestaurante();
 		try {
 			daoRestaurante.setConn(conn);
-			if (!daoRestaurante.verificar(restaurante, clave))
+			if (!daoRestaurante.verificarRest(restaurante, clave))
 				throw new Exception("El usuario no tiene permisos para realizar esta accion");
 			else
 			{
@@ -735,7 +737,7 @@ public class DAOProducto {
 				return verificarDisponibilidadPlatos(nombre,restaurante,cambios);
 			}
 		}
-		return false;
+		return true;
 	}
 
 
@@ -787,7 +789,7 @@ public class DAOProducto {
 	public void restarUnidad(String nombre, String restaurante, String[] cambios) throws Exception 
 	{
 		String sql = "UPDATE PRODUCTO SET ";
-		sql += "CANT_ACTUAL="+ "CANT_ACTUAL -1" + " ,";
+		sql += "CANT_ACTUAL="+ "CANT_ACTUAL -1" + " ";
 		sql += "WHERE NOMBRE ='"+nombre+"' AND RESTAURANTE ='"+restaurante+"'";
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
@@ -796,10 +798,13 @@ public class DAOProducto {
 		for (int i = 0; i < platos.size(); i++) 
 		{
 			Producto plato = platos.get(i);
-			String nom = plato.getNombre();
-			if(!cambios[i].equals("") && cambios.length>1)
-				nom =cambios[i];
-			restarUnidad(nom, plato.getRestaurante(), null);
+			if(plato!= null)
+			{
+				String nom = plato.getNombre();
+				if(!cambios[i+1].equals("") && cambios.length>1)
+					nom =cambios[i+1];
+				restarUnidad(nom, plato.getRestaurante(), null);				
+			}
 		}		
 	}
 

@@ -41,6 +41,8 @@ public class Menu implements Articulo{
 	private ArrayList<String> tipoComida;
 	
 	private ArrayList<Producto> productos;
+	
+	private String cambios;
 
 	public Menu(@JsonProperty(value="nombre")String nombre,@JsonProperty(value="restaurante") String restaurante, @JsonProperty(value="costo")double costo, @JsonProperty(value="precio")double precio, @JsonProperty(value="tiempoPreparacion")int tiempoPreparacion,@JsonProperty(value="cantidadMaxima")int cantidadMaxima) {
 		this.nombre = nombre;
@@ -62,6 +64,12 @@ public class Menu implements Articulo{
 		this.cantidadMaxima=cantidadMaxima;
 	}
 
+	public String getCambios() {
+		return cambios;
+	}
+	public void setCambios(String cambios) {
+		this.cambios = cambios;
+	}
 	public int getCantidadMaxima() {
 		return cantidadMaxima;
 	}

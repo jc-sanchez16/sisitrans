@@ -24,6 +24,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import tm.TMIngrediente;
 import tm.TMRequerimientos;
 import tm.TMUsuario;
+import vos.Articulo;
 import vos.Ingrediente;
 
 /**
@@ -117,20 +118,22 @@ public class RequerimientosServices {
 	public Response registrarPedidoOrden(@QueryParam("mesa") int mesa, Respuesta res) {
 		TMRequerimientos tm = new TMRequerimientos(getPath());
 		try {
-			tm.registrarPedidoOrden(mesa,new Date(),res.productos,res.usuarios);
+			Date f =new Date();
+			f = new Date(f.getYear(),f.getMonth(),f.getDate(),f.getHours(), f.getMinutes());
+			tm.registrarPedidoOrden(mesa,f,res.productos,res.usuarios);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
-		}
-		return Response.status(200).entity(res).build();
+		}		return Response.status(200).entity(res).build();
 	}
 	@PUT
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Path("16")
-	public Response registrarServicio(@QueryParam("clave") int clave,@QueryParam("restaurante") String restaurante, @QueryParam("fecha") Date fecha,@QueryParam("mesa") int mesa) {
+	public Response registrarServicio(@QueryParam("clave") int clave,@QueryParam("restaurante") String restaurante, @QueryParam("fecha") String fecha,@QueryParam("mesa") int mesa) {
 		TMRequerimientos tm = new TMRequerimientos(getPath());
+		Date fec = new Date(fecha);
 		String res = "No se realizo la accion";
 		try {
-			res = tm.registrarServicio(clave, restaurante, fecha, mesa);
+			res = tm.registrarServicio(clave, restaurante, fec, mesa);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
@@ -139,11 +142,12 @@ public class RequerimientosServices {
 	@DELETE
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Path("17")
-	public Response cancelarServicio(@QueryParam("clave") int clave,@QueryParam("restaurante") String restaurante, @QueryParam("fecha") Date fecha,@QueryParam("mesa") int mesa) {
+	public Response cancelarServicio(@QueryParam("clave") int clave,@QueryParam("restaurante") String restaurante, @QueryParam("fecha") String fecha,@QueryParam("mesa") int mesa) {
 		TMRequerimientos tm = new TMRequerimientos(getPath());
 		String res = "No se realizo la accion";
+		Date fec = new Date(fecha);
 		try {
-			res = tm.cancelarServicio(clave, restaurante, fecha, mesa);
+			res = tm.cancelarServicio(clave, restaurante, fec, mesa);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
@@ -154,9 +158,31 @@ public class RequerimientosServices {
 	@Path("C7")
 	public Response consultarConsumo(@QueryParam("clave") int clave,@QueryParam("peticion") int peticion, @QueryParam("usuario") int usuario) {
 		TMRequerimientos tm = new TMRequerimientos(getPath());
-		int res = null;
+		ArrayList<Articulo> res = null;
 		try {
 			res = tm.consultarConsumo(usuario,clave, peticion);
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(res).build();
+	}
+	
+//	RFC8. CONSULTAR PEDIDOS
+//	Muestra la información consolidada de los pedidos hechos en RotondAndes. Consolida, como mínimo, para cada uno los
+//	restaurantes y para cada uno de sus productos las ventas totales (en dinero y en cantidad), lo consumidos por clientes
+//	registrados y por clientes no registrados.
+//	Esta operación es realizada por un usuario restaurante y por el administrador de RotondAndes.
+//	NOTA: Respetando la privacidad de los clientes, cuando un restaurante hace esta consulta obtiene la información de sus
+//	propias actividades, mientras que el administrador obtiene toda la información. Ver RNF1.
+	
+	@GET
+	@Produces({ MediaType.APPLICATION_JSON })
+	@Path("C8")
+	public Response consultarPedidos(@QueryParam("clave") int clave,@QueryParam("usuario") String usuario) {
+		TMRequerimientos tm = new TMRequerimientos(getPath());
+		String res = null;
+		try {
+			res = tm.consultarPedidos(usuario,clave);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}

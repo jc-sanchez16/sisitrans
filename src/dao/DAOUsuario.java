@@ -437,7 +437,11 @@ public class DAOUsuario {
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
-		return rs.next();
+		while( rs.next())
+		{
+			return true;
+		}
+		return false;
 	}
 
 

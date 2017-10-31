@@ -248,20 +248,6 @@ public class DAORestaurante {
 		}
 		return lista;
 	}
-
-
-
-
-	public boolean verificar(String restaurante, int clave) throws SQLException {
-
-		String sql = "SELECT CLAVE FROM RESTAURANTE WHERE NOMBRE ='"+restaurante+"'";
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		ResultSet rs = prepStmt.executeQuery();
-		if(rs.getInt(1)!= clave)
-			return false;
-		return true;
-	}
 	
 	public boolean verificarRest(String restaurante, int clave) throws SQLException {
 

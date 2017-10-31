@@ -197,9 +197,9 @@ public class DAOIngrediente {
 					if(i!=j)
 					{
 						
-						String sql = "INSERT INTO EQUIVALENCIAS_INGREDIENTE VALUES ('";
+						String sql = "INSERT INTO EQUIVALENCIA_INGREDIENTES VALUES ('";
 						sql += ingredientes.get(i)+"','";
-						sql += ingredientes.get(j)+"',)'";
+						sql += ingredientes.get(j)+"')";
 
 						PreparedStatement prepStmt = conn.prepareStatement(sql);
 						recursos.add(prepStmt);

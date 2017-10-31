@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
+import vos.Articulo;
 import vos.Menu;
 import vos.Orden;
 import vos.Producto;
@@ -102,41 +103,6 @@ public class TMRequerimientos {
 		return DriverManager.getConnection(url, user, password);
 	}
 
-
-
-
-
-	public void addProducto(Producto producto) throws Exception {
-		DAOProducto daoProducto = new DAOProducto();
-		try 
-		{
-			//////transaccion
-			this.conn = darConexion();
-			daoProducto.setConn(conn);
-			daoProducto.addProducto(producto);
-			conn.commit();
-
-		} catch (SQLException e) {
-			System.err.println("SQLException:" + e.getMessage());
-			e.printStackTrace();
-			throw e;
-		} catch (Exception e) {
-			System.err.println("GeneralException:" + e.getMessage());
-			e.printStackTrace();
-			throw e;
-		} finally {
-			try {
-				daoProducto.cerrarRecursos();
-				if(this.conn!=null)
-					this.conn.close();
-			} catch (SQLException exception) {
-				System.err.println("SQLException closing resources:" + exception.getMessage());
-				exception.printStackTrace();
-				throw exception;
-			}
-		}
-	}
-
 	public String addEquivalenciaIngrediente(int clave, ArrayList<String> ingredientes) throws Exception {
 		DAOIngrediente daoIngrediente = new DAOIngrediente();
 		String res = "no se realizo la accion";
@@ -144,6 +110,7 @@ public class TMRequerimientos {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setAutoCommit(false);
 			daoIngrediente.setConn(conn);
 			res = daoIngrediente.AddEquivalenciaIngrediente(clave, ingredientes);
 			conn.commit();
@@ -176,6 +143,7 @@ public class TMRequerimientos {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setAutoCommit(false);
 			daoProducto.setConn(conn);
 			res = daoProducto.addEquivalenciaProducto(clave,restaurante,productos);
 			conn.commit();
@@ -209,6 +177,7 @@ public class TMRequerimientos {
 		{
 			//////transaccion
 			this.conn = darConexion();
+			conn.setAutoCommit(false);
 			daoProducto.setConn(conn);
 			res = daoProducto.surtirRestaurante(clave,restaurante);
 			conn.commit();
@@ -239,14 +208,15 @@ public class TMRequerimientos {
 		Savepoint save = null;
 		try 
 		{
-			this.conn = darConexion();			
-			save =conn.setSavepoint("sin orden");
+			this.conn = darConexion();	
+			conn.setAutoCommit(false);		
+			save =conn.setSavepoint();
 			daoOrden.setConn(conn);
 			daoOrden.addOrdenEnProceso(new Orden(mesa, fecha, usuarios, null, null, false));
 			for(int i = 0 ; i<productos.size(); i++)
 			{
 				String[] producto = productos.get(i).split(";");
-				daoOrden.registrarPedidoProducto(producto[0],producto[1],producto[2].split("."), mesa, fecha);
+				daoOrden.registrarPedidoProducto(producto[0],producto[1],producto[2],Integer.parseInt(producto[3]), mesa, fecha);
 			}
 			conn.commit();
 
@@ -275,8 +245,9 @@ public class TMRequerimientos {
 		Savepoint save = null;
 		try 
 		{
-			this.conn = darConexion();			
-			save =conn.setSavepoint("sin orden");
+			this.conn = darConexion();	
+			conn.setAutoCommit(false);		
+			save =conn.setSavepoint();
 			daoOrden.setConn(conn);
 			res = daoOrden.registrarServicio(clave,restaurante,fecha,mesa);
 			conn.commit();
@@ -306,8 +277,9 @@ public class TMRequerimientos {
 		Savepoint save = null;
 		try 
 		{
-			this.conn = darConexion();			
-			save =conn.setSavepoint("sin orden");
+			this.conn = darConexion();	
+			conn.setAutoCommit(false);		
+			save =conn.setSavepoint();
 			daoOrden.setConn(conn);
 			res = daoOrden.cancelarServicio(clave,restaurante,fecha,mesa);
 			conn.commit();
@@ -330,12 +302,13 @@ public class TMRequerimientos {
 		return res;
 	}
 
-	public int consultarConsumo(int usuario, int clave, int peticion) {
-		String res = "no se realizo la accion";
+	public ArrayList<Articulo> consultarConsumo(int usuario, int clave, int peticion) throws Exception {
+		ArrayList<Articulo> res = null;
 		DAOOrden daoOrden = new DAOOrden();	
 		try 
 		{
-			this.conn = darConexion();			
+			this.conn = darConexion();		
+			conn.setAutoCommit(false);	
 			daoOrden.setConn(conn);
 			res = daoOrden.consultarConsumo(usuario, clave, peticion);
 			conn.commit();
@@ -357,7 +330,31 @@ public class TMRequerimientos {
 		return res;
 	}
 
-
-
-
+	public String consultarPedidos(String usuario, int clave) throws Exception {
+		String res = null;
+		DAOOrden daoOrden = new DAOOrden();	
+		try 
+		{
+			this.conn = darConexion();	
+			conn.setAutoCommit(false);		
+			daoOrden.setConn(conn);
+			res = daoOrden.consultarPedidos(usuario, clave);
+			conn.commit();
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoOrden.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return res;
+	}
 }

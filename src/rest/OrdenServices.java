@@ -75,15 +75,14 @@ public class OrdenServices {
 	 * el error que se produjo
 	 */
 	@GET
-	@Path( "{mesa: \\d+}/{fecha: [1-9_]+}")
+	@Path("PK")
 	@Produces( { MediaType.APPLICATION_JSON } )
-	public Response getOrdenPK(  @PathParam("mesa") int mesa, @PathParam("fecha") String fecha)
+	public Response getOrdenPK(  @QueryParam("mesa") int mesa, @QueryParam("fecha") String fecha)
 	{
 		TMOrden tm = new TMOrden( getPath( ) );
 		try
 		{			
-			String[] f = fecha.split("_");
-			Orden orden = tm.getOrdenPK(mesa, new Date(Integer.parseInt(f[2])-1900,Integer.parseInt(f[1]),Integer.parseInt(f[0])));
+			Orden orden = tm.getOrdenPK(mesa, new Date(fecha));
 			return Response.status( 200 ).entity( orden ).build( );			
 		}
 		catch( Exception e )
@@ -92,65 +91,4 @@ public class OrdenServices {
 		}
 	}
 
-
-	/**
-	 * Metodo que expone servicio REST usando POST que agrega el video que recibe en Json
-	 * <b>URL: </b> http://"ip o mesa de host":8080/VideoAndes/rest/videos/video
-	 * @param video - video a agregar
-	 * @return Json con el video que agrego o Json con el error que se produjo
-	 */
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response addOrden(Orden orden) {
-		TMOrden tm = new TMOrden(getPath());
-		try {
-			tm.addOrden(orden);
-		} catch (Exception e) {
-			return Response.status(500).entity(doErrorMessage(e)).build();
-		}
-		return Response.status(200).entity(orden).build();
-	}
-
-
-	/**
-	 * Metodo que expone servicio REST usando PUT que actualiza el video que recibe en Json
-	 * <b>URL: </b> http://"ip o mesa de host":8080/VideoAndes/rest/videos
-	 * @param orden - video a actualizar. 
-	 * @return Json con el video que actualizo o Json con el error que se produjo
-	 */
-	@PUT
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateOrden(Orden orden) {
-		TMOrden tm = new TMOrden(getPath());
-		try {
-			tm.updateOrden(orden);
-		} catch (Exception e) {
-			return Response.status(500).entity(doErrorMessage(e)).build();
-		}
-		return Response.status(200).entity(orden).build();
-	}
-
-	/**
-	 * Metodo que expone servicio REST usando DELETE que elimina el video que recibe en Json
-	 * <b>URL: </b> http://"ip o mesa de host":8080/VideoAndes/rest/videos
-	 * @param orden - video a aliminar. 
-	 * @return Json con el video que elimino o Json con el error que se produjo
-	 */
-	@DELETE
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path( "{mesa: \\d+}/{fecha: [1-9_]+}")
-	public Response deleteOrden(@PathParam("mesa") int mesa, @PathParam("fecha") String fecha) {
-		TMOrden tm = new TMOrden(getPath());
-		try {
-			String[] f = fecha.split("_");
-			tm.deleteOrden(mesa, new Date(Integer.parseInt(f[2])-1900,Integer.parseInt(f[1]),Integer.parseInt(f[0])));
-		} catch (Exception e) {
-			return Response.status(500).entity(doErrorMessage(e)).build();
-		}
-		return Response.status(200).entity(mesa+", "+fecha).build();
-	}
-
-	}
+}

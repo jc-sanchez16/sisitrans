@@ -97,23 +97,6 @@ public class DAOOrden {
 
 
 
-	public void addOrden(Orden orden) throws SQLException, Exception {
-
-		int aten = orden.getAtendido()==true?0:1;
-		String sql = "INSERT INTO ORDEN VALUES (";
-		sql += orden.getFecha().getTime() + ",";
-		sql += orden.getMesa() + ",";
-		sql += aten+")";
-
-
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
-		addUsuarios(orden);
-		addMenus(orden);
-		addProductos(orden);
-
-	}
 	public void addOrdenEnProceso(Orden orden) throws SQLException, Exception {
 
 		int aten = orden.getAtendido()==true?0:1;
@@ -128,27 +111,6 @@ public class DAOOrden {
 		prepStmt.executeQuery();
 		addUsuarios(orden);
 
-	}
-
-	public void updateOrden(Orden orden) throws SQLException, Exception {
-
-		deleteUsuarios(orden.getMesa(), orden.getFecha().getTime());
-		deleteMenusYProductos(orden.getMesa(), orden.getFecha().getTime());
-		addUsuarios(orden);
-		addMenus(orden);
-		addProductos(orden);
-
-	}
-
-
-	public void deleteOrden(int mesa, Date fecha) throws SQLException, Exception {
-
-		String sql = "DELETE FROM ORDEN";
-		sql += " WHERE MESA= " + mesa+ " AND FECHA = " + fecha.getTime();
-
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
 	}
 
 
@@ -201,8 +163,12 @@ public class DAOOrden {
 				String nombre = rs.getString("NOMBRE");
 				String restaurante = rs.getString("RESTAURANTE");
 				Menu menu = daoProducto.getMenuPK(nombre, restaurante);
+				String cambios = rs.getString("CAMBIOS");
 				if(menu!= null)	
+				{
+					menu.setCambios(cambios);
 					lista.add(menu);
+				}
 			}
 		}
 		finally
@@ -228,9 +194,48 @@ public class DAOOrden {
 				String restaurante = rs.getString("RESTAURANTE");
 				Producto producto = daoProducto.getProductoPK(nombre, restaurante);
 				String cambios = rs.getString("CAMBIOS");
-				producto.setCambios(cambios);
 				if(producto!= null)	
+				{
+					producto.setCambios(cambios);
 					lista.add(producto);
+				}
+			}
+		}
+		finally
+		{
+			daoProducto.cerrarRecursos();
+		}
+		return lista;
+	}
+	private ArrayList<Articulo> getArticulosOrden(int mesa, long f)throws Exception {
+		ArrayList<Articulo> lista = new ArrayList<Articulo>();
+		DAOProducto daoProducto = new DAOProducto();
+		try
+		{
+			daoProducto.setConn(conn);
+			String sql = "SELECT * FROM ORDEN_PRODUCTO WHERE MESA = "+mesa+" AND FECHA = "+f;
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			ResultSet rs = prepStmt.executeQuery();
+			while (rs.next()) {		
+				String nombre = rs.getString("NOMBRE");
+				String restaurante = rs.getString("RESTAURANTE");
+				Producto producto = daoProducto.getProductoPK(nombre, restaurante);
+				String cambios = rs.getString("CAMBIOS");
+				if(producto ==null)
+				{
+					Menu product = daoProducto.getMenuPK(nombre, restaurante);
+					if(product!= null)
+					{
+						product.setCambios(cambios);
+						lista.add(product);
+					}
+				}
+				else 
+				{
+					producto.setCambios(cambios);
+					lista.add(producto);
+				}
 			}
 		}
 		finally
@@ -310,11 +315,12 @@ public class DAOOrden {
 	}
 
 
-	public void registrarPedidoProducto(String nombre, String restaurante, String[] cambios, int mesa, Date fecha) throws Exception
+	public void registrarPedidoProducto(String nombre, String restaurante, String camb,int usuario, int mesa, Date fecha) throws Exception
 	{
 		DAOProducto daoProducto = new DAOProducto();
 		try
 		{
+			String[] cambios = camb.split(":");
 			daoProducto.setConn(conn);
 			if(daoProducto.verificarDisponibilidad(nombre,restaurante,cambios))
 			{
@@ -322,7 +328,9 @@ public class DAOOrden {
 				sql += restaurante+"','";
 				sql += nombre+"',";
 				sql += fecha.getTime() + ",";
-				sql += mesa + ")";
+				sql += mesa + ",'";
+				sql += camb +"',";
+				sql += usuario +")";
 				PreparedStatement prepStmt = conn.prepareStatement(sql);
 				recursos.add(prepStmt);
 				prepStmt.executeQuery();
@@ -352,19 +360,19 @@ public class DAOOrden {
 		{
 			daoProducto.setConn(conn);
 			daoRestaurante.setConn(conn);
-			if(!daoRestaurante.verificar(restaurante, clave))
+			if(!daoRestaurante.verificarRest(restaurante, clave))
 				throw new Exception("no es un usuario valido");
 			String sql = "UPDATE ORDEN SET ";
-			sql += "ATENDIDO ="+ 0+",";
+			sql += "ATENDIDO ="+ 0+"";
 			sql += " WHERE FECHA = " + fecha.getTime()+" AND MESA ="+mesa;
 			PreparedStatement prepStmt = conn.prepareStatement(sql);
 			recursos.add(prepStmt);
 			prepStmt.executeQuery();
-			ArrayList<Producto> productos = getProductosOrden(mesa, fecha.getTime());
+			ArrayList<Articulo> productos = getArticulosOrden(mesa, fecha.getTime());
 			for (int i = 0; i < productos.size(); i++) 
 			{
-				Producto producto = productos.get(i);
-				daoProducto.restarUnidad(producto.getNombre(), producto.getRestaurante(), producto.getCambios().split("."));
+				Articulo producto = productos.get(i);
+				daoProducto.restarUnidad(producto.getNombre(), producto.getRestaurante(), producto.getCambios().split(":"));
 			}
 			res= "se realizo la accion";
 		}
@@ -382,9 +390,10 @@ public class DAOOrden {
 		DAORestaurante daoRestaurante = new DAORestaurante();
 		try
 		{
+			daoRestaurante.setConn(conn);
 			if(getOrdenPK(mesa, fecha).getAtendido())
 				throw new Exception("La orden ya estaba finalizada");
-			if(!daoRestaurante.verificar(restaurante, clave))
+			if(!daoRestaurante.verificarRest(restaurante, clave))
 				throw new Exception("no es un usuario valido");
 			String sql = "DELETE FROM ORDEN WHERE FECHA = " + fecha.getTime()+" AND MESA ="+mesa;
 			PreparedStatement prepStmt = conn.prepareStatement(sql);
@@ -400,12 +409,13 @@ public class DAOOrden {
 	}
 
 
-	public String consultarConsumo(int usuario, int clave, int peticion) {
+	public ArrayList<Articulo> consultarConsumo(int usuario, int clave, int peticion) throws Exception {
 		ArrayList<Articulo> res = new ArrayList<Articulo>();
 		DAOUsuario daoUsuario= new DAOUsuario();
 		DAOProducto daoProducto = new DAOProducto();		
 		try
 		{
+			daoProducto.setConn(conn);
 			daoUsuario.setConn(conn);
 			if(!(daoUsuario.verificar(usuario, clave,1)||(usuario==peticion && daoUsuario.verificar(usuario, clave, 0))))
 				throw new Exception("no es un usuario valido");
@@ -416,8 +426,12 @@ public class DAOOrden {
 			while (rs.next()) {		
 				String nombre = rs.getString("NOMBRE");
 				String restaurante = rs.getString("RESTAURANTE");
-				lista.add(
-						daoProducto.getProductoPK(nombre, restaurante);;
+				Articulo art = daoProducto.getProductoPK(nombre, restaurante);
+				if(art!= null)
+				{
+					res.add(art);
+				}
+				res.add(daoProducto.getMenuPK(nombre, restaurante));
 			}
 		}
 		finally
@@ -425,7 +439,147 @@ public class DAOOrden {
 			daoUsuario.cerrarRecursos();
 			daoProducto.cerrarRecursos();
 		}
-		return lista;
+		return res;
 	}
 
+
+	public String consultarPedidos(String usuario, int clave) throws SQLException, Exception {
+		String res = null;
+		DAOUsuario daoUsuario= new DAOUsuario();
+		DAOProducto daoProducto = new DAOProducto();		
+		DAORestaurante daoRestaurante = new DAORestaurante();
+		try
+		{
+			daoUsuario.setConn(conn);
+			daoRestaurante.setConn(conn);
+			daoProducto.setConn(conn);
+			String sql = "SELECT * FROM ORDEN_PRODUCTO ";
+			if(daoRestaurante.verificarRest(usuario,clave))
+				sql += "WHERE RESTAURANTE = '"+usuario+"' ";
+			else if(!daoUsuario.verificar(Integer.parseInt(usuario), clave, 1))
+				throw new Exception("no es un usuario valido");
+			sql += "ORDER BY RESTAURANTE";
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			ResultSet rs = prepStmt.executeQuery();
+			res = "[";
+			String ant = null;
+			int clientesNR = 0;
+			double ventas= 0;
+			ArrayList<String> productos= new ArrayList<String>();
+			String restaurante = null;
+			//	RFC8. CONSULTAR PEDIDOS
+			//	Muestra la información consolidada de los pedidos hechos en RotondAndes. Consolida, como mínimo, para cada uno los
+			//	restaurantes y para cada uno de sus productos las ventas totales (en dinero y en cantidad), lo consumidos por clientes
+			//	registrados y por clientes no registrados.
+			//	Esta operación es realizada por un usuario restaurante y por el administrador de RotondAndes.
+			//	NOTA: Respetando la privacidad de los clientes, cuando un restaurante hace esta consulta obtiene la información de sus
+			//	propias actividades, mientras que el administrador obtiene toda la información. Ver RNF1.
+			while (rs.next())
+			{
+				restaurante = rs.getString("RESTAURANTE");
+				if(ant !=null && !ant.equals(restaurante))
+				{
+					res +="\"productos\": [";
+					for(int i = 0 ; i<productos.size();i++)
+					{
+						String actual = productos.get(i); 
+						if(!actual.equals(""))
+						{
+							int cantidad =  1;
+							for(int j = i+1 ; j<productos.size();j++)
+							{
+								String nuevo =  productos.get(j);
+								if(nuevo.equals(actual))
+								{
+									cantidad++;
+									productos.add(j, "");
+								}
+							}
+							res+= "{\"nombre\": \""+actual+"\",";
+							res+="\"unidadesVendidas\": "+cantidad+",";
+							Producto prod = daoProducto.getProductoPK(actual, ant);
+							if(prod == null)
+							{
+								Menu men = daoProducto.getMenuPK(actual, ant);
+								res+="\"ventas\": "+men.getPrecio()*cantidad+"},";
+								ventas+=men.getPrecio()*cantidad;
+							}
+							else
+							{
+								res+="\"ventas\": "+prod.getPrecio()*cantidad+"},";
+								ventas+=prod.getPrecio()*cantidad;
+							}
+						}
+					}
+					res = res.substring(0,res.lastIndexOf(","));
+					res +="], \"clientesNoRegistrados\": "+clientesNR+","; 
+					res +=" \"clientesRegistrados\": "+(productos.size()-clientesNR)+","; 
+					res += "\"cantidadVentas\": "+productos.size()+",";
+					res += "\"valorVentas\": "+ventas+"}, ";
+					res+="{\"nombre\": \""+ restaurante+"\",";
+					ant = restaurante;
+					clientesNR = 0;
+					ventas= 0;
+					productos= new ArrayList<String>();
+
+				}
+				if(ant ==null)
+				{
+					res+="{\"nombre\": \""+ restaurante+"\",";
+					ant = restaurante;
+				}
+				String nombre = rs.getString("NOMBRE");
+				int usua = rs.getInt("USUARIO");
+				if(daoUsuario.verificar(usua, 0, 0))
+					clientesNR++;
+				productos.add(nombre);				
+			}		
+			res +="\"productos\": [";
+			for(int i = 0 ; i<productos.size();i++)
+			{
+				String actual = productos.get(i); 
+				int cantidad =  1;
+				for(int j = i+1 ; j<productos.size();j++)
+				{
+					String nuevo =  productos.get(j);
+					if(nuevo.equals(actual))
+					{
+						cantidad++;
+						productos.add(j, "");
+					}
+				}
+				res+= "{\"nombre\": \""+actual+"\",";
+				res+="\"unidadesVendidas\": "+cantidad+",";
+				Producto prod = daoProducto.getProductoPK(actual, ant);
+				if(prod == null)
+				{
+					Menu men = daoProducto.getMenuPK(actual, ant);
+					res+="\"ventas\": "+men.getPrecio()*cantidad+"},";
+					ventas+=men.getPrecio()*cantidad;
+				}
+				else
+				{
+					res+="\"ventas\": "+prod.getPrecio()*cantidad+"},";
+					ventas+=prod.getPrecio()*cantidad;
+				}
+
+			}
+			res = res.substring(0,res.lastIndexOf(","));
+			res +="], \"clientesNoRegistrados\": "+clientesNR+","; 
+			res +=" \"clientesRegistrados\": "+(productos.size()-clientesNR)+","; 
+			res += "\"cantidadVentas\": "+productos.size()+",";
+			res += "\"valorVentas\": "+ventas+"}]";			
+		}
+		catch(NumberFormatException e)
+		{
+			throw new Exception("no es un restaurante valido");
+		}
+		finally
+		{
+			daoUsuario.cerrarRecursos();
+			daoProducto.cerrarRecursos();
+		}
+		return res;
+	}
 }
