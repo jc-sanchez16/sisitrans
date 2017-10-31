@@ -1,0 +1,163 @@
+{
+	"id": "04ec1472-41aa-5bf4-91a0-aaceac730a91",
+	"name": "IngredientesServices",
+	"description": "Pruebas de los servicios de los ingredientes",
+	"order": [
+		"ae9f57b7-d9d2-a468-a9e9-3c54c3111adb",
+		"0c8cdab3-61e4-80d9-6ab4-24f1cf7d9e20",
+		"ace4e5cc-ed64-eed7-ac8c-6e2a1c94d13a",
+		"2c9bf0bf-4133-86cf-f0d9-437ffae8a9af"
+	],
+	"folders": [],
+	"folders_order": [],
+	"timestamp": 1509252283073,
+	"owner": 0,
+	"public": false,
+	"requests": [
+		{
+			"id": "0c8cdab3-61e4-80d9-6ab4-24f1cf7d9e20",
+			"headers": "",
+			"headerData": [],
+			"url": "http://localhost:8080/RotonAndes/rest/ingredientes/PK?nombre=LECHUGA",
+			"queryParams": [
+				{
+					"key": "nombre",
+					"value": "LECHUGA",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				}
+			],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "GET",
+			"collectionId": "04ec1472-41aa-5bf4-91a0-aaceac730a91",
+			"data": null,
+			"dataMode": "params",
+			"name": "http://localhost:8080/RotonAndes/rest/ingredientes/PK?nombre=LECHUGA",
+			"description": "OBTENER UN INGREDIENTE POR SU NOMBRE",
+			"descriptionFormat": "html",
+			"time": 1509253664748,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "2c9bf0bf-4133-86cf-f0d9-437ffae8a9af",
+			"headers": "",
+			"headerData": [],
+			"url": "http://localhost:8080/RotonAndes/rest/ingredientes?restaurante=LAS DELICIAS&claveRestaurante=42365&nombre=PEPINOS",
+			"queryParams": [
+				{
+					"key": "restaurante",
+					"value": "LAS DELICIAS",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "claveRestaurante",
+					"value": "42365",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "nombre",
+					"value": "PEPINOS",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				}
+			],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "DELETE",
+			"collectionId": "04ec1472-41aa-5bf4-91a0-aaceac730a91",
+			"data": null,
+			"dataMode": "params",
+			"name": "http://localhost:8080/RotonAndes/rest/ingredientes?restaurante=LAS DELICIAS&claveRestaurante=42365&nombre=PEPINOS",
+			"description": "borra un ingrediente.",
+			"descriptionFormat": "html",
+			"time": 1509253857466,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "ace4e5cc-ed64-eed7-ac8c-6e2a1c94d13a",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8080/RotonAndes/rest/ingredientes?restaurante=LAS DELICIAS&claveRestaurante=42365",
+			"queryParams": [
+				{
+					"key": "restaurante",
+					"value": "LAS DELICIAS",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "claveRestaurante",
+					"value": "42365",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				}
+			],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "POST",
+			"collectionId": "04ec1472-41aa-5bf4-91a0-aaceac730a91",
+			"data": [],
+			"dataMode": "raw",
+			"name": "http://localhost:8080/RotonAndes/rest/ingredientes?restaurante=LAS DELICIAS&claveRestaurante=42365",
+			"description": "AGREGAR UN INGREDIENTE",
+			"descriptionFormat": "html",
+			"time": 1509253682764,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"rawModeData": "{\"nombre\": \"PEPINOS\",\n    \"descripcionE\": \"PEPINOS PARA ACOMPAÑAR ENSALADAS\",\n    \"descripcionEn\": \"CUCUMBERS TO ACCOMPANY SALADS\"}"
+		},
+		{
+			"id": "ae9f57b7-d9d2-a468-a9e9-3c54c3111adb",
+			"headers": "",
+			"headerData": [],
+			"url": "http://localhost:8080/RotonAndes/rest/ingredientes",
+			"queryParams": [],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "GET",
+			"collectionId": "04ec1472-41aa-5bf4-91a0-aaceac730a91",
+			"data": null,
+			"dataMode": "params",
+			"name": "http://localhost:8080/RotonAndes/rest/ingredientes",
+			"description": "Obtener todos los ingredientes",
+			"descriptionFormat": "html",
+			"time": 1509252491820,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		}
+	]
+}

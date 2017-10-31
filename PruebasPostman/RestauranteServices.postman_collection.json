@@ -1,0 +1,225 @@
+{
+	"id": "4a93de85-421f-2ea7-3459-47b55b850ba7",
+	"name": "RestauranteServices",
+	"description": "Pruebas de los servicios del restaurante.",
+	"order": [
+		"906adf01-6eab-b636-1b95-2e7ac60d2281",
+		"52a08ed7-7b8c-5db0-a7c9-bc41c647dd71",
+		"9a35fd41-d0e0-5c58-3f81-33897f8b9f9d",
+		"30fd5481-824a-a123-023c-abe5ac3cf174",
+		"dab76a07-c2b6-35f8-a1bb-18f244d9edb8"
+	],
+	"folders": [],
+	"folders_order": [],
+	"timestamp": 1509202730334,
+	"owner": 0,
+	"public": false,
+	"requests": [
+		{
+			"id": "30fd5481-824a-a123-023c-abe5ac3cf174",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8080/RotonAndes/rest/restaurantes?usuario=12345678&contraseñaAd=21435423",
+			"queryParams": [
+				{
+					"key": "usuario",
+					"value": "12345678",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "contraseñaAd",
+					"value": "21435423",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				}
+			],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "PUT",
+			"collectionId": "4a93de85-421f-2ea7-3459-47b55b850ba7",
+			"data": [],
+			"dataMode": "raw",
+			"name": "http://localhost:8080/RotonAndes/rest/restaurantes?usuario=12345678&contraseñaAd=21435423",
+			"description": "ACTUALIZAR UN RESTAURANTE EN ROTONDANDES",
+			"descriptionFormat": "html",
+			"time": 1509242388219,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"rawModeData": "{\"nombre\":\"RAPI FOOD\",\"tipoComida\":\"RANCHERA\",\"web\":\"WWW.RAPIFOOD123.COM\",\"zona\":7,\"administrador\":918273645}"
+		},
+		{
+			"id": "52a08ed7-7b8c-5db0-a7c9-bc41c647dd71",
+			"headers": "",
+			"headerData": [],
+			"url": "http://localhost:8080/RotonAndes/rest/restaurantes/PK?nombre=DOÑA SEGUNDA",
+			"queryParams": [
+				{
+					"key": "nombre",
+					"value": "DOÑA SEGUNDA",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				}
+			],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "GET",
+			"collectionId": "4a93de85-421f-2ea7-3459-47b55b850ba7",
+			"data": null,
+			"dataMode": "params",
+			"name": "http://localhost:8080/RotonAndes/rest/restaurantes/PK?nombre=DOÑA SEGUNDA",
+			"description": "OBTENER UN RESTAURANTE POR SU NOMBRE",
+			"descriptionFormat": "html",
+			"time": 1509240441897,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "906adf01-6eab-b636-1b95-2e7ac60d2281",
+			"headers": "",
+			"headerData": [],
+			"url": "http://localhost:8080/RotonAndes/rest/restaurantes",
+			"queryParams": [],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "GET",
+			"collectionId": "4a93de85-421f-2ea7-3459-47b55b850ba7",
+			"data": null,
+			"dataMode": "params",
+			"name": "http://localhost:8080/RotonAndes/rest/restaurantes",
+			"description": "Obtener todos los restaurantes.",
+			"descriptionFormat": "html",
+			"time": 1509203316174,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "9a35fd41-d0e0-5c58-3f81-33897f8b9f9d",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8080/RotonAndes/rest/restaurantes?clave=543216789&usuario=12345678&contraseñaAd=21435423",
+			"queryParams": [
+				{
+					"key": "clave",
+					"value": "543216789",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "usuario",
+					"value": "12345678",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "contraseñaAd",
+					"value": "21435423",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				}
+			],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "POST",
+			"collectionId": "4a93de85-421f-2ea7-3459-47b55b850ba7",
+			"data": [],
+			"dataMode": "raw",
+			"name": "http://localhost:8080/RotonAndes/rest/restaurantes?clave=543216789&usuario=12345678&contraseñaAd=21435423",
+			"description": "Agregar un restaurante a rotondAndes",
+			"descriptionFormat": "html",
+			"time": 1509241880380,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"rawModeData": "{\"nombre\":\"RAPI FOOD\",\"tipoComida\":\"RAPIDA\",\"web\":\"WWW.RAPIFOOD.COM\",\"zona\":5,\"administrador\":918273645}"
+		},
+		{
+			"id": "dab76a07-c2b6-35f8-a1bb-18f244d9edb8",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8080/RotonAndes/rest/restaurantes?usuario=12345678&contraseñaAd=21435423&nombre=RAPI FOOD",
+			"queryParams": [
+				{
+					"key": "usuario",
+					"value": "12345678",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "contraseñaAd",
+					"value": "21435423",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "nombre",
+					"value": "RAPI FOOD",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				}
+			],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "DELETE",
+			"collectionId": "4a93de85-421f-2ea7-3459-47b55b850ba7",
+			"data": [],
+			"dataMode": "raw",
+			"name": "http://localhost:8080/RotonAndes/rest/restaurantes?usuario=12345678&contraseñaAd=21435423&nombre=RAPI FOOD",
+			"description": "BORRAR UN RESTAURANTE DE LA ROTONDA",
+			"descriptionFormat": "html",
+			"time": 1509242579241,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"rawModeData": ""
+		}
+	]
+}

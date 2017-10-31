@@ -1,0 +1,224 @@
+{
+	"id": "70e91ee7-b135-75ca-c99e-bd19299393c5",
+	"name": "MenusServices",
+	"description": "Pruebas de los servicios del menu",
+	"order": [
+		"64e59dda-8507-d5e8-dc6b-09a9f84075d5",
+		"4a8088d1-be8b-8812-87f4-e5fdff3b7b04",
+		"5792fcc9-22c0-9e74-e8d0-56bcb6d6e894",
+		"bdbfb8e7-764b-f070-62dc-dfe5e37aac2e",
+		"0c333c97-ac3d-b4a2-c0c4-d6ba15f43e43"
+	],
+	"folders": [],
+	"folders_order": [],
+	"timestamp": 1509212186961,
+	"owner": 0,
+	"public": false,
+	"requests": [
+		{
+			"id": "0c333c97-ac3d-b4a2-c0c4-d6ba15f43e43",
+			"headers": "",
+			"headerData": [],
+			"url": "http://localhost:8080/RotonAndes/rest/menus?nombre=EAT AND EAT&restaurante=LAS DELICIAS&restauranteVerificar=LAS DELICIAS&claveRestaurante=42365",
+			"queryParams": [
+				{
+					"key": "nombre",
+					"value": "EAT AND EAT",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "restaurante",
+					"value": "LAS DELICIAS",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "restauranteVerificar",
+					"value": "LAS DELICIAS",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "claveRestaurante",
+					"value": "42365",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				}
+			],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "DELETE",
+			"collectionId": "70e91ee7-b135-75ca-c99e-bd19299393c5",
+			"data": null,
+			"dataMode": "params",
+			"name": "http://localhost:8080/RotonAndes/rest/menus?nombre=EAT AND EAT&restaurante=LAS DELICIAS&restauranteVerificar=LAS DELICIAS&claveRestaurante=42365",
+			"description": "BORRAR UN MENU",
+			"descriptionFormat": "html",
+			"time": 1509252141240,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "4a8088d1-be8b-8812-87f4-e5fdff3b7b04",
+			"headers": "",
+			"headerData": [],
+			"url": "http://localhost:8080/RotonAndes/rest/menus/PK?nombre=EL GIGANTE&restaurante=CARNES FINAS",
+			"queryParams": [
+				{
+					"key": "nombre",
+					"value": "EL GIGANTE",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "restaurante",
+					"value": "CARNES FINAS",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				}
+			],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "GET",
+			"collectionId": "70e91ee7-b135-75ca-c99e-bd19299393c5",
+			"data": null,
+			"dataMode": "params",
+			"name": "http://localhost:8080/RotonAndes/rest/menus/PK?nombre=EL GIGANTE&restaurante=CARNES FINAS",
+			"description": "OBTENER UN MENU POR SU NOMBRE Y RESTAURANTE QUE LO OFRECE.",
+			"descriptionFormat": "html",
+			"time": 1509246916360,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "5792fcc9-22c0-9e74-e8d0-56bcb6d6e894",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8080/RotonAndes/rest/menus?restaurante=LAS DELICIAS&claveRestaurante=42365",
+			"queryParams": [
+				{
+					"key": "restaurante",
+					"value": "LAS DELICIAS",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "claveRestaurante",
+					"value": "42365",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				}
+			],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "POST",
+			"collectionId": "70e91ee7-b135-75ca-c99e-bd19299393c5",
+			"data": [],
+			"dataMode": "raw",
+			"name": "http://localhost:8080/RotonAndes/rest/menus?restaurante=LAS DELICIAS&claveRestaurante=42365",
+			"description": "UN POST CON ERROR PUES QUIERE CREAR UN MENU NO ASOCIADO AL RESTAURANTE QUE LO QUIERE AGREGAR",
+			"descriptionFormat": "html",
+			"time": 1509247259991,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"rawModeData": "   {\"nombre\": \"EAT AND EAT\",\"restaurante\": \"CARNES FINAS\", \"costo\": 13590,\n    \"precio\": 20000,\"tiempoPreparacion\": 40,\"cantidadMaxima\": 100}"
+		},
+		{
+			"id": "64e59dda-8507-d5e8-dc6b-09a9f84075d5",
+			"headers": "",
+			"headerData": [],
+			"url": "http://localhost:8080/RotonAndes/rest/menus",
+			"queryParams": [],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "GET",
+			"collectionId": "70e91ee7-b135-75ca-c99e-bd19299393c5",
+			"data": null,
+			"dataMode": "params",
+			"name": "http://localhost:8080/RotonAndes/rest/menus",
+			"description": "OBTENER TODOS LOS MENUS",
+			"descriptionFormat": "html",
+			"time": 1509245256629,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "bdbfb8e7-764b-f070-62dc-dfe5e37aac2e",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8080/RotonAndes/rest/menus?restaurante=LAS DELICIAS&claveRestaurante=42365",
+			"queryParams": [
+				{
+					"key": "restaurante",
+					"value": "LAS DELICIAS",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "claveRestaurante",
+					"value": "42365",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				}
+			],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "PUT",
+			"collectionId": "70e91ee7-b135-75ca-c99e-bd19299393c5",
+			"data": [],
+			"dataMode": "raw",
+			"name": "http://localhost:8080/RotonAndes/rest/menus?restaurante=LAS DELICIAS&claveRestaurante=42365",
+			"description": "ACTUALIZAR UN MENU",
+			"descriptionFormat": "html",
+			"time": 1509251970992,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"rawModeData": "   {\"nombre\": \"EAT AND EAT\",\"restaurante\": \"LAS DELICIAS\", \"costo\": 17830,\n    \"precio\": 25340,\"tiempoPreparacion\": 37,\"cantidadMaxima\": 205}"
+		}
+	]
+}

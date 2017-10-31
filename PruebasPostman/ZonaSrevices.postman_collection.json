@@ -1,0 +1,227 @@
+{
+	"id": "854bf84a-4987-7b30-0339-0a1149642931",
+	"name": "ZonaSrevices",
+	"description": "Pruebas de los servicos zona.",
+	"order": [
+		"5aec5896-a9b2-859f-90dd-d516caee9ff0",
+		"94ced232-bd61-2992-cb52-32ca1c332f2b",
+		"617ef30c-b17b-5cbb-d2fb-0ae132ca4cc6",
+		"382a5e42-63f9-b316-b57f-66d0055a7d56",
+		"e572f6b6-96d4-23f9-14cf-80ef4e69cea7",
+		"4a5b31b7-bd7e-72de-b70a-e78bdd490c81"
+	],
+	"folders": [],
+	"folders_order": [],
+	"timestamp": 1509199321094,
+	"owner": 0,
+	"public": false,
+	"requests": [
+		{
+			"id": "382a5e42-63f9-b316-b57f-66d0055a7d56",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8080/RotonAndes/rest/zonas?usuario=67194643&clave=5246545",
+			"queryParams": [
+				{
+					"key": "usuario",
+					"value": "67194643",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "clave",
+					"value": "5246545",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				}
+			],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "PUT",
+			"collectionId": "854bf84a-4987-7b30-0339-0a1149642931",
+			"data": [],
+			"dataMode": "raw",
+			"name": "http://localhost:8080/RotonAndes/rest/zonas?usuario=67194643&clave=5246545",
+			"description": "Actualizar la zona",
+			"descriptionFormat": "html",
+			"time": 1509221332659,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"rawModeData": "{\"id\":12,\"abierto\":\"false\",\"capacidad\":25,\"discapacitados\":\"true\",\"especialidad\":\"JAPONESA\"}"
+		},
+		{
+			"id": "4a5b31b7-bd7e-72de-b70a-e78bdd490c81",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8080/RotonAndes/rest/zonas?usuario=67194643&clave=5246545",
+			"queryParams": [
+				{
+					"key": "usuario",
+					"value": "67194643",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "clave",
+					"value": "5246545",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				}
+			],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "POST",
+			"collectionId": "854bf84a-4987-7b30-0339-0a1149642931",
+			"data": [],
+			"dataMode": "raw",
+			"name": "http://localhost:8080/RotonAndes/rest/zonas?usuario=67194643&clave=5246545",
+			"description": "AGREGAR UNA ZONA",
+			"descriptionFormat": "html",
+			"time": 1509221762617,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"rawModeData": "{\"id\":14,\"abierto\":\"false\",\"capacidad\":67,\"discapacitados\":\"true\",\"especialidad\":\"COLOMBIANA\"}"
+		},
+		{
+			"id": "5aec5896-a9b2-859f-90dd-d516caee9ff0",
+			"headers": "",
+			"headerData": [],
+			"url": "http://localhost:8080/RotonAndes/rest/zonas",
+			"queryParams": [],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "GET",
+			"collectionId": "854bf84a-4987-7b30-0339-0a1149642931",
+			"data": null,
+			"dataMode": "params",
+			"name": "http://localhost:8080/RotonAndes/rest/zonas",
+			"description": "Obtener todas las zonas.",
+			"descriptionFormat": "html",
+			"time": 1509199433106,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "617ef30c-b17b-5cbb-d2fb-0ae132ca4cc6",
+			"headers": "",
+			"headerData": [],
+			"url": "http://localhost:8080/RotonAndes/rest/zonas/12",
+			"queryParams": [],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "DELETE",
+			"collectionId": "854bf84a-4987-7b30-0339-0a1149642931",
+			"data": null,
+			"dataMode": "params",
+			"name": "http://localhost:8080/RotonAndes/rest/zonas/12",
+			"description": "Borrar una zona.",
+			"descriptionFormat": "html",
+			"time": 1509200615403,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "94ced232-bd61-2992-cb52-32ca1c332f2b",
+			"headers": "",
+			"headerData": [],
+			"url": "http://localhost:8080/RotonAndes/rest/zonas/5",
+			"queryParams": [],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "GET",
+			"collectionId": "854bf84a-4987-7b30-0339-0a1149642931",
+			"data": null,
+			"dataMode": "params",
+			"name": "http://localhost:8080/RotonAndes/rest/zonas/5",
+			"description": "Obtener una zona en especial, respecto a su id.",
+			"descriptionFormat": "html",
+			"time": 1509199571804,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "e572f6b6-96d4-23f9-14cf-80ef4e69cea7",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8080/RotonAndes/rest/zonas?usuario=67194643&clave=5246545",
+			"queryParams": [
+				{
+					"key": "usuario",
+					"value": "67194643",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "clave",
+					"value": "5246545",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				}
+			],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "POST",
+			"collectionId": "854bf84a-4987-7b30-0339-0a1149642931",
+			"data": [],
+			"dataMode": "raw",
+			"name": "http://localhost:8080/RotonAndes/rest/zonas?usuario=67194643&clave=5246545",
+			"description": "AGREGAR UNA ZONA QUE YA TENNIA UN ID FALLO",
+			"descriptionFormat": "html",
+			"time": 1509221729292,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"rawModeData": "{\"id\":13,\"abierto\":\"false\",\"capacidad\":67,\"discapacitados\":\"true\",\"especialidad\":\"COLOMBIANA\"}"
+		}
+	]
+}

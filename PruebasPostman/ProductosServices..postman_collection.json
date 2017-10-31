@@ -1,0 +1,232 @@
+{
+	"id": "af336935-59fe-3a05-536f-9cda482fc552",
+	"name": "ProductosServices.",
+	"description": "Pruebas de los servicios de los productos",
+	"order": [
+		"4044e8d3-e0f6-292c-50f2-f5e624b9eb6f",
+		"a50c0e72-681a-1052-cbdf-bef1df256dc0",
+		"a7a963b4-2d37-8f27-49d1-ee700ab90f23",
+		"f18cfe26-bd43-7af1-e2c2-7b5efd75394b",
+		"95862d27-b7c2-2206-42a4-409fa271a49b"
+	],
+	"folders": [],
+	"folders_order": [],
+	"timestamp": 1509207332086,
+	"owner": 0,
+	"public": false,
+	"requests": [
+		{
+			"id": "4044e8d3-e0f6-292c-50f2-f5e624b9eb6f",
+			"headers": "",
+			"headerData": [],
+			"url": "http://localhost:8080/RotonAndes/rest/productos",
+			"queryParams": [],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "GET",
+			"collectionId": "af336935-59fe-3a05-536f-9cda482fc552",
+			"data": null,
+			"dataMode": "params",
+			"name": "http://localhost:8080/RotonAndes/rest/productos",
+			"description": "Obtener todos los productos.",
+			"descriptionFormat": "html",
+			"time": 1509207347705,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "95862d27-b7c2-2206-42a4-409fa271a49b",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8080/RotonAndes/rest/productos?restaurante=DOÑA SEGUNDA&claveRestaurante=326557978&nombre=PATACON DULCE&restauranteVerificar=DOÑA SEGUNDA",
+			"queryParams": [
+				{
+					"key": "restaurante",
+					"value": "DOÑA SEGUNDA",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "claveRestaurante",
+					"value": "326557978",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "nombre",
+					"value": "PATACON DULCE",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "restauranteVerificar",
+					"value": "DOÑA SEGUNDA",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				}
+			],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "DELETE",
+			"collectionId": "af336935-59fe-3a05-536f-9cda482fc552",
+			"data": [],
+			"dataMode": "raw",
+			"name": "http://localhost:8080/RotonAndes/rest/productos?restaurante=DOÑA SEGUNDA&claveRestaurante=326557978&nombre=PATACON DULCE&restauranteVerificar=DOÑA SEGUNDA",
+			"description": "BORRAR UN PRODUCTO",
+			"descriptionFormat": "html",
+			"time": 1509245121259,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"rawModeData": ""
+		},
+		{
+			"id": "a50c0e72-681a-1052-cbdf-bef1df256dc0",
+			"headers": "",
+			"headerData": [],
+			"url": "http://localhost:8080/RotonAndes/rest/productos/PK?nombre=AREPA DULCE&restaurante=ANDRES CARNE DE RES",
+			"queryParams": [
+				{
+					"key": "nombre",
+					"value": "AREPA DULCE",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "restaurante",
+					"value": "ANDRES CARNE DE RES",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				}
+			],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "GET",
+			"collectionId": "af336935-59fe-3a05-536f-9cda482fc552",
+			"data": null,
+			"dataMode": "params",
+			"name": "http://localhost:8080/RotonAndes/rest/productos/PK?nombre=AREPA DULCE&restaurante=ANDRES CARNE DE RES",
+			"description": "OBTENER UN PRODUCTO POR EL RESTAURANTE QUE LO OFRECE Y SU NOMBRE",
+			"descriptionFormat": "html",
+			"time": 1509244200156,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "a7a963b4-2d37-8f27-49d1-ee700ab90f23",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8080/RotonAndes/rest/productos?restaurante=DOÑA SEGUNDA&claveRestaurante=326557978",
+			"queryParams": [
+				{
+					"key": "restaurante",
+					"value": "DOÑA SEGUNDA",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "claveRestaurante",
+					"value": "326557978",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				}
+			],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "POST",
+			"collectionId": "af336935-59fe-3a05-536f-9cda482fc552",
+			"data": [],
+			"dataMode": "raw",
+			"name": "http://localhost:8080/RotonAndes/rest/productos?restaurante=DOÑA SEGUNDA&claveRestaurante=326557978",
+			"description": "AGREAR UN PRODUCTO",
+			"descriptionFormat": "html",
+			"time": 1509244892892,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"rawModeData": "{\"nombre\": \"PATACON DULCE\",\"restaurante\": \"DOÑA SEGUNDA\",\"costo\": 7500,\"tipo\": 4,\n    \"descripcionE\": \"PATACON DELICIOSO\",\"descripcionEn\": \"SWEET PATACON\", \"tiempoPreparacion\": 13,\n    \"precio\": 9000,\"cantidadMaxima\": 230}"
+		},
+		{
+			"id": "f18cfe26-bd43-7af1-e2c2-7b5efd75394b",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8080/RotonAndes/rest/productos?restaurante=DOÑA SEGUNDA&claveRestaurante=326557978",
+			"queryParams": [
+				{
+					"key": "restaurante",
+					"value": "DOÑA SEGUNDA",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "claveRestaurante",
+					"value": "326557978",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				}
+			],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "PUT",
+			"collectionId": "af336935-59fe-3a05-536f-9cda482fc552",
+			"data": [],
+			"dataMode": "raw",
+			"name": "http://localhost:8080/RotonAndes/rest/productos?restaurante=DOÑA SEGUNDA&claveRestaurante=326557978",
+			"description": "ACTUALIZAR UN PRODUCTOR",
+			"descriptionFormat": "html",
+			"time": 1509244919527,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"rawModeData": "{\"nombre\": \"PATACON DULCE\",\"restaurante\": \"DOÑA SEGUNDA\",\"costo\": 4500,\"tipo\": 2,\n    \"descripcionE\": \"PATACON DELICIOSO\",\"descripcionEn\": \"SWEET PATACON\", \"tiempoPreparacion\": 9,\n    \"precio\": 7000,\"cantidadMaxima\": 110}"
+		}
+	]
+}
