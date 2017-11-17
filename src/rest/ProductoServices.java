@@ -16,8 +16,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import tm.TMProducto;
-import tm.TMReserva;
+import tm.TM;
 import vos.Menu;
 import vos.Producto;
 import vos.Reserva;
@@ -56,7 +55,7 @@ public class ProductoServices {
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getProductos() {
-		TMProducto tm = new TMProducto(getPath());
+		TM tm = new TM(getPath());
 		List<Producto> productos;
 		try {
 			productos = tm.getProductos();
@@ -78,7 +77,7 @@ public class ProductoServices {
 	@Produces( { MediaType.APPLICATION_JSON } )
 	public Response getProductoPK(  @QueryParam("nombre") String nombre, @QueryParam("restaurante") String restaurante)
 	{
-		TMProducto tm = new TMProducto( getPath( ) );
+		TM tm = new TM( getPath( ) );
 		try
 		{			
 			Producto producto = tm.getProductoPK(nombre, restaurante);
@@ -101,7 +100,7 @@ public class ProductoServices {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addProducto(Producto producto,@QueryParam("restaurante") String restaurante,@QueryParam("claveRestaurante") int claveRestaurante) {
-		TMProducto tm = new TMProducto(getPath());
+		TM tm = new TM(getPath());
 		try {
 			tm.addProducto(producto,restaurante,claveRestaurante);
 		} catch (Exception e) {
@@ -121,7 +120,7 @@ public class ProductoServices {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateProducto(Producto producto,@QueryParam("restaurante") String restaurante,@QueryParam("claveRestaurante") int claveRestaurante) {
-		TMProducto tm = new TMProducto(getPath());
+		TM tm = new TM(getPath());
 		try {
 			tm.updateProducto(producto,restaurante,claveRestaurante);
 		} catch (Exception e) {
@@ -141,7 +140,7 @@ public class ProductoServices {
 	@Produces(MediaType.APPLICATION_JSON)
 	
 	public Response deleteProducto(@QueryParam("nombre") String nombre, @QueryParam("restaurante") String restaurante,@QueryParam("restauranteVerificar") String restaurante2,@QueryParam("claveRestaurante") int claveRestaurante) {
-		TMProducto tm = new TMProducto(getPath());
+		TM tm = new TM(getPath());
 		try {
 			tm.deleteProducto(nombre,restaurante,restaurante2,claveRestaurante);
 		} catch (Exception e) {

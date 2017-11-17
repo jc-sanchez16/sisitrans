@@ -16,8 +16,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import tm.TMUsuario;
-import tm.TMZona;
+import tm.TM;
 import vos.Usuario;
 import vos.Zona;
 
@@ -59,7 +58,7 @@ public class UsuarioServices {
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getUsuarios( @QueryParam("usuario") int usuario,@QueryParam("clave") int clave) {
-		TMUsuario tm = new TMUsuario(getPath());
+		TM tm = new TM(getPath());
 		List<Usuario> usuarios;
 		try {
 			usuarios = tm.getUsuarios(usuario,clave);
@@ -81,7 +80,7 @@ public class UsuarioServices {
 	@Produces( { MediaType.APPLICATION_JSON } )
 	public Response getUsuarioPK(@QueryParam("clave") int clave)
 	{
-		TMUsuario tm = new TMUsuario( getPath( ) );
+		TM tm = new TM( getPath( ) );
 		try
 		{
 			Usuario user = tm.getUsuarioPK(clave);
@@ -104,7 +103,7 @@ public class UsuarioServices {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addUsuario(Usuario user,@QueryParam("usuario") int usuario,@QueryParam("claveNueva") int claveNueva,@QueryParam("clave") int clave) {
-		TMUsuario tm = new TMUsuario(getPath());
+		TM tm = new TM(getPath());
 		try {
 			tm.addUsuario(user, claveNueva, usuario, clave);
 		} catch (Exception e) {
@@ -124,7 +123,7 @@ public class UsuarioServices {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateUsuario(Usuario user, @QueryParam("usuario") int usuario ,@QueryParam("clave") int clave) {
-		TMUsuario tm = new TMUsuario(getPath());
+		TM tm = new TM(getPath());
 		try {
 			tm.updateUsuario(user,usuario,clave);
 		} catch (Exception e) {
@@ -143,7 +142,7 @@ public class UsuarioServices {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteUsuario( @QueryParam( "id" ) int id,@QueryParam("usuario") int usuario ,@QueryParam("clave") int clave ) {
-		TMUsuario tm = new TMUsuario(getPath());
+		TM tm = new TM(getPath());
 		try {
 			tm.deleteUsuario(id, usuario, clave);
 		} catch (Exception e) {
@@ -161,7 +160,7 @@ public class UsuarioServices {
 	@Path("admin")
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getAdministradores( @QueryParam("usuario") int usuario,@QueryParam("clave") int clave) {
-		TMUsuario tm = new TMUsuario(getPath());
+		TM tm = new TM(getPath());
 		List<Usuario> administradores;
 		try {
 			administradores = tm.getAdministradores(usuario,clave);
@@ -182,7 +181,7 @@ public class UsuarioServices {
 	@Produces( { MediaType.APPLICATION_JSON } )
 	public Response getAdministradorPK( @QueryParam( "id" ) int id, @QueryParam("usuario") int usuario,@QueryParam("clave") int clave )
 	{
-		TMUsuario tm = new TMUsuario( getPath( ) );
+		TM tm = new TM( getPath( ) );
 		try
 		{
 			Usuario admin = tm.getAdministradorPK(id,usuario,clave);
@@ -204,7 +203,7 @@ public class UsuarioServices {
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getRepresentantes(@QueryParam("usuario") int admin,@QueryParam("usuarioRep") int userRepresentante,
 			@QueryParam("claveUser") int claveUsuario, @QueryParam("claveRep") int claveRep) {
-		TMUsuario tm = new TMUsuario(getPath());
+		TM tm = new TM(getPath());
 		List<Usuario> administradores;
 		try {
 			administradores = tm.getRepresentantes(admin,userRepresentante,claveUsuario,claveRep);
@@ -226,7 +225,7 @@ public class UsuarioServices {
 	public Response getRepresentantePK( @QueryParam( "id" ) int id,@QueryParam("usuario") int admin2,@QueryParam("usuarioRep") int userRepresentante,@QueryParam("restaurante") String restaurante,
 			@QueryParam("claveUser") int claveUsuario, @QueryParam("claveRep") int claveRep,@QueryParam("claveRestaurante") int claveRestaurante )
 	{
-		TMUsuario tm = new TMUsuario( getPath( ) );
+		TM tm = new TM( getPath( ) );
 		try
 		{
 			Usuario admin = tm.getRepresentantesPK(id,admin2,userRepresentante,restaurante,claveUsuario,claveRep,claveRestaurante);

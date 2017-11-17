@@ -16,7 +16,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import tm.TMProducto;
+import tm.TM;
 import vos.Menu;
 
 /**
@@ -52,7 +52,7 @@ public class MenuServices {
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getMenus() {
-		TMProducto tm = new TMProducto(getPath());
+		TM tm = new TM(getPath());
 		List<Menu> menus;
 		try {
 			menus = tm.getMenus();
@@ -74,7 +74,7 @@ public class MenuServices {
 	@Produces( { MediaType.APPLICATION_JSON } )
 	public Response getMenuPk(  @QueryParam("nombre") String nombre, @QueryParam("restaurante") String restaurante )
 	{
-		TMProducto tm = new TMProducto( getPath( ) );
+		TM tm = new TM( getPath( ) );
 		try
 		{
 			Menu menu = tm.getMenuPK(nombre, restaurante);
@@ -97,7 +97,7 @@ public class MenuServices {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addMenu(Menu menu,@QueryParam("restaurante") String restaurante,@QueryParam("claveRestaurante") int claveRestaurante) {
-		TMProducto tm = new TMProducto(getPath());
+		TM tm = new TM(getPath());
 		try {
 			tm.addMenu(menu, restaurante, claveRestaurante);
 		} catch (Exception e) {
@@ -117,7 +117,7 @@ public class MenuServices {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateMenu(Menu menu,@QueryParam("restaurante") String restaurante,@QueryParam("claveRestaurante") int claveRestaurante) {
-		TMProducto tm = new TMProducto(getPath());
+		TM tm = new TM(getPath());
 		try {
 			tm.updateMenu(menu,restaurante,claveRestaurante);
 		} catch (Exception e) {
@@ -136,7 +136,7 @@ public class MenuServices {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteMenu( @QueryParam("nombre") String nombre, @QueryParam("restaurante") String restaurante,@QueryParam("restauranteVerificar") String restaurante2,@QueryParam("claveRestaurante") int claveRestaurante) {
-		TMProducto tm = new TMProducto(getPath());
+		TM tm = new TM(getPath());
 		try {
 			tm.deleteMenu(nombre, restaurante,restaurante2,claveRestaurante);
 		} catch (Exception e) {

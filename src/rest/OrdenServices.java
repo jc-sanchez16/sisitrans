@@ -17,8 +17,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import tm.TMOrden;
-import tm.TMReserva;
+import tm.TM;
 import vos.Menu;
 import vos.Orden;
 import vos.Reserva;
@@ -57,7 +56,7 @@ public class OrdenServices {
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getOrdenes() {
-		TMOrden tm = new TMOrden(getPath());
+		TM tm = new TM(getPath());
 		List<Orden> ordenes;
 		try {
 			ordenes = tm.getOrdenes();
@@ -79,7 +78,7 @@ public class OrdenServices {
 	@Produces( { MediaType.APPLICATION_JSON } )
 	public Response getOrdenPK(  @QueryParam("mesa") int mesa, @QueryParam("fecha") String fecha)
 	{
-		TMOrden tm = new TMOrden( getPath( ) );
+		TM tm = new TM( getPath( ) );
 		try
 		{			
 			Orden orden = tm.getOrdenPK(mesa, new Date(fecha));

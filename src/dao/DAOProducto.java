@@ -351,7 +351,7 @@ public class DAOProducto {
 			sql +="0,";
 			sql +="0,";
 			sql += menu.getCantidadMaxima()+")";
-			
+
 
 			PreparedStatement prepStmt = conn.prepareStatement(sql);
 			recursos.add(prepStmt);
@@ -375,11 +375,11 @@ public class DAOProducto {
 		if(menu.getProductos()!=null)
 		{
 
-				sql += "'"+menu.getProductos().get(0) + "',";
-				sql += "'"+menu.getProductos().get(1) + "',";
-				sql += "'"+menu.getProductos().get(2) + "',";
-				sql += "'"+menu.getProductos().get(3) + "',";
-				sql += "'"+menu.getProductos().get(4) + "','";
+			sql += "'"+menu.getProductos().get(0) + "',";
+			sql += "'"+menu.getProductos().get(1) + "',";
+			sql += "'"+menu.getProductos().get(2) + "',";
+			sql += "'"+menu.getProductos().get(3) + "',";
+			sql += "'"+menu.getProductos().get(4) + "','";
 		}
 		else
 		{
@@ -452,7 +452,7 @@ public class DAOProducto {
 			sql += "POSTRE='"+menu.getProductos().get(2) + "',";
 			sql += "BEBIDA='"+menu.getProductos().get(3) + "',";
 			sql += "ACOMPAÑAMIENTO='"+menu.getProductos().get(4) + "',";	
-				
+
 		}
 		else
 		{
@@ -462,7 +462,7 @@ public class DAOProducto {
 			sql += "BEBIDA="+"NULL,";
 			sql += "ACOMPAÑAMIENTO="+"NULL,";
 		}
-			
+
 		sql += "RESTAURANTE='"+menu.getRestaurante() + "'";
 		sql += "WHERE NOMBRE ='"+menu.getNombre()+"' AND RESTAURANTE = '"+ menu.getRestaurante()+"'";
 
@@ -644,46 +644,32 @@ public class DAOProducto {
 	public String addEquivalenciaProducto(int clave, String restaurante, ArrayList<String> productos) throws Exception {
 
 		String res = "no se realizo la accion";
-		DAORestaurante daoRestaurante = new DAORestaurante();
 		int tipo = darTipo(restaurante, productos.get(0));
-		try
-		{
-			daoRestaurante.setConn(conn);
-			if(!daoRestaurante.verificarRest(restaurante, clave))
-				throw new Exception("No es un usuario valido");
-			String sql = "INSERT ALL ";
-			for (int i = 0; i < productos.size(); i++) 
-			{
-				for (int j = 0; j <productos.size(); j++) 
-				{
-					if(i!=j)
-					{
-						if(tipo !=darTipo(restaurante, productos.get(j)))
-							throw new Exception("Los productos no son del mismo tipo");
-						sql += "INTO EQUIVALENCIA_PRODUCTO VALUES ('";
-						sql += productos.get(i)+"','";
-						sql += productos.get(j)+"','";
-						sql += restaurante+"') ";
 
-						
-					}
+		String sql = "INSERT ALL ";
+		for (int i = 0; i < productos.size(); i++) 
+		{
+			for (int j = 0; j <productos.size(); j++) 
+			{
+				if(i!=j)
+				{
+					if(tipo !=darTipo(restaurante, productos.get(j)))
+						throw new Exception("Los productos no son del mismo tipo");
+					sql += "INTO EQUIVALENCIA_PRODUCTO VALUES ('";
+					sql += productos.get(i)+"','";
+					sql += productos.get(j)+"','";
+					sql += restaurante+"') ";
+
+
 				}
 			}
-			sql += " SELECT * FROM DUAL";
-			PreparedStatement prepStmt = conn.prepareStatement(sql);
-			recursos.add(prepStmt);
-			prepStmt.executeQuery();
-			res="se realizo la accion";
 		}
-		catch(Exception e)
-		{
-			res = "no se realizo la accion";
-			throw e;
-		}
-		finally
-		{
-			daoRestaurante.cerrarRecursos();
-		}
+		sql += " SELECT * FROM DUAL";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+		res="se realizo la accion";
+
 		return res;
 	}
 

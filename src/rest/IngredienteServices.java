@@ -16,8 +16,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import tm.TMIngrediente;
-import tm.TMReserva;
+import tm.TM;
 import vos.Menu;
 import vos.Ingrediente;
 import vos.Reserva;
@@ -56,7 +55,7 @@ public class IngredienteServices {
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getIngredientes() {
-		TMIngrediente tm = new TMIngrediente(getPath());
+		TM tm = new TM(getPath());
 		List<Ingrediente> ingredientes;
 		try {
 			ingredientes = tm.getIngredientes();
@@ -78,7 +77,7 @@ public class IngredienteServices {
 	@Produces( { MediaType.APPLICATION_JSON } )
 	public Response getIngredientePK(  @QueryParam("nombre") String nombre)
 	{
-		TMIngrediente tm = new TMIngrediente( getPath( ) );
+		TM tm = new TM( getPath( ) );
 		try
 		{			
 			Ingrediente ingrediente = tm.getIngredientePK(nombre);
@@ -101,7 +100,7 @@ public class IngredienteServices {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addIngrediente(Ingrediente ingrediente,@QueryParam("restaurante") String restaurante,@QueryParam("claveRestaurante") int claveRestaurante) {
-		TMIngrediente tm = new TMIngrediente(getPath());
+		TM tm = new TM(getPath());
 		try {
 			tm.addIngrediente(ingrediente,restaurante,claveRestaurante);
 		} catch (Exception e) {
@@ -122,7 +121,7 @@ public class IngredienteServices {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteIngrediente(@QueryParam("nombre") String nombre,@QueryParam("restaurante") String restaurante,@QueryParam("claveRestaurante") int claveRestaurante) {
-		TMIngrediente tm = new TMIngrediente(getPath());
+		TM tm = new TM(getPath());
 		try {
 			tm.deleteIngrediente(nombre,restaurante,claveRestaurante);
 		} catch (Exception e) {

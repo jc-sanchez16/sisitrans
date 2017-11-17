@@ -16,8 +16,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import tm.TMRestaurante;
-import tm.TMZona;
+import tm.TM;
 import vos.Restaurante;
 import vos.Zona;
 
@@ -55,7 +54,7 @@ public class RestauranteServices {
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getRestaurantes() {
-		TMRestaurante tm = new TMRestaurante(getPath());
+		TM tm = new TM(getPath());
 		List<Restaurante> restaurantes;
 		try {
 			restaurantes = tm.getRestaurantes();
@@ -77,7 +76,7 @@ public class RestauranteServices {
 	@Produces( { MediaType.APPLICATION_JSON } )
 	public Response getRestaurantePK( @QueryParam("nombre") String nombre )
 	{
-		TMRestaurante tm = new TMRestaurante( getPath( ) );
+		TM tm = new TM( getPath( ) );
 		try
 		{
 			Restaurante rest = tm.getRestaurantePK(nombre);
@@ -100,7 +99,7 @@ public class RestauranteServices {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addRestaurante(Restaurante restaurante, @QueryParam("clave")int claveNueva, @QueryParam("usuario")int usuario,@QueryParam("contraseñaAd")int contraseñaAd) {
-		TMRestaurante tm = new TMRestaurante(getPath());
+		TM tm = new TM(getPath());
 		try {
 			tm.addRestaurante(restaurante, claveNueva, usuario, contraseñaAd);
 		} catch (Exception e) {
@@ -120,7 +119,7 @@ public class RestauranteServices {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateRestaurante(Restaurante restaurante,@QueryParam("usuario")int usuario,@QueryParam("contraseñaAd")int contraseñaAd) {
-		TMRestaurante tm = new TMRestaurante(getPath());
+		TM tm = new TM(getPath());
 		try {
 			tm.updateRestaurante(restaurante,usuario,contraseñaAd);
 		} catch (Exception e) {
@@ -139,7 +138,7 @@ public class RestauranteServices {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteRestaurante( @QueryParam("nombre") String nombre,@QueryParam("usuario")int usuario,@QueryParam("contraseñaAd")int contraseñaAd ) {
-		TMRestaurante tm = new TMRestaurante(getPath());
+		TM tm = new TM(getPath());
 		try {
 			tm.deleteRestaurante(nombre,usuario,contraseñaAd);
 		} catch (Exception e) {

@@ -29,7 +29,7 @@ import javax.ws.rs.core.Response;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
-import tm.TMZona;
+import tm.TM;
 import vos.Restaurante;
 
 import vos.Zona;
@@ -69,7 +69,7 @@ public class ZonaServices {
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getZonas() {
-		TMZona tm = new TMZona(getPath());
+		TM tm = new TM(getPath());
 		List<Zona> zonas;
 		try {
 			zonas = tm.getZonas();
@@ -90,7 +90,7 @@ public class ZonaServices {
 	@Produces( { MediaType.APPLICATION_JSON } )
 	public Response getZonaPK( @QueryParam( "id" ) int id )
 	{
-		TMZona tm = new TMZona( getPath( ) );
+		TM tm = new TM( getPath( ) );
 		try
 		{
 			Zona zon = tm.getZonaPK(id);
@@ -113,7 +113,7 @@ public class ZonaServices {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addZona(Zona zona, @QueryParam("usuario") int usuario,@QueryParam("clave") int clave) {
-		TMZona tm = new TMZona(getPath());
+		TM tm = new TM(getPath());
 		System.out.println("hola");
 		try {
 			tm.addZona(zona,usuario, clave);
@@ -134,7 +134,7 @@ public class ZonaServices {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateZona(Zona zona, @QueryParam("usuario") int usuario,@QueryParam("clave") int clave) {
-		TMZona tm = new TMZona(getPath());
+		TM tm = new TM(getPath());
 		try {
 			tm.updateZona(zona,usuario,clave);
 		} catch (Exception e) {
@@ -154,7 +154,7 @@ public class ZonaServices {
 	@Path( "{id: \\d+}" )
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteZona( @PathParam( "id" ) int id ) {
-		TMZona tm = new TMZona(getPath());
+		TM tm = new TM(getPath());
 		try {
 			tm.deleteZona(id);
 		} catch (Exception e) {

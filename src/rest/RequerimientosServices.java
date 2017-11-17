@@ -21,9 +21,7 @@ import javax.ws.rs.core.Response;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
-import tm.TMIngrediente;
-import tm.TMRequerimientos;
-import tm.TMUsuario;
+import tm.TM;
 import vos.Articulo;
 import vos.Ingrediente;
 
@@ -64,7 +62,7 @@ public class RequerimientosServices {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path( "11")
 	public Response AddEquivalenciaIngrediente(@QueryParam("clave") int clave, ArrayList<String> ingredientes) {
-		TMRequerimientos tm = new TMRequerimientos(getPath());
+		TM tm = new TM(getPath());
 		String res = "No se realizo la accion";
 		try {
 			res = tm.addEquivalenciaIngrediente(clave, ingredientes);
@@ -79,7 +77,7 @@ public class RequerimientosServices {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path( "12")
 	public Response AddEquivalenciaProducto(@QueryParam("clave") int clave,@QueryParam("restaurante") String restaurante, ArrayList<String> productos) {
-		TMRequerimientos tm = new TMRequerimientos(getPath());
+		TM tm = new TM(getPath());
 		String res = "No se realizo la accion";
 		try {
 			res = tm.addEquivalenciaProducto(clave, restaurante, productos);
@@ -92,7 +90,7 @@ public class RequerimientosServices {
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Path("13")
 	public Response surtirRestaurante(@QueryParam("clave") int clave,@QueryParam("restaurante") String restaurante) {
-		TMRequerimientos tm = new TMRequerimientos(getPath());
+		TM tm = new TM(getPath());
 		String res = "No se realizo la accion";
 		try {
 			res = tm.surtirRestaurante(clave, restaurante);
@@ -116,7 +114,7 @@ public class RequerimientosServices {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("15")
 	public Response registrarPedidoOrden(@QueryParam("mesa") int mesa, Respuesta res) {
-		TMRequerimientos tm = new TMRequerimientos(getPath());
+		TM tm = new TM(getPath());
 		try {
 			Date f =new Date();
 			f = new Date(f.getYear(),f.getMonth(),f.getDate(),f.getHours(), f.getMinutes());
@@ -129,7 +127,7 @@ public class RequerimientosServices {
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Path("16")
 	public Response registrarServicio(@QueryParam("clave") int clave,@QueryParam("restaurante") String restaurante, @QueryParam("fecha") String fecha,@QueryParam("mesa") int mesa) {
-		TMRequerimientos tm = new TMRequerimientos(getPath());
+		TM tm = new TM(getPath());
 		Date fec = new Date(fecha);
 		String res = "No se realizo la accion";
 		try {
@@ -143,7 +141,7 @@ public class RequerimientosServices {
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Path("17")
 	public Response cancelarServicio(@QueryParam("clave") int clave,@QueryParam("restaurante") String restaurante, @QueryParam("fecha") String fecha,@QueryParam("mesa") int mesa) {
-		TMRequerimientos tm = new TMRequerimientos(getPath());
+		TM tm = new TM(getPath());
 		String res = "No se realizo la accion";
 		Date fec = new Date(fecha);
 		try {
@@ -157,7 +155,7 @@ public class RequerimientosServices {
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Path("C7")
 	public Response consultarConsumo(@QueryParam("clave") int clave,@QueryParam("peticion") int peticion, @QueryParam("usuario") int usuario) {
-		TMRequerimientos tm = new TMRequerimientos(getPath());
+		TM tm = new TM(getPath());
 		ArrayList<Articulo> res = null;
 		try {
 			res = tm.consultarConsumo(usuario,clave, peticion);
@@ -179,7 +177,7 @@ public class RequerimientosServices {
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Path("C8")
 	public Response consultarPedidos(@QueryParam("clave") int clave,@QueryParam("usuario") String usuario) {
-		TMRequerimientos tm = new TMRequerimientos(getPath());
+		TM tm = new TM(getPath());
 		String res = null;
 		try {
 			res = tm.consultarPedidos(usuario,clave);

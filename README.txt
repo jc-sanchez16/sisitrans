@@ -130,20 +130,7 @@ OrdenServices.
 2) Obtener una orden por su fecha.
 	@get
 	url:http://localhost:8080/RotonAndes/rest/ordenes/PK?mesa=1&fecha=2017/10/31 11:31
-Reserva Services.
-1) Obetener todas las reservas.
-	@get
-	url:
-2) Obtener una reserva por su fecha.
-	@get
-	url:
-3) Agregar una reserva.
-	@post
-	json:
-	url:
-4) Borrar una reserva
-	@delete
-	url:
+
 RequerimientoServices.
 1) Registrar equivalencias ingredientes.
 	@post

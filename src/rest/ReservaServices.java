@@ -17,8 +17,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import tm.TMReserva;
-import tm.TMZona;
+import tm.TM;
 import vos.Reserva;
 import vos.Zona;
 
@@ -57,7 +56,7 @@ public class ReservaServices {
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getReservas() {
-		TMReserva tm = new TMReserva(getPath());
+		TM tm = new TM(getPath());
 		List<Reserva> reservas;
 		try {
 			reservas = tm.getReservas();
@@ -79,7 +78,7 @@ public class ReservaServices {
 	@Produces( { MediaType.APPLICATION_JSON } )
 	public Response getReservaPK( @QueryParam( "id" ) int id ,@QueryParam( "fecha" ) String fecha )
 	{
-		TMReserva tm = new TMReserva( getPath( ) );
+		TM tm = new TM( getPath( ) );
 		try
 		{
 			Reserva reserva = tm.getReservaPK(id,  new Date(fecha));
@@ -102,7 +101,7 @@ public class ReservaServices {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addReserva(Reserva reserva) {
-		TMReserva tm = new TMReserva(getPath());
+		TM tm = new TM(getPath());
 		try {
 			tm.addReserva(reserva);
 		} catch (Exception e) {
@@ -122,7 +121,7 @@ public class ReservaServices {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateReserva(Reserva reserva) {
-		TMReserva tm = new TMReserva(getPath());
+		TM tm = new TM(getPath());
 		try {
 			tm.updateReserva(reserva);
 		} catch (Exception e) {
@@ -141,7 +140,7 @@ public class ReservaServices {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteReserva( @QueryParam( "id" ) int id ,@QueryParam( "fecha" ) String fecha ) {
-		TMReserva tm = new TMReserva(getPath());
+		TM tm = new TM(getPath());
 		try {
 			tm.deleteReserva(id,  new Date(fecha));
 		} catch (Exception e) {

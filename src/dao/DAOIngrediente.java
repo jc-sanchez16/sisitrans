@@ -95,56 +95,27 @@ public class DAOIngrediente {
 
 
 
-	public void addIngrediente(Ingrediente ingrediente, String restaurante, int claveRestaurante) throws SQLException, Exception {
-
-		DAORestaurante daoRestaurante = new DAORestaurante();
-		try
-		{
-			daoRestaurante.setConn(conn);
-			
-				if(!daoRestaurante.verificarRest(restaurante, claveRestaurante))
-					throw new Exception("No es un usuario valido");
-
-			String sql = "INSERT INTO INGREDIENTE VALUES ('";
-			sql += ingrediente.getNombre() + "','";
-			sql += ingrediente.getDescripcionE() + "','";
-			sql += ingrediente.getDescripcionEn() + "')";
-
-			PreparedStatement prepStmt = conn.prepareStatement(sql);
-			recursos.add(prepStmt);
-			prepStmt.executeQuery();
-
-		}
-		finally
-		{
-			daoRestaurante.cerrarRecursos();
-		}
+	public void addIngrediente(Ingrediente ingrediente) throws SQLException, Exception {
 
 
+		String sql = "INSERT INTO INGREDIENTE VALUES ('";
+		sql += ingrediente.getNombre() + "','";
+		sql += ingrediente.getDescripcionE() + "','";
+		sql += ingrediente.getDescripcionEn() + "')";
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
 	}
 
-	public void deleteIngrediente(String nombre, String restaurante, int claveRestaurante) throws SQLException, Exception {
+	public void deleteIngrediente(String nombre) throws SQLException, Exception {
 
-		DAORestaurante daoRestaurante = new DAORestaurante();
-		try
-		{
-			daoRestaurante.setConn(conn);
-			
-				if(!daoRestaurante.verificarRest(restaurante, claveRestaurante))
-					throw new Exception("No es un usuario valido");
+		String sql = "DELETE FROM INGREDIENTE";
+		sql += " WHERE NOMBRE='" + nombre+"'";
 
-				String sql = "DELETE FROM INGREDIENTE";
-				sql += " WHERE NOMBRE='" + nombre+"'";
-
-				PreparedStatement prepStmt = conn.prepareStatement(sql);
-				recursos.add(prepStmt);
-				prepStmt.executeQuery();
-
-		}
-		finally
-		{
-			daoRestaurante.cerrarRecursos();
-		}
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
 	}
 
 
@@ -157,7 +128,7 @@ public class DAOIngrediente {
 		ResultSet rs = prepStmt.executeQuery();
 
 		while (rs.next()) {
-			
+
 			lista.add(getIngredientePK(rs.getString("ID_INGREDIENTE")));
 		}
 
@@ -174,7 +145,7 @@ public class DAOIngrediente {
 		ResultSet rs = prepStmt.executeQuery();
 
 		while (rs.next()) {
-			
+
 			lista.add(rs.getString("NOMBRE_EQUIVALENCIA"));
 		}
 
@@ -182,42 +153,28 @@ public class DAOIngrediente {
 	}
 
 
-	public String AddEquivalenciaIngrediente(int clave, ArrayList<String> ingredientes) throws Exception {
+	public String AddEquivalenciaIngrediente(ArrayList<String> ingredientes) throws Exception {
 		String res = "no se realizo la accion";
-		DAORestaurante daoRestaurante = new DAORestaurante();
-		try
-		{
-			daoRestaurante.setConn(conn);
-			if(!daoRestaurante.verificar( clave))
-				throw new Exception("No es un usuario valido");
-			for (int i = 0; i < ingredientes.size(); i++) 
-			{
-				for (int j = 0; j <ingredientes.size(); j++) 
-				{
-					if(i!=j)
-					{
-						
-						String sql = "INSERT INTO EQUIVALENCIA_INGREDIENTES VALUES ('";
-						sql += ingredientes.get(i)+"','";
-						sql += ingredientes.get(j)+"')";
 
-						PreparedStatement prepStmt = conn.prepareStatement(sql);
-						recursos.add(prepStmt);
-						prepStmt.executeQuery();
-						res="se realizo la accion";
-					}
+		for (int i = 0; i < ingredientes.size(); i++) 
+		{
+			for (int j = 0; j <ingredientes.size(); j++) 
+			{
+				if(i!=j)
+				{
+
+					String sql = "INSERT INTO EQUIVALENCIA_INGREDIENTES VALUES ('";
+					sql += ingredientes.get(i)+"','";
+					sql += ingredientes.get(j)+"')";
+
+					PreparedStatement prepStmt = conn.prepareStatement(sql);
+					recursos.add(prepStmt);
+					prepStmt.executeQuery();
+					res="se realizo la accion";
 				}
 			}
 		}
-		catch(Exception e)
-		{
-			res = "no se realizo la accion";
-			throw e;
-		}
-		finally
-		{
-			daoRestaurante.cerrarRecursos();
-		}
+
 		return res;
 	}
 
