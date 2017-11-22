@@ -228,7 +228,7 @@ public class RequerimientosServices {
 		String res = null;
 		Date fecI = new Date(dia);
 		try {
-			res = tm.consultarFuncionamiento(usuario,clave,dia);
+			res = tm.consultarFuncionamiento(usuario,clave,fecI);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
@@ -237,11 +237,12 @@ public class RequerimientosServices {
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Path("C12")
-	public Response consultarBuenosClientes(@QueryParam("clave") int clave,@QueryParam("usuario") String usuario) {
+	public Response consultarBuenosClientes(@QueryParam("mes") String dia) {
 		TM tm = new TM(getPath());
 		String res = null;
+		Date fecI = new Date(dia);
 		try {
-			res = tm.consultarPedidos(usuario,clave);
+			res = tm.consultarBuenosClientes();
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}

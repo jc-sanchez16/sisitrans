@@ -517,7 +517,7 @@ public class TM {
 		return res;
 	}
 	
-	public String consultarFuncionamiento(int usuario, int clave, String dia) throws Exception {
+	public String consultarFuncionamiento(int usuario, int clave, Date dia) throws Exception {
 		String res = null;
 		DAOOrden daoOrden = new DAOOrden();	
 		DAOUsuario daoUsuario = new DAOUsuario();
