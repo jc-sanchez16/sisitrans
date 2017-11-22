@@ -550,6 +550,40 @@ public class TM {
 		}
 		return res;
 	}
+	
+	public String consultarBuenosClientes(int usuario, int clave, Date dia) throws Exception {
+		String res = null;
+		DAOOrden daoOrden = new DAOOrden();	
+		DAOUsuario daoUsuario = new DAOUsuario();
+		try 
+		{
+			this.conn = darConexion();		
+			daoUsuario.setConn(conn);
+			if(!(daoUsuario.verificar(usuario, clave,1)))
+				throw new Exception("no es un usuario valido");
+			daoUsuario.cerrarRecursos();
+			daoOrden.setConn(conn);
+			res = daoOrden.consultarFuncionamiento(dia);
+			daoOrden.cerrarRecursos();			
+			conn.commit();
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoOrden.cerrarRecursos();
+				daoUsuario.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return res;
+	}
 	//Ingredientes
 
 	public List<Ingrediente> getIngredientes() throws Exception {
