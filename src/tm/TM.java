@@ -529,7 +529,7 @@ public class TM {
 				throw new Exception("no es un usuario valido");
 			daoUsuario.cerrarRecursos();
 			daoOrden.setConn(conn);
-			res = daoOrden.consultarFuncionamiento(dia);
+			res = daoOrden.consultarFuncionalidad(dia);
 			daoOrden.cerrarRecursos();			
 			conn.commit();
 		} catch (Exception e) {
@@ -551,7 +551,7 @@ public class TM {
 		return res;
 	}
 	
-	public String consultarBuenosClientes(int usuario, int clave, Date dia) throws Exception {
+	public String consultarBuenosClientes(Date dia, int clave, int usuario) throws Exception {
 		String res = null;
 		DAOOrden daoOrden = new DAOOrden();	
 		DAOUsuario daoUsuario = new DAOUsuario();
@@ -563,7 +563,7 @@ public class TM {
 				throw new Exception("no es un usuario valido");
 			daoUsuario.cerrarRecursos();
 			daoOrden.setConn(conn);
-			res = daoOrden.consultarFuncionamiento(dia);
+			res = daoOrden.consultarBuenosClientes(dia);
 			daoOrden.cerrarRecursos();			
 			conn.commit();
 		} catch (Exception e) {

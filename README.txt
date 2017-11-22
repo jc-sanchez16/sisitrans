@@ -171,7 +171,8 @@ c10:
 
 http://localhost:8080/RotonAndes/rest/RF/C10?clave=454&usuario=2117&restaurante=bieiggvsqyybdjddzvwv&fechaI=2206/01/20 00:00&fechaF=2206/01/20 23:59&order=&group
 
-
+c11:
+http://localhost:8080/RotonAndes/rest/RF/C11?clave=454&usuario=2117&dia=2206/01/20 00:00
 
 
 

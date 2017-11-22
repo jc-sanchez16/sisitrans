@@ -525,22 +525,22 @@ public class DAOOrden {
 	public String consultarConsumo(String restaurante, Date fecI, Date fecF, String order, String group) throws SQLException {
 		String res = "no se pudo hacer";
 		String sql = null;
-			if(!group.equals(""))
+		if(!group.equals(""))
+		{
+			String[] gro = group.split("|");	
+			sql ="SELECT "+gro[0]+" from (((SELECT * FROM ORDEN_PRODUCTO PR WHERE PR.RESTAURANTE = '"+restaurante+"' AND PR.FECHA BETWEEN "+fecI.getTime()+" AND "+fecF.getTime()+" ) PRR  JOIN (PRODUCTO U JOIN  TIPO_COMIDA TC ON U.NOMBRE = TC.NOMBRE AND U.RESTAURANTE = TC.RESTAURANTE)on U.RESTAURANTE = PRR.RESTAURANTE AND U.NOMBRE=PRR.NOMBRE) JOIN PERSONA PS ON PS.NUMERO_ID = PRR.USUARIO) GROUP BY "+gro[1];
+		}
+		else	
+			sql ="SELECT PRR.*,U.*, PS.NOMBRE AS NOM, PS.EDAD, PS.TIPO, TC.TIPO AS TIP from (((SELECT * FROM ORDEN_PRODUCTO PR WHERE PR.RESTAURANTE = '"+restaurante+"' AND PR.FECHA BETWEEN "+fecI.getTime()+" AND "+fecF.getTime()+" ) PRR  JOIN (PRODUCTO U JOIN  TIPO_COMIDA TC ON U.NOMBRE = TC.NOMBRE AND U.RESTAURANTE = TC.RESTAURANTE)on U.RESTAURANTE = PRR.RESTAURANTE AND U.NOMBRE=PRR.NOMBRE) JOIN PERSONA PS ON PS.NUMERO_ID = PRR.USUARIO)";
+		if(!order.equals(""))
+			sql += " ORDER BY "+order;
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		res= "[";
+		while (rs.next()) {		
+			if(group.equals(""))
 			{
-				String[] gro = group.split("|");	
-				sql ="SELECT "+gro[0]+" from (((SELECT * FROM ORDEN_PRODUCTO PR WHERE PR.RESTAURANTE = '"+restaurante+"' AND PR.FECHA BETWEEN "+fecI.getTime()+" AND "+fecF.getTime()+" ) PRR  JOIN (PRODUCTO U JOIN  TIPO_COMIDA TC ON U.NOMBRE = TC.NOMBRE AND U.RESTAURANTE = TC.RESTAURANTE)on U.RESTAURANTE = PRR.RESTAURANTE AND U.NOMBRE=PRR.NOMBRE) JOIN PERSONA PS ON PS.NUMERO_ID = PRR.USUARIO) GROUP BY "+gro[1];
-			}
-			else	
-				sql ="SELECT PRR.*,U.*, PS.NOMBRE AS NOM, PS.EDAD, PS.TIPO, TC.TIPO AS TIP from (((SELECT * FROM ORDEN_PRODUCTO PR WHERE PR.RESTAURANTE = '"+restaurante+"' AND PR.FECHA BETWEEN "+fecI.getTime()+" AND "+fecF.getTime()+" ) PRR  JOIN (PRODUCTO U JOIN  TIPO_COMIDA TC ON U.NOMBRE = TC.NOMBRE AND U.RESTAURANTE = TC.RESTAURANTE)on U.RESTAURANTE = PRR.RESTAURANTE AND U.NOMBRE=PRR.NOMBRE) JOIN PERSONA PS ON PS.NUMERO_ID = PRR.USUARIO)";
-			if(!order.equals(""))
-				sql += " ORDER BY "+order;
-			PreparedStatement prepStmt = conn.prepareStatement(sql);
-			recursos.add(prepStmt);
-			ResultSet rs = prepStmt.executeQuery();
-			res= "[";
-			while (rs.next()) {		
-				if(group.equals(""))
-				{
 				res+="{ \"id\": "+ rs.getString("USUARIO");
 				res+= ", \"nombre\": \""+ rs.getString("NOM");
 				res+= "\", \"edad\":"+ rs.getString("EDAD");
@@ -556,42 +556,42 @@ public class DAOOrden {
 				res+= ", \"precio\": "+ rs.getString("PRECIO");
 				res+= ", \"tipo comida\": \""+rs.getString("TIP");
 				res+= "\"},";
-				}
-				else
-				{
-					res="{ ";
-					String[] gro = group.split("|")[0].split(",");
-					for (int i = 0; i < gro.length; i++) {
-						res+= " \""+gro[i]+"\": "+ rs.getString(gro[i].trim());
-					}
-					
-					res+= "},";
-				}
 			}
-			res = res.substring(0, res.length()-1);
-			res+="]";
-		
+			else
+			{
+				res="{ ";
+				String[] gro = group.split("|")[0].split(",");
+				for (int i = 0; i < gro.length; i++) {
+					res+= " \""+gro[i]+"\": "+ rs.getString(gro[i].trim());
+				}
+
+				res+= "},";
+			}
+		}
+		res = res.substring(0, res.length()-1);
+		res+="]";
+
 		return res;
 	}
 	public String consultarConsumo2(String restaurante, Date fecI, Date fecF, String order, String group) throws SQLException {
 		String res = "no se pudo hacer";
 		String sql = null;
-			if(!group.equals(""))
+		if(!group.equals(""))
+		{
+			String[] gro = group.split("|");	
+			sql ="SELECT "+gro[0]+" FROM  ((SELECT * FROM ORDEN_PRODUCTO OP WHERE USUARIO NOT IN (SELECT USUARIO FROM ORDEN_PRODUCTO PR WHERE PR.RESTAURANTE = '"+restaurante+"' AND PR.FECHA BETWEEN "+fecI.getTime()+" AND "+fecF.getTime()+" AND OP.FECHA BETWEEN "+fecI.getTime()+" AND "+fecF.getTime()+")PRR JOIN PERSONA PS ON PS.NUMERO_ID = PRR.USUARIO) GROUP BY "+gro[1];
+		}
+		else	
+			sql ="SELECT PRR.*,PS.NOMBRE AS NOM, PS.EDAD, PS.TIPO  FROM  ((SELECT * FROM ORDEN_PRODUCTO OP WHERE USUARIO NOT IN (SELECT USUARIO FROM ORDEN_PRODUCTO PR WHERE PR.RESTAURANTE = '"+restaurante+"' AND PR.FECHA BETWEEN "+fecI.getTime()+" AND "+fecF.getTime()+") AND OP.FECHA BETWEEN "+fecI.getTime()+" AND "+fecF.getTime()+")PRR JOIN PERSONA PS ON PS.NUMERO_ID = PRR.USUARIO)";
+		if(!order.equals(""))
+			sql += " ORDER BY "+order;
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		res= "[";
+		while (rs.next()) {		
+			if(group.equals(""))
 			{
-				String[] gro = group.split("|");	
-				sql ="SELECT "+gro[0]+" FROM  ((SELECT * FROM ORDEN_PRODUCTO OP WHERE USUARIO NOT IN (SELECT USUARIO FROM ORDEN_PRODUCTO PR WHERE PR.RESTAURANTE = '"+restaurante+"' AND PR.FECHA BETWEEN "+fecI.getTime()+" AND "+fecF.getTime()+" AND OP.FECHA BETWEEN "+fecI.getTime()+" AND "+fecF.getTime()+")PRR JOIN PERSONA PS ON PS.NUMERO_ID = PRR.USUARIO) GROUP BY "+gro[1];
-			}
-			else	
-				sql ="SELECT PRR.*,PS.NOMBRE AS NOM, PS.EDAD, PS.TIPO  FROM  ((SELECT * FROM ORDEN_PRODUCTO OP WHERE USUARIO NOT IN (SELECT USUARIO FROM ORDEN_PRODUCTO PR WHERE PR.RESTAURANTE = '"+restaurante+"' AND PR.FECHA BETWEEN "+fecI.getTime()+" AND "+fecF.getTime()+") AND OP.FECHA BETWEEN "+fecI.getTime()+" AND "+fecF.getTime()+")PRR JOIN PERSONA PS ON PS.NUMERO_ID = PRR.USUARIO)";
-			if(!order.equals(""))
-				sql += " ORDER BY "+order;
-			PreparedStatement prepStmt = conn.prepareStatement(sql);
-			recursos.add(prepStmt);
-			ResultSet rs = prepStmt.executeQuery();
-			res= "[";
-			while (rs.next()) {		
-				if(group.equals(""))
-				{
 				res+="{ \"id\": "+ rs.getString("USUARIO");
 				res+= ", \"nombre\": \""+ rs.getString("NOM");
 				res+= "\", \"edad\":"+ rs.getString("EDAD");
@@ -600,21 +600,21 @@ public class DAOOrden {
 				res+= ", \"producto\": \""+ rs.getString("NOMBRE");
 				res+= "\", \"restaurante\": \""+rs.getString("RESTAURANTE");
 				res+= "\"},";
-				}
-				else
-				{
-					res="{ ";
-					String[] gro = group.split("|")[0].split(",");
-					for (int i = 0; i < gro.length; i++) {
-						res+= " \""+gro[i]+"\": "+ rs.getString(gro[i].trim());
-					}
-					
-					res+= "},";
-				}
 			}
-			res = res.substring(0, res.length()-1);
-			res+="]";
-		
+			else
+			{
+				res="{ ";
+				String[] gro = group.split("|")[0].split(",");
+				for (int i = 0; i < gro.length; i++) {
+					res+= " \""+gro[i]+"\": "+ rs.getString(gro[i].trim());
+				}
+
+				res+= "},";
+			}
+		}
+		res = res.substring(0, res.length()-1);
+		res+="]";
+
 		return res;
 	}
 	public String consultarFuncionalidad(Date dia) throws SQLException {
@@ -622,48 +622,92 @@ public class DAOOrden {
 		Long fec = dia.getTime();
 		String sql = "SELECT * FROM (SELECT  RES1.NOMBRE AS NOM1, RES1.ZONA AS ZON1, RES1.TIPO_COMIDA AS TIP1, RES1.WEB AS WEB1 FROM (SELECT COUNT(USUARIO) AS NUMERO, RESTAURANTE FROM ORDEN_PRODUCTO WHERE  rownum = 1 AND FECHA BETWEEN "+fec+" AND "+(fec+86340000)+" GROUP BY RESTAURANTE ORDER BY NUMERO DESC) TAB1 JOIN RESTAURANTE RES1 ON RES1.NOMBRE=TAB1.RESTAURANTE   ), (SELECT RES2.NOMBRE AS NOM2, RES2.ZONA AS ZON2, RES2.TIPO_COMIDA AS TIP2, RES2.WEB AS WEB2 FROM (SELECT COUNT(USUARIO) AS NUMERO, RESTAURANTE FROM ORDEN_PRODUCTO WHERE rownum = 1 AND FECHA BETWEEN "+fec+" AND "+(fec+86340000)+" GROUP BY RESTAURANTE ORDER BY NUMERO ASC )TAB2 JOIN RESTAURANTE RES2 ON RES2.NOMBRE=TAB2.RESTAURANTE  ), (SELECT RES3.NOMBRE AS NOM3, RES3.RESTAURANTE AS REST3, RES3.COSTO AS COST3, RES3.TIPO AS TIP3, RES3.DESCRIPCION_E AS DES3 , RES3.DESCRIPCION_EN AS DESC3, RES3.TIEMPO_PREP AS TI3, RES3.PRECIO AS PRE3  FROM (SELECT COUNT(USUARIO) AS NUMERO, NOMBRE, RESTAURANTE FROM ORDEN_PRODUCTO WHERE rownum = 1 AND FECHA BETWEEN "+fec+" AND "+(fec+86340000)+" GROUP BY NOMBRE, RESTAURANTE ORDER BY NUMERO DESC )TAB3 JOIN PRODUCTO RES3 ON RES3.NOMBRE= TAB3.NOMBRE AND RES3.RESTAURANTE = TAB3.RESTAURANTE ), (SELECT RES4.NOMBRE AS NOM4, RES4.RESTAURANTE AS REST4, RES4.COSTO AS COST4, RES4.TIPO AS TIP4, RES4.DESCRIPCION_E AS DES4 , RES4.DESCRIPCION_EN AS DESC4, RES4.TIEMPO_PREP AS TI4, RES4.PRECIO AS PRE4 FROM (SELECT COUNT(USUARIO) AS NUMERO, NOMBRE, RESTAURANTE FROM ORDEN_PRODUCTO  WHERE rownum = 1 AND FECHA BETWEEN "+fec+" AND "+(fec+86340000)+" GROUP BY NOMBRE, RESTAURANTE ORDER BY NUMERO ASC )TAB4 JOIN PRODUCTO RES4 ON RES4.NOMBRE= TAB4.NOMBRE AND RES4.RESTAURANTE = TAB4.RESTAURANTE  )";
 
-			PreparedStatement prepStmt = conn.prepareStatement(sql);
-			recursos.add(prepStmt);
-			ResultSet rs = prepStmt.executeQuery();
-			res= "[";
-			while (rs.next()) {		
-				res+= "{ \"dato\": \"Restaurante mas frecuentado\",";
-				res+= "\"nombre\": \""+ rs.getString("NOM1");
-				res+= "\", \"zona\": "+ rs.getString("ZON1");
-				res+= ", \"tipo comida\": \""+ rs.getString("TIP1");
-				res+= "\", \"pagina web\": \""+rs.getString("WEB1");
-				res+= "\"},";
-				res+= "{ \"dato\": \"Restaurante menos frecuentado\",";
-				res+= "\"nombre\": \""+ rs.getString("NOM2");
-				res+= "\", \"zona\": "+ rs.getString("ZON2");
-				res+= ", \"tipo comida\": \""+ rs.getString("TIP2");
-				res+= "\", \"pagina web\": \""+rs.getString("WEB2");
-				res+= "\"},";
-				res+= "{ \"dato\": \"Producto mas Vendido\",";
-				res+= "\"nombre\": \""+ rs.getString("NOM3");
-				res+= "\", \"restaurante\": \""+ rs.getString("REST3");
-				res+= "\", \"costo\": "+ rs.getString("COST3");
-				res+= ", \"tipo\": "+ rs.getString("TIP3");
-				res+= ", \"descripcion español\": \""+rs.getString("DES3");
-				res+= "\", \"descripcion ingles\": \""+rs.getString("DESC3");
-				res+= "\", \"tiempo preparacion\": "+ rs.getString("TI3");
-				res+= ", \"precio\": "+ rs.getString("PRE3");
-				res+= "},";
-				res+= "{ \"dato\": \"Producto menos Vendido\",";
-				res+= "\"nombre\": \""+ rs.getString("NOM4");
-				res+= "\", \"restaurante\": \""+ rs.getString("REST4");
-				res+= "\", \"costo\": "+ rs.getString("COST4");
-				res+= ", \"tipo\": "+ rs.getString("TIP4");
-				res+= ", \"descripcion español\": \""+rs.getString("DES4");
-				res+= "\", \"descripcion ingles\": \""+rs.getString("DESC4");
-				res+= "\", \"tiempo preparacion\": "+ rs.getString("TI4");
-				res+= ", \"precio\": "+ rs.getString("PRE4");
-				res+= "},";
-				}
-			
-			res = res.substring(0, res.length()-1);
-			res+="]";
-		
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		res= "[";
+		while (rs.next()) {		
+			res+= "{ \"dato\": \"Restaurante mas frecuentado\",";
+			res+= "\"nombre\": \""+ rs.getString("NOM1");
+			res+= "\", \"zona\": "+ rs.getString("ZON1");
+			res+= ", \"tipo comida\": \""+ rs.getString("TIP1");
+			res+= "\", \"pagina web\": \""+rs.getString("WEB1");
+			res+= "\"},";
+			res+= "{ \"dato\": \"Restaurante menos frecuentado\",";
+			res+= "\"nombre\": \""+ rs.getString("NOM2");
+			res+= "\", \"zona\": "+ rs.getString("ZON2");
+			res+= ", \"tipo comida\": \""+ rs.getString("TIP2");
+			res+= "\", \"pagina web\": \""+rs.getString("WEB2");
+			res+= "\"},";
+			res+= "{ \"dato\": \"Producto mas Vendido\",";
+			res+= "\"nombre\": \""+ rs.getString("NOM3");
+			res+= "\", \"restaurante\": \""+ rs.getString("REST3");
+			res+= "\", \"costo\": "+ rs.getString("COST3");
+			res+= ", \"tipo\": "+ rs.getString("TIP3");
+			res+= ", \"descripcion español\": \""+rs.getString("DES3");
+			res+= "\", \"descripcion ingles\": \""+rs.getString("DESC3");
+			res+= "\", \"tiempo preparacion\": "+ rs.getString("TI3");
+			res+= ", \"precio\": "+ rs.getString("PRE3");
+			res+= "},";
+			res+= "{ \"dato\": \"Producto menos Vendido\",";
+			res+= "\"nombre\": \""+ rs.getString("NOM4");
+			res+= "\", \"restaurante\": \""+ rs.getString("REST4");
+			res+= "\", \"costo\": "+ rs.getString("COST4");
+			res+= ", \"tipo\": "+ rs.getString("TIP4");
+			res+= ", \"descripcion español\": \""+rs.getString("DES4");
+			res+= "\", \"descripcion ingles\": \""+rs.getString("DESC4");
+			res+= "\", \"tiempo preparacion\": "+ rs.getString("TI4");
+			res+= ", \"precio\": "+ rs.getString("PRE4");
+			res+= "},";
+		}
+
+		res = res.substring(0, res.length()-1);
+		res+="]";
+
+		return res;
+	}
+	public String consultarBuenosClientes (Date dia) throws SQLException {
+		String res = "no se pudo hacer";
+		String sql = "SELECT * FROM (SELECT USUARIO FROM (SELECT USUARIO, MAX(MENU) AS PREC FROM (ORDEN_PRODUCTO PRR JOIN (SELECT MENU, RESTAURANTE, NOMBRE FROM PRODUCTO )U ON U.RESTAURANTE = PRR.RESTAURANTE AND U.NOMBRE=PRR.NOMBRE) GROUP BY PRR.USUARIO) WHERE PREC = 0) J1  JOIN PERSONA PS ON PS.NUMERO_ID = J1.USUARIO;";
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		res= "[";
+		while (rs.next()) {		
+			res+="{ \"id\": "+ rs.getString("NUMERO_ID");
+			res+= ", \"nombre\": \""+ rs.getString("NOMBRE");
+			res+= "\", \"edad\":"+ rs.getString("EDAD");
+			res+= "},";
+		}
+		sql = "SELECT * FROM (SELECT * FROM (ORDEN_PRODUCTO PRR JOIN (SELECT PRECIO, RESTAURANTE, NOMBRE, TIPO FROM PRODUCTO)U ON U.RESTAURANTE = PRR.RESTAURANTE AND U.NOMBRE=PRR.NOMBRE)  WHERE U.TIPO =2 AND U.PRECIO >= 33000) TOT JOIN PERSONA PS ON PS.NUMERO_ID = TOT.USUARIO";
+
+		prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		rs = prepStmt.executeQuery();
+		res= "[";
+		while (rs.next()) {		
+			res+="{ \"id\": "+ rs.getString("NUMERO_ID");
+			res+= ", \"nombre\": \""+ rs.getString("NOMBRE");
+			res+= "\", \"edad\":"+ rs.getString("EDAD");
+			res+= "},";
+		}
+		Long fec= dia.getTime();
+		sql = "SELECT * FROM (SELECT ID_CLI FROM (SELECT ID_CLIENTE AS ID_CLI FROM ORDEN_USUARIO WHERE FECHA BETWEEN "+fec+" AND "+(fec+604800000)+")T1 JOIN (SELECT ID_CLIENTE FROM ORDEN_USUARIO WHERE FECHA BETWEEN "+(fec+604800001)+" AND "+(fec+(2*604800000))+") T2 ON T1.ID_CLI= T2.ID_CLIENTE JOIN (SELECT ID_CLIENTE FROM ORDEN_USUARIO WHERE FECHA BETWEEN "+(fec+(2*604800001))+" AND "+(fec+(3*604800000))+") T3 ON T1.ID_CLI= T3.ID_CLIENTE JOIN (SELECT ID_CLIENTE FROM ORDEN_USUARIO WHERE FECHA BETWEEN "+(fec+(3*604800001))+" AND "+(fec+(4*604800000))+") T4 ON T1.ID_CLI = T4.ID_CLIENTE)FI JOIN PERSONA PS ON PS.NUMERO_ID = FI.ID_CLI;";
+
+		prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		rs = prepStmt.executeQuery();
+		res= "[";
+		while (rs.next()) {		
+			res+="{ \"id\": "+ rs.getString("NUMERO_ID");
+			res+= ", \"nombre\": \""+ rs.getString("NOMBRE");
+			res+= "\", \"edad\":"+ rs.getString("EDAD");
+			res+= "},";
+		}
+		res = res.substring(0, res.length()-1);
+		res+="]";
+
 		return res;
 	}
 }
