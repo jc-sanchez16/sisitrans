@@ -179,7 +179,7 @@ public class DAOOrden {
 	}
 
 
-	private ArrayList<Producto> getProductosOrden(int mesa, long f)throws Exception {
+	public ArrayList<Producto> getProductosOrden(int mesa, long f)throws Exception {
 		ArrayList<Producto> lista = new ArrayList<Producto>();
 		DAOProducto daoProducto = new DAOProducto();
 		try
@@ -207,7 +207,7 @@ public class DAOOrden {
 		}
 		return lista;
 	}
-	private ArrayList<Articulo> getArticulosOrden(int mesa, long f)throws Exception {
+	public ArrayList<Articulo> getArticulosOrden(int mesa, long f)throws Exception {
 		ArrayList<Articulo> lista = new ArrayList<Articulo>();
 		DAOProducto daoProducto = new DAOProducto();
 		try
@@ -317,127 +317,65 @@ public class DAOOrden {
 
 	public void registrarPedidoProducto(String nombre, String restaurante, String camb,int usuario, int mesa, Date fecha) throws Exception
 	{
-		DAOProducto daoProducto = new DAOProducto();
-		try
-		{
-			String[] cambios = camb.split(":");
-			daoProducto.setConn(conn);
-			if(daoProducto.verificarDisponibilidad(nombre,restaurante,cambios))
-			{
-				String sql = "INSERT INTO ORDEN_PRODUCTO VALUES ('";
-				sql += restaurante+"','";
-				sql += nombre+"',";
-				sql += fecha.getTime() + ",";
-				sql += mesa + ",'";
-				sql += camb +"',";
-				sql += usuario +")";
-				PreparedStatement prepStmt = conn.prepareStatement(sql);
-				recursos.add(prepStmt);
-				prepStmt.executeQuery();
-			}
-			else 
-			{
-				throw new Exception("no hay unidades disponible");
-			}
-		}
-		catch(Exception e)
-		{
-			throw e;
-		}
-		finally
-		{
-			daoProducto.cerrarRecursos();
-		}
+
+		String[] cambios = camb.split(":");
+
+		String sql = "INSERT INTO ORDEN_PRODUCTO VALUES ('";
+		sql += restaurante+"','";
+		sql += nombre+"',";
+		sql += fecha.getTime() + ",";
+		sql += mesa + ",'";
+		sql += camb +"',";
+		sql += usuario +")";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+
 	}
 
 
 	public String registrarServicio(int clave, String restaurante, Date fecha, int mesa) throws Exception 
 	{
 		String res = "no se realizo la accion";
-		DAOProducto daoProducto = new DAOProducto();
-		DAORestaurante daoRestaurante = new DAORestaurante();
-		try
-		{
-			daoProducto.setConn(conn);
-			daoRestaurante.setConn(conn);
-			if(!daoRestaurante.verificarRest(restaurante, clave))
-				throw new Exception("no es un usuario valido");
-			String sql = "UPDATE ORDEN SET ";
-			sql += "ATENDIDO ="+ 0+"";
-			sql += " WHERE FECHA = " + fecha.getTime()+" AND MESA ="+mesa;
-			PreparedStatement prepStmt = conn.prepareStatement(sql);
-			recursos.add(prepStmt);
-			prepStmt.executeQuery();
-			ArrayList<Articulo> productos = getArticulosOrden(mesa, fecha.getTime());
-			for (int i = 0; i < productos.size(); i++) 
-			{
-				Articulo producto = productos.get(i);
-				daoProducto.restarUnidad(producto.getNombre(), producto.getRestaurante(), producto.getCambios().split(":"));
-			}
-			res= "se realizo la accion";
-		}
-		finally
-		{
-			daoProducto.cerrarRecursos();
-			daoRestaurante.cerrarRecursos();
-		}
+		String sql = "UPDATE ORDEN SET ";
+		sql += "ATENDIDO ="+ 0+"";
+		sql += " WHERE FECHA = " + fecha.getTime()+" AND MESA ="+mesa;
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+		res= "se realizo la accion";
+
 		return res;
 	}
 
 
 	public String cancelarServicio(int clave, String restaurante, Date fecha, int mesa) throws SQLException, Exception {
 		String res = "no se realizo la accion";
-		DAORestaurante daoRestaurante = new DAORestaurante();
-		try
-		{
-			daoRestaurante.setConn(conn);
-			if(getOrdenPK(mesa, fecha).getAtendido())
-				throw new Exception("La orden ya estaba finalizada");
-			if(!daoRestaurante.verificarRest(restaurante, clave))
-				throw new Exception("no es un usuario valido");
-			String sql = "DELETE FROM ORDEN WHERE FECHA = " + fecha.getTime()+" AND MESA ="+mesa;
-			PreparedStatement prepStmt = conn.prepareStatement(sql);
-			recursos.add(prepStmt);
-			prepStmt.executeQuery();
-			res= "se realizo la accion";
-		}
-		finally
-		{
-			daoRestaurante.cerrarRecursos();
-		}
+		if(getOrdenPK(mesa, fecha).getAtendido())
+			throw new Exception("La orden ya estaba finalizada");
+		String sql = "DELETE FROM ORDEN WHERE FECHA = " + fecha.getTime()+" AND MESA ="+mesa;
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+		res= "se realizo la accion";
+
 		return res;
 	}
 
 
-	public ArrayList<Articulo> consultarConsumo(int usuario, int clave, int peticion) throws Exception {
-		ArrayList<Articulo> res = new ArrayList<Articulo>();
-		DAOUsuario daoUsuario= new DAOUsuario();
-		DAOProducto daoProducto = new DAOProducto();		
-		try
-		{
-			daoProducto.setConn(conn);
-			daoUsuario.setConn(conn);
-			if(!(daoUsuario.verificar(usuario, clave,1)||(usuario==peticion && daoUsuario.verificar(usuario, clave, 0))))
-				throw new Exception("no es un usuario valido");
-			String sql = "SELECT * FROM ORDEN_PRODUCTO WHERE USUARIO = "+peticion;
-			PreparedStatement prepStmt = conn.prepareStatement(sql);
-			recursos.add(prepStmt);
-			ResultSet rs = prepStmt.executeQuery();
-			while (rs.next()) {		
-				String nombre = rs.getString("NOMBRE");
-				String restaurante = rs.getString("RESTAURANTE");
-				Articulo art = daoProducto.getProductoPK(nombre, restaurante);
-				if(art!= null)
-				{
-					res.add(art);
-				}
-				res.add(daoProducto.getMenuPK(nombre, restaurante));
-			}
-		}
-		finally
-		{
-			daoUsuario.cerrarRecursos();
-			daoProducto.cerrarRecursos();
+	public ArrayList<String[]> consultarConsumo(int usuario, int clave, int peticion) throws Exception {
+		ArrayList<String[]> res = new ArrayList<String[]>();
+		String sql = "SELECT * FROM ORDEN_PRODUCTO WHERE USUARIO = "+peticion;
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		while (rs.next()) {		
+			String nombre = rs.getString("NOMBRE");
+			String restaurante = rs.getString("RESTAURANTE");
+			String[] temp = new String[2];
+			temp[0] =nombre;
+			temp[1]= restaurante;
+			res.add(temp);
 		}
 		return res;
 	}
@@ -580,6 +518,140 @@ public class DAOOrden {
 			daoUsuario.cerrarRecursos();
 			daoProducto.cerrarRecursos();
 		}
+		return res;
+	}
+
+
+	public String consultarConsumo(String restaurante, Date fecI, Date fecF, String order, String group) throws SQLException {
+		String res = "no se pudo hacer";
+		String sql = null;
+			if(!group.equals(""))
+			{
+				String[] gro = group.split("|");	
+				sql ="SELECT "+gro[0]+" from (((SELECT * FROM ORDEN_PRODUCTO PR WHERE PR.RESTAURANTE = '"+restaurante+"' AND PR.FECHA BETWEEN "+fecI.getTime()+" AND "+fecF.getTime()+" ) PRR  JOIN (PRODUCTO U JOIN  TIPO_COMIDA TC ON U.NOMBRE = TC.NOMBRE AND U.RESTAURANTE = TC.RESTAURANTE)on U.RESTAURANTE = PRR.RESTAURANTE AND U.NOMBRE=PRR.NOMBRE) JOIN PERSONA PS ON PS.NUMERO_ID = PRR.USUARIO) GROUP BY "+gro[1];
+			}
+			else	
+				sql ="SELECT PRR.*,U.*, PS.NOMBRE AS NOM, PS.EDAD, PS.TIPO, TC.TIPO AS TIP from (((SELECT * FROM ORDEN_PRODUCTO PR WHERE PR.RESTAURANTE = '"+restaurante+"' AND PR.FECHA BETWEEN "+fecI.getTime()+" AND "+fecF.getTime()+" ) PRR  JOIN (PRODUCTO U JOIN  TIPO_COMIDA TC ON U.NOMBRE = TC.NOMBRE AND U.RESTAURANTE = TC.RESTAURANTE)on U.RESTAURANTE = PRR.RESTAURANTE AND U.NOMBRE=PRR.NOMBRE) JOIN PERSONA PS ON PS.NUMERO_ID = PRR.USUARIO)";
+			if(!order.equals(""))
+				sql += " ORDER BY "+order;
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			ResultSet rs = prepStmt.executeQuery();
+			res= "[";
+			while (rs.next()) {		
+				if(group.equals(""))
+				{
+				res+="{ \"id\": "+ rs.getString("USUARIO");
+				res+= ", \"nombre\": \""+ rs.getString("NOM");
+				res+= "\", \"edad\":"+ rs.getString("EDAD");
+				res+= ", \"fecha\": \""+new Date(rs.getLong("FECHA"));
+				res+= "\", \"mesa\": "+ rs.getString("MESA");
+				res+= ", \"producto\": \""+ rs.getString("NOMBRE");
+				res+= "\", \"restaurante\": \""+rs.getString("RESTAURANTE");
+				res+= "\", \"costo\": "+ rs.getString("COSTO");
+				res+= ", \"tipo\": \""+ rs.getString("TIPO");
+				res+= "\", \"descripcion español\": \""+rs.getString("DESCRIPCION_E");
+				res+= "\", \"descripcion ingles\": \""+rs.getString("DESCRIPCION_EN");
+				res+= "\", \"tiempo preparacion\": "+ rs.getString("TIEMPO_PREP");
+				res+= ", \"precio\": "+ rs.getString("PRECIO");
+				res+= ", \"tipo comida\": \""+rs.getString("TIP");
+				res+= "\"},";
+				}
+				else
+				{
+					res="{ ";
+					String[] gro = group.split("|")[0].split(",");
+					for (int i = 0; i < gro.length; i++) {
+						res+= " \""+gro[i]+"\": "+ rs.getString(gro[i].trim());
+					}
+					
+					res+= "},";
+				}
+			}
+			res = res.substring(0, res.length()-1);
+			res+="]";
+		
+		return res;
+	}
+	public String consultarConsumo2(String restaurante, Date fecI, Date fecF, String order, String group) throws SQLException {
+		String res = "no se pudo hacer";
+		String sql = null;
+			if(!group.equals(""))
+			{
+				String[] gro = group.split("|");	
+				sql ="SELECT "+gro[0]+" FROM  ((SELECT * FROM ORDEN_PRODUCTO OP WHERE USUARIO NOT IN (SELECT USUARIO FROM ORDEN_PRODUCTO PR WHERE PR.RESTAURANTE = '"+restaurante+"' AND PR.FECHA BETWEEN "+fecI.getTime()+" AND "+fecF.getTime()+" AND OP.FECHA BETWEEN "+fecI.getTime()+" AND "+fecF.getTime()+")PRR JOIN PERSONA PS ON PS.NUMERO_ID = PRR.USUARIO) GROUP BY "+gro[1];
+			}
+			else	
+				sql ="SELECT PRR.*,PS.NOMBRE AS NOM, PS.EDAD, PS.TIPO  FROM  ((SELECT * FROM ORDEN_PRODUCTO OP WHERE USUARIO NOT IN (SELECT USUARIO FROM ORDEN_PRODUCTO PR WHERE PR.RESTAURANTE = '"+restaurante+"' AND PR.FECHA BETWEEN "+fecI.getTime()+" AND "+fecF.getTime()+") AND OP.FECHA BETWEEN "+fecI.getTime()+" AND "+fecF.getTime()+")PRR JOIN PERSONA PS ON PS.NUMERO_ID = PRR.USUARIO)";
+			if(!order.equals(""))
+				sql += " ORDER BY "+order;
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			ResultSet rs = prepStmt.executeQuery();
+			res= "[";
+			while (rs.next()) {		
+				if(group.equals(""))
+				{
+				res+="{ \"id\": "+ rs.getString("USUARIO");
+				res+= ", \"nombre\": \""+ rs.getString("NOM");
+				res+= "\", \"edad\":"+ rs.getString("EDAD");
+				res+= ", \"fecha\": \""+new Date(rs.getLong("FECHA"));
+				res+= "\", \"mesa\": "+ rs.getString("MESA");
+				res+= ", \"producto\": \""+ rs.getString("NOMBRE");
+				res+= "\", \"restaurante\": \""+rs.getString("RESTAURANTE");
+				res+= "\"},";
+				}
+				else
+				{
+					res="{ ";
+					String[] gro = group.split("|")[0].split(",");
+					for (int i = 0; i < gro.length; i++) {
+						res+= " \""+gro[i]+"\": "+ rs.getString(gro[i].trim());
+					}
+					
+					res+= "},";
+				}
+			}
+			res = res.substring(0, res.length()-1);
+			res+="]";
+		
+		return res;
+	}
+	public String consultarFuncionalidad(Date dia) throws SQLException {
+		String res = "no se pudo hacer";
+		Long fec = dia.getTime();
+		String sql = "SELECT * FROM (SELECT  RES1.NOMBRE AS NOM1, RES1.ZONA AS ZON1, RES1.TIPO_COMIDA AS TIP1, RES1.WEB AS WEB1 FROM (SELECT COUNT(USUARIO) AS NUMERO, RESTAURANTE FROM ORDEN_PRODUCTO WHERE  rownum = 1 AND FECHA BETWEEN "+fec+" AND "+(fec+86340000)+" GROUP BY RESTAURANTE ORDER BY NUMERO DESC) TAB1 JOIN RESTAURANTE RES1 ON RES1.NOMBRE=TAB1.RESTAURANTE   ), (SELECT RES2.* FROM (SELECT COUNT(USUARIO) AS NUMERO, RESTAURANTE FROM ORDEN_PRODUCTO WHERE rownum = 1 AND FECHA BETWEEN "+fec+" AND "+(fec+86340000)+" GROUP BY RESTAURANTE ORDER BY NUMERO ASC )TAB2 JOIN RESTAURANTE RES2 ON RES2.NOMBRE=TAB2.RESTAURANTE  ), (SELECT RES3.* FROM (SELECT COUNT(USUARIO) AS NUMERO, NOMBRE, RESTAURANTE FROM ORDEN_PRODUCTO WHERE rownum = 1 AND FECHA BETWEEN "+fec+" AND "+(fec+86340000)+" GROUP BY NOMBRE, RESTAURANTE ORDER BY NUMERO DESC )TAB3 JOIN PRODUCTO RES3 ON RES3.NOMBRE= TAB3.NOMBRE AND RES3.RESTAURANTE = TAB3.RESTAURANTE ), (SELECT RES4.* FROM (SELECT COUNT(USUARIO) AS NUMERO, NOMBRE, RESTAURANTE FROM ORDEN_PRODUCTO  WHERE rownum = 1 AND FECHA BETWEEN "+fec+" AND "+(fec+86340000)+" GROUP BY NOMBRE, RESTAURANTE ORDER BY NUMERO ASC )TAB4 JOIN PRODUCTO RES4 ON RES4.NOMBRE= TAB4.NOMBRE AND RES4.RESTAURANTE = TAB4.RESTAURANTE  )";
+
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			ResultSet rs = prepStmt.executeQuery();
+			res= "[";
+			while (rs.next()) {		
+				if(group.equals(""))
+				{
+				res+="{ \"id\": "+ rs.getString("USUARIO");
+				res+= ", \"nombre\": \""+ rs.getString("NOM");
+				res+= "\", \"edad\":"+ rs.getString("EDAD");
+				res+= ", \"fecha\": \""+new Date(rs.getLong("FECHA"));
+				res+= "\", \"mesa\": "+ rs.getString("MESA");
+				res+= ", \"producto\": \""+ rs.getString("NOMBRE");
+				res+= "\", \"restaurante\": \""+rs.getString("RESTAURANTE");
+				res+= "\"},";
+				}
+				else
+				{
+					res="{ ";
+					String[] gro = group.split("|")[0].split(",");
+					for (int i = 0; i < gro.length; i++) {
+						res+= " \""+gro[i]+"\": "+ rs.getString(gro[i].trim());
+					}
+					
+					res+= "},";
+				}
+			}
+			res = res.substring(0, res.length()-1);
+			res+="]";
+		
 		return res;
 	}
 }

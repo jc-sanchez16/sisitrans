@@ -176,7 +176,68 @@ public class RequerimientosServices {
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Path("C8")
-	public Response consultarPedidos(@QueryParam("clave") int clave,@QueryParam("usuario") String usuario) {
+	public Response consultarPedidos(@QueryParam("clave") int clave,@QueryParam("usuario") String usuario ) {
+		TM tm = new TM(getPath());
+		String res = null;
+		try {
+			res = tm.consultarPedidos(usuario,clave);
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(res).build();
+	}
+	@GET
+	@Produces({ MediaType.APPLICATION_JSON })
+	@Path("C9")
+	public Response consultarConsumo(@QueryParam("clave") int clave,@QueryParam("usuario") int usuario, @QueryParam("restaurante") String restaurante,@QueryParam("fechaI") String fechaI,@QueryParam("fechaF") String fechaF,
+									 @QueryParam("order") String order, @QueryParam("group") String group) {
+		TM tm = new TM(getPath());
+		String res = null;
+		Date fecI = new Date(fechaI);
+		Date fecF = new Date(fechaF);
+		try {
+			res = tm.consultarConsumo(clave, usuario, restaurante,fecI, fecF,
+					 order, group);
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(res).build();
+	}
+	@GET
+	@Produces({ MediaType.APPLICATION_JSON })
+	@Path("C10")
+	public Response consultarConsumo2(@QueryParam("clave") int clave,@QueryParam("usuario") int usuario, @QueryParam("restaurante") String restaurante,@QueryParam("fechaI") String fechaI,@QueryParam("fechaF") String fechaF,
+			 @QueryParam("order") String order, @QueryParam("group") String group) {
+		TM tm = new TM(getPath());
+		String res = null;
+		Date fecI = new Date(fechaI);
+		Date fecF = new Date(fechaF);
+		try {
+			res = tm.consultarConsumo2(clave, usuario, restaurante,fecI, fecF,
+					 order, group);
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(res).build();
+	}
+	@GET
+	@Produces({ MediaType.APPLICATION_JSON })
+	@Path("C11")
+	public Response consultarFuncionamiento(@QueryParam("clave") int clave,@QueryParam("usuario") int usuario, @QueryParam("dia") String dia ) {
+		TM tm = new TM(getPath());
+		String res = null;
+		Date fecI = new Date(dia);
+		try {
+			res = tm.consultarFuncionamiento(usuario,clave,dia);
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(res).build();
+	}
+	@GET
+	@Produces({ MediaType.APPLICATION_JSON })
+	@Path("C12")
+	public Response consultarBuenosClientes(@QueryParam("clave") int clave,@QueryParam("usuario") String usuario) {
 		TM tm = new TM(getPath());
 		String res = null;
 		try {

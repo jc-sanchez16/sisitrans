@@ -124,6 +124,7 @@ public class TM {
 			daoRestaurante.setConn(conn);
 			if(!daoRestaurante.verificar( clave))
 				throw new Exception("No es un usuario valido");
+			daoRestaurante.cerrarRecursos();
 			res = daoIngrediente.AddEquivalenciaIngrediente(ingredientes);
 			conn.commit();
 
@@ -138,6 +139,7 @@ public class TM {
 		} finally {
 			try {
 				daoIngrediente.cerrarRecursos();
+				daoRestaurante.cerrarRecursos();
 				if(this.conn!=null)
 					this.conn.close();
 			} catch (SQLException exception) {
@@ -161,6 +163,7 @@ public class TM {
 			daoRestaurante.setConn(conn);
 			if(!daoRestaurante.verificarRest(restaurante, clave))
 				throw new Exception("No es un usuario valido");
+			daoRestaurante.cerrarRecursos();
 			res = daoProducto.addEquivalenciaProducto(clave,restaurante,productos);
 			conn.commit();
 
@@ -175,6 +178,7 @@ public class TM {
 		} finally {
 			try {
 				daoProducto.cerrarRecursos();
+				daoRestaurante.cerrarRecursos();
 				if(this.conn!=null)
 					this.conn.close();
 			} catch (SQLException exception) {
@@ -188,6 +192,7 @@ public class TM {
 
 	public String surtirRestaurante(int clave, String restaurante) throws Exception {
 		DAOProducto daoProducto = new DAOProducto();
+		DAORestaurante daoRestaurante = new DAORestaurante();
 		String res = "no se realizo la accion";		
 		try 
 		{
@@ -195,6 +200,10 @@ public class TM {
 			this.conn = darConexion();
 			conn.setAutoCommit(false);
 			daoProducto.setConn(conn);
+			daoRestaurante.setConn(conn);
+			if(!daoRestaurante.verificarRest(restaurante, clave))
+				throw new Exception("No es un usuario valido");
+			daoRestaurante.cerrarRecursos();
 			res = daoProducto.surtirRestaurante(clave,restaurante);
 			conn.commit();
 
@@ -209,6 +218,7 @@ public class TM {
 		} finally {
 			try {
 				daoProducto.cerrarRecursos();
+				daoRestaurante.cerrarRecursos();
 				if(this.conn!=null)
 					this.conn.close();
 			} catch (SQLException exception) {
@@ -221,6 +231,7 @@ public class TM {
 	}
 	public void registrarPedidoOrden(int mesa, Date fecha, ArrayList<String> productos, ArrayList<Integer> usuarios) throws Exception {
 		DAOOrden daoOrden = new DAOOrden();	
+		DAOProducto daoProducto = new DAOProducto();
 		Savepoint save = null;
 		try 
 		{
@@ -229,9 +240,15 @@ public class TM {
 			save =conn.setSavepoint();
 			daoOrden.setConn(conn);
 			daoOrden.addOrdenEnProceso(new Orden(mesa, fecha, usuarios, null, null, false));
+			daoProducto.setConn(conn);
 			for(int i = 0 ; i<productos.size(); i++)
 			{
 				String[] producto = productos.get(i).split(";");
+				String[] cambios = producto[2].split(":");
+				daoProducto.setConn(conn);
+				if(daoProducto.verificarDisponibilidad(producto[0],producto[1],cambios))
+					throw new Exception("no hay unidades disponible");
+				daoProducto.cerrarRecursos();
 				daoOrden.registrarPedidoProducto(producto[0],producto[1],producto[2],Integer.parseInt(producto[3]), mesa, fecha);
 			}
 			conn.commit();
@@ -245,6 +262,7 @@ public class TM {
 		} finally {
 			try {
 				daoOrden.cerrarRecursos();
+				daoProducto.cerrarRecursos();
 				if(this.conn!=null)
 					this.conn.close();
 			} catch (SQLException exception) {
@@ -258,6 +276,8 @@ public class TM {
 	public String registrarServicio(int clave, String restaurante, Date fecha, int mesa) throws Exception {
 		String res = "no se realizo la accion";
 		DAOOrden daoOrden = new DAOOrden();	
+		DAORestaurante daoRestaurante = new DAORestaurante();
+		DAOProducto daoProducto = new DAOProducto();
 		Savepoint save = null;
 		try 
 		{
@@ -265,7 +285,19 @@ public class TM {
 			conn.setAutoCommit(false);		
 			save =conn.setSavepoint();
 			daoOrden.setConn(conn);
+			daoRestaurante.setConn(conn);
+			if(!daoRestaurante.verificarRest(restaurante, clave))
+				throw new Exception("No es un usuario valido");
+			daoRestaurante.cerrarRecursos();
 			res = daoOrden.registrarServicio(clave,restaurante,fecha,mesa);
+			ArrayList<Articulo> productos = daoOrden.getArticulosOrden(mesa, fecha.getTime());
+			daoOrden.cerrarRecursos();
+			daoProducto.setConn(conn);
+			for (int i = 0; i < productos.size(); i++) 
+			{
+				Articulo producto = productos.get(i);
+				daoProducto.restarUnidad(producto.getNombre(), producto.getRestaurante(), producto.getCambios().split(":"));
+			}
 			conn.commit();
 		} catch (Exception e) {
 			System.err.println("GeneralException:" + e.getMessage());
@@ -275,6 +307,8 @@ public class TM {
 		} finally {
 			try {
 				daoOrden.cerrarRecursos();
+				daoRestaurante.cerrarRecursos();
+				daoProducto.cerrarRecursos();
 				if(this.conn!=null)
 					this.conn.close();
 			} catch (SQLException exception) {
@@ -290,12 +324,17 @@ public class TM {
 	{
 		String res = "no se realizo la accion";
 		DAOOrden daoOrden = new DAOOrden();	
+		DAORestaurante daoRestaurante = new DAORestaurante();
 		Savepoint save = null;
 		try 
 		{
 			this.conn = darConexion();	
 			conn.setAutoCommit(false);		
 			save =conn.setSavepoint();
+			daoRestaurante.setConn(conn);
+			if(!daoRestaurante.verificarRest(restaurante, clave))
+				throw new Exception("No es un usuario valido");
+			daoRestaurante.cerrarRecursos();
 			daoOrden.setConn(conn);
 			res = daoOrden.cancelarServicio(clave,restaurante,fecha,mesa);
 			conn.commit();
@@ -307,6 +346,7 @@ public class TM {
 		} finally {
 			try {
 				daoOrden.cerrarRecursos();
+				daoRestaurante.cerrarRecursos();
 				if(this.conn!=null)
 					this.conn.close();
 			} catch (SQLException exception) {
@@ -321,12 +361,30 @@ public class TM {
 	public ArrayList<Articulo> consultarConsumo(int usuario, int clave, int peticion) throws Exception {
 		ArrayList<Articulo> res = null;
 		DAOOrden daoOrden = new DAOOrden();	
+		DAOUsuario daoUsuario = new DAOUsuario();
+		DAOProducto daoProducto = new DAOProducto();
 		try 
 		{
 			this.conn = darConexion();		
 			conn.setAutoCommit(false);	
+			daoUsuario.setConn(conn);
+			if(!(daoUsuario.verificar(usuario, clave,1)||(usuario==peticion && daoUsuario.verificar(usuario, clave, 0))))
+				throw new Exception("no es un usuario valido");
+			daoUsuario.cerrarRecursos();
 			daoOrden.setConn(conn);
-			res = daoOrden.consultarConsumo(usuario, clave, peticion);
+			ArrayList<String[]> ans  = daoOrden.consultarConsumo(usuario, clave, peticion);
+			daoOrden.cerrarRecursos();
+			daoProducto.setConn(conn);
+			for (int i = 0; i < ans.size(); i++) 
+			{
+				String [] an = ans.get(i);
+				Articulo art = daoProducto.getProductoPK(an[0], an[1]);
+				if(art!= null)
+				{
+					res.add(art);
+				}
+				res.add(daoProducto.getMenuPK(an[0], an[1]));
+			}
 			conn.commit();
 		} catch (Exception e) {
 			System.err.println("GeneralException:" + e.getMessage());
@@ -335,6 +393,8 @@ public class TM {
 		} finally {
 			try {
 				daoOrden.cerrarRecursos();
+				daoUsuario.cerrarRecursos();
+				daoProducto.cerrarRecursos();
 				if(this.conn!=null)
 					this.conn.close();
 			} catch (SQLException exception) {
@@ -348,6 +408,7 @@ public class TM {
 
 	public String consultarPedidos(String usuario, int clave) throws Exception {
 		String res = null;
+		//TODO: FALTA Y EN ADELANTE
 		DAOOrden daoOrden = new DAOOrden();	
 		try 
 		{
@@ -373,7 +434,122 @@ public class TM {
 		}
 		return res;
 	}
+
+	public String consultarConsumo(int clave, int usuario, String restaurante, Date fecI, Date fecF, String order,
+			String group) throws Exception {
+		String res = null;
+		DAOOrden daoOrden = new DAOOrden();	
+		DAOUsuario daoUsuario = new DAOUsuario();
+		DAORestaurante daoRestaurante = new DAORestaurante();
+		try 
+		{
+			this.conn = darConexion();		
+			daoUsuario.setConn(conn);
+			if(usuario != 0 && !(daoUsuario.verificar(usuario, clave,1)))
+				throw new Exception("no es un usuario valido");
+			daoUsuario.cerrarRecursos();
+			daoRestaurante.setConn(conn);
+			if(usuario == 0 && !daoRestaurante.verificarRest(restaurante, clave))
+				throw new Exception("no es un usuario valido");
+			daoRestaurante.cerrarRecursos();
+			daoOrden.setConn(conn);
+			res = daoOrden.consultarConsumo(restaurante, fecI, fecF,order, group);
+			daoOrden.cerrarRecursos();			
+			conn.commit();
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoOrden.cerrarRecursos();
+				daoUsuario.cerrarRecursos();
+				daoRestaurante.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return res;
+	}
+
+	public String consultarConsumo2(int clave, int usuario, String restaurante, Date fecI, Date fecF, String order,
+			String group) throws Exception {
+		String res = null;
+		DAOOrden daoOrden = new DAOOrden();	
+		DAOUsuario daoUsuario = new DAOUsuario();
+		DAORestaurante daoRestaurante = new DAORestaurante();
+		try 
+		{
+			this.conn = darConexion();		
+			daoUsuario.setConn(conn);
+			if(usuario != 0 && !(daoUsuario.verificar(usuario, clave,1)))
+				throw new Exception("no es un usuario valido");
+			daoUsuario.cerrarRecursos();
+			daoRestaurante.setConn(conn);
+			if(usuario == 0 && !daoRestaurante.verificarRest(restaurante, clave))
+				throw new Exception("no es un usuario valido");
+			daoRestaurante.cerrarRecursos();
+			daoOrden.setConn(conn);
+			res = daoOrden.consultarConsumo2(restaurante, fecI, fecF,order, group);
+			daoOrden.cerrarRecursos();			
+			conn.commit();
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoOrden.cerrarRecursos();
+				daoUsuario.cerrarRecursos();
+				daoRestaurante.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return res;
+	}
 	
+	public String consultarFuncionamiento(int usuario, int clave, String dia) throws Exception {
+		String res = null;
+		DAOOrden daoOrden = new DAOOrden();	
+		DAOUsuario daoUsuario = new DAOUsuario();
+		try 
+		{
+			this.conn = darConexion();		
+			daoUsuario.setConn(conn);
+			if(!(daoUsuario.verificar(usuario, clave,1)))
+				throw new Exception("no es un usuario valido");
+			daoUsuario.cerrarRecursos();
+			daoOrden.setConn(conn);
+			res = daoOrden.consultarFuncionamiento(dia);
+			daoOrden.cerrarRecursos();			
+			conn.commit();
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoOrden.cerrarRecursos();
+				daoUsuario.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return res;
+	}
 	//Ingredientes
 
 	public List<Ingrediente> getIngredientes() throws Exception {
@@ -1644,4 +1820,5 @@ public class TM {
 			}
 		}
 	}
+
 }

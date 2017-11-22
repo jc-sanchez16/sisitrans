@@ -676,31 +676,15 @@ public class DAOProducto {
 
 	public String surtirRestaurante(int clave, String restaurante)throws Exception {
 		String res = "No se realizo la accion";
-		DAORestaurante daoRestaurante = new DAORestaurante();
-		try {
-			daoRestaurante.setConn(conn);
-			if (!daoRestaurante.verificarRest(restaurante, clave))
-				throw new Exception("El usuario no tiene permisos para realizar esta accion");
-			else
-			{
-				String sql ="UPDATE PRODUCTO SET CANT_ACTUAL =CANT_MAX";
-				sql += " WHERE RESTAURANTE = '"+ restaurante+"'";		
 
-				PreparedStatement prepStmt = conn.prepareStatement(sql);
-				recursos.add(prepStmt);
-				prepStmt.executeQuery();
-				res="Se realizo la accion";
-			}
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-			throw e;
-		}
-		finally
-		{
-			daoRestaurante.cerrarRecursos();
-		}
+		String sql ="UPDATE PRODUCTO SET CANT_ACTUAL =CANT_MAX";
+		sql += " WHERE RESTAURANTE = '"+ restaurante+"'";		
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+		res="Se realizo la accion";
+
 		return res;
 
 

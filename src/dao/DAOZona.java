@@ -49,8 +49,6 @@ public class DAOZona {
 		DAORestaurante daoRestaurante = new DAORestaurante();
 		try
 		{
-			daoReserva.setConn(conn);
-			daoRestaurante.setConn(conn);
 			String sql = "SELECT * FROM ZONA";
 
 			PreparedStatement prepStmt = conn.prepareStatement(sql);
@@ -63,11 +61,19 @@ public class DAOZona {
 				int capacidad = rs.getInt("CAPACIDAD");
 				boolean discapacitados =((rs.getInt("DISCAPACITADOS") == 0) ? true:false);
 				String especialidad =rs.getString("ESPECIALIDAD") ;
+				daoReserva.setConn(conn);
 				ArrayList<Reserva> reservas =  daoReserva.getReservasZona(id);
+				daoReserva.cerrarRecursos();
 				ArrayList<String> condiciones = getCondiciones(id);
+				daoRestaurante.setConn(conn);
 				ArrayList<Restaurante> restaurantes = daoRestaurante.getRestaurantesZona(id);
+				daoRestaurante.cerrarRecursos();
 				lista.add(new Zona(id, abierto, capacidad, discapacitados, especialidad, reservas, condiciones, restaurantes));
 			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
 		}
 		finally
 		{

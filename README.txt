@@ -163,7 +163,13 @@ RequerimientoServices.
 	@get
 	url:http://localhost:8080/RotonAndes/rest/RF/C8?clave=21435423&usuario=12345678
 
+c9:
 
+http://localhost:8080/RotonAndes/rest/RF/C9?clave=454&usuario=2117&restaurante=bieiggvsqyybdjddzvwv&fechaI=2206/01/20 00:00&fechaF=2206/01/20 23:59&order=&group
+
+c10:
+
+http://localhost:8080/RotonAndes/rest/RF/C10?clave=454&usuario=2117&restaurante=bieiggvsqyybdjddzvwv&fechaI=2206/01/20 00:00&fechaF=2206/01/20 23:59&order=&group
 
 
 

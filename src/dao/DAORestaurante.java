@@ -216,12 +216,9 @@ public class DAORestaurante {
 
 	public ArrayList<Restaurante> getRestaurantesZona(int id) throws Exception {
 		ArrayList<Restaurante> lista = new ArrayList<Restaurante>();
-		DAOUsuario daoUsuario = new DAOUsuario();
 		DAOProducto daoProducto = new DAOProducto();
 		try
 		{
-			daoUsuario.setConn(conn);
-			daoProducto.setConn(conn);
 			String sql = "SELECT * FROM RESTAURANTE WHERE ZONA ='"+id+"'";
 
 			PreparedStatement prepStmt = conn.prepareStatement(sql);
@@ -235,15 +232,16 @@ public class DAORestaurante {
 				int zona = rs.getInt("ZONA");
 
 				int administrador = rs.getInt("REPRESENTANTE");
+				daoProducto.setConn(conn);
 				ArrayList<Producto> productos = daoProducto.getProductosRestaurante(nombre);
 				ArrayList<Menu> menus = daoProducto.getMenusRestaurante(nombre);
+				daoProducto.cerrarRecursos();
 				ArrayList<Contrato> contratos= getContratos(nombre);
 				lista.add(new Restaurante(nombre, tipoComida, web, zona, administrador, contratos, productos, menus));
 			}
 		}
 		finally
 		{
-			daoUsuario.cerrarRecursos();
 			daoProducto.cerrarRecursos();
 		}
 		return lista;
