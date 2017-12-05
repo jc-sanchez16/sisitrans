@@ -527,7 +527,7 @@ public class DAOOrden {
 		String sql = null;
 		if(!group.equals(""))
 		{
-			String[] gro = group.split("|");	
+			String[] gro = group.split(":");	
 			sql ="SELECT "+gro[0]+" from (((SELECT * FROM ORDEN_PRODUCTO PR WHERE PR.RESTAURANTE = '"+restaurante+"' AND PR.FECHA BETWEEN "+fecI.getTime()+" AND "+fecF.getTime()+" ) PRR  JOIN (PRODUCTO U JOIN  TIPO_COMIDA TC ON U.NOMBRE = TC.NOMBRE AND U.RESTAURANTE = TC.RESTAURANTE)on U.RESTAURANTE = PRR.RESTAURANTE AND U.NOMBRE=PRR.NOMBRE) JOIN PERSONA PS ON PS.NUMERO_ID = PRR.USUARIO) GROUP BY "+gro[1];
 		}
 		else	
@@ -559,10 +559,11 @@ public class DAOOrden {
 			}
 			else
 			{
-				res="{ ";
-				String[] gro = group.split("|")[0].split(",");
-				for (int i = 0; i < gro.length; i++) {
-					res+= " \""+gro[i]+"\": "+ rs.getString(gro[i].trim());
+				res+="{ ";
+				String[] gro = group.split(":")[0].split(",");
+				res+= " \""+gro[0]+"\": "+ rs.getString(gro[0].trim())+"";
+				for (int i = 1; i < gro.length; i++) {
+					res+= ", \""+gro[i]+"\": "+ rs.getString(gro[i].trim())+"";
 				}
 
 				res+= "},";
@@ -578,8 +579,8 @@ public class DAOOrden {
 		String sql = null;
 		if(!group.equals(""))
 		{
-			String[] gro = group.split("|");	
-			sql ="SELECT "+gro[0]+" FROM  ((SELECT * FROM ORDEN_PRODUCTO OP WHERE USUARIO NOT IN (SELECT USUARIO FROM ORDEN_PRODUCTO PR WHERE PR.RESTAURANTE = '"+restaurante+"' AND PR.FECHA BETWEEN "+fecI.getTime()+" AND "+fecF.getTime()+" AND OP.FECHA BETWEEN "+fecI.getTime()+" AND "+fecF.getTime()+")PRR JOIN PERSONA PS ON PS.NUMERO_ID = PRR.USUARIO) GROUP BY "+gro[1];
+			String[] gro = group.split(":");	
+			sql ="SELECT "+gro[0]+" FROM  ((SELECT * FROM ORDEN_PRODUCTO OP WHERE USUARIO NOT IN (SELECT USUARIO FROM ORDEN_PRODUCTO PR WHERE PR.RESTAURANTE = '"+restaurante+"' AND PR.FECHA BETWEEN "+fecI.getTime()+" AND "+fecF.getTime()+") AND OP.FECHA BETWEEN "+fecI.getTime()+" AND "+fecF.getTime()+")PRR JOIN PERSONA PS ON PS.NUMERO_ID = PRR.USUARIO) GROUP BY "+gro[1];
 		}
 		else	
 			sql ="SELECT PRR.*,PS.NOMBRE AS NOM, PS.EDAD, PS.TIPO  FROM  ((SELECT * FROM ORDEN_PRODUCTO OP WHERE USUARIO NOT IN (SELECT USUARIO FROM ORDEN_PRODUCTO PR WHERE PR.RESTAURANTE = '"+restaurante+"' AND PR.FECHA BETWEEN "+fecI.getTime()+" AND "+fecF.getTime()+") AND OP.FECHA BETWEEN "+fecI.getTime()+" AND "+fecF.getTime()+")PRR JOIN PERSONA PS ON PS.NUMERO_ID = PRR.USUARIO)";
@@ -603,10 +604,11 @@ public class DAOOrden {
 			}
 			else
 			{
-				res="{ ";
-				String[] gro = group.split("|")[0].split(",");
-				for (int i = 0; i < gro.length; i++) {
-					res+= " \""+gro[i]+"\": "+ rs.getString(gro[i].trim());
+				res+="{ ";
+				String[] gro = group.split(":")[0].split(",");
+				res+= " \""+gro[0]+"\": "+ rs.getString(gro[0].trim())+"";
+				for (int i = 1; i < gro.length; i++) {
+					res+= ", \""+gro[i]+"\": "+ rs.getString(gro[i].trim())+"";
 				}
 
 				res+= "},";
@@ -668,7 +670,7 @@ public class DAOOrden {
 	}
 	public String consultarBuenosClientes (Date dia) throws SQLException {
 		String res = "no se pudo hacer";
-		String sql = "SELECT * FROM (SELECT USUARIO FROM (SELECT USUARIO, MAX(MENU) AS PREC FROM (ORDEN_PRODUCTO PRR JOIN (SELECT MENU, RESTAURANTE, NOMBRE FROM PRODUCTO )U ON U.RESTAURANTE = PRR.RESTAURANTE AND U.NOMBRE=PRR.NOMBRE) GROUP BY PRR.USUARIO) WHERE PREC = 0) J1  JOIN PERSONA PS ON PS.NUMERO_ID = J1.USUARIO;";
+		String sql = "SELECT * FROM (SELECT USUARIO FROM (SELECT USUARIO, MAX(MENU) AS PREC FROM (ORDEN_PRODUCTO PRR JOIN (SELECT MENU, RESTAURANTE, NOMBRE FROM PRODUCTO )U ON U.RESTAURANTE = PRR.RESTAURANTE AND U.NOMBRE=PRR.NOMBRE) GROUP BY PRR.USUARIO) WHERE PREC = 0) J1  JOIN PERSONA PS ON PS.NUMERO_ID = J1.USUARIO";
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
@@ -681,11 +683,9 @@ public class DAOOrden {
 			res+= "},";
 		}
 		sql = "SELECT * FROM (SELECT * FROM (ORDEN_PRODUCTO PRR JOIN (SELECT PRECIO, RESTAURANTE, NOMBRE, TIPO FROM PRODUCTO)U ON U.RESTAURANTE = PRR.RESTAURANTE AND U.NOMBRE=PRR.NOMBRE)  WHERE U.TIPO =2 AND U.PRECIO >= 33000) TOT JOIN PERSONA PS ON PS.NUMERO_ID = TOT.USUARIO";
-
 		prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		rs = prepStmt.executeQuery();
-		res= "[";
 		while (rs.next()) {		
 			res+="{ \"id\": "+ rs.getString("NUMERO_ID");
 			res+= ", \"nombre\": \""+ rs.getString("NOMBRE");
@@ -693,12 +693,11 @@ public class DAOOrden {
 			res+= "},";
 		}
 		Long fec= dia.getTime();
-		sql = "SELECT * FROM (SELECT ID_CLI FROM (SELECT ID_CLIENTE AS ID_CLI FROM ORDEN_USUARIO WHERE FECHA BETWEEN "+fec+" AND "+(fec+604800000)+")T1 JOIN (SELECT ID_CLIENTE FROM ORDEN_USUARIO WHERE FECHA BETWEEN "+(fec+604800001)+" AND "+(fec+(2*604800000))+") T2 ON T1.ID_CLI= T2.ID_CLIENTE JOIN (SELECT ID_CLIENTE FROM ORDEN_USUARIO WHERE FECHA BETWEEN "+(fec+(2*604800001))+" AND "+(fec+(3*604800000))+") T3 ON T1.ID_CLI= T3.ID_CLIENTE JOIN (SELECT ID_CLIENTE FROM ORDEN_USUARIO WHERE FECHA BETWEEN "+(fec+(3*604800001))+" AND "+(fec+(4*604800000))+") T4 ON T1.ID_CLI = T4.ID_CLIENTE)FI JOIN PERSONA PS ON PS.NUMERO_ID = FI.ID_CLI;";
+		sql = "SELECT * FROM (SELECT ID_CLI FROM (SELECT ID_CLIENTE AS ID_CLI FROM ORDEN_USUARIO WHERE FECHA BETWEEN "+fec+" AND "+(fec+86340000)+")T1 JOIN (SELECT ID_CLIENTE FROM ORDEN_USUARIO WHERE FECHA BETWEEN "+(fec+86340001)+" AND "+(fec+(2*86340000))+") T2 ON T1.ID_CLI= T2.ID_CLIENTE JOIN (SELECT ID_CLIENTE FROM ORDEN_USUARIO WHERE FECHA BETWEEN "+(fec+(2*86340001))+" AND "+(fec+(3*86340000))+") T3 ON T1.ID_CLI= T3.ID_CLIENTE JOIN (SELECT ID_CLIENTE FROM ORDEN_USUARIO WHERE FECHA BETWEEN "+(fec+(3*86340001))+" AND "+(fec+(4*86340000))+") T4 ON T1.ID_CLI = T4.ID_CLIENTE)FI JOIN PERSONA PS ON PS.NUMERO_ID = FI.ID_CLI";
 
 		prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		rs = prepStmt.executeQuery();
-		res= "[";
 		while (rs.next()) {		
 			res+="{ \"id\": "+ rs.getString("NUMERO_ID");
 			res+= ", \"nombre\": \""+ rs.getString("NOMBRE");

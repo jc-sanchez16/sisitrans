@@ -24,6 +24,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import tm.TM;
 import vos.Articulo;
 import vos.Ingrediente;
+import vos.Producto;
 
 /**
  * Clase que expone servicios REST con ruta base: http://"ip o nombre de host":8080/VideoAndes/rest/videos/...
@@ -237,6 +238,62 @@ public class RequerimientosServices {
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Path("C12")
+	public Response consultarBuenosClientes(@QueryParam("mes") String dia,@QueryParam("clave") int clave,@QueryParam("usuario") int usuario) {
+		TM tm = new TM(getPath());
+		String res = null;
+		Date fecI = new Date(dia);
+		try {
+			res = tm.consultarBuenosClientes(fecI,clave,usuario);
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(res).build();
+	}
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("18")
+	public Response registrarPedidoOrdenD(@QueryParam("mesa") int mesa, Respuesta res) {
+		TM tm = new TM(getPath());
+		try {
+			Date f =new Date();
+			f = new Date(f.getYear(),f.getMonth(),f.getDate(),f.getHours(), f.getMinutes());
+			tm.registrarPedidoOrdenD(mesa,f,res.productos,res.usuarios);
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}		return Response.status(200).entity(res).build();
+	}
+	@PUT
+	@Produces({ MediaType.APPLICATION_JSON })
+	@Path("19")
+	public Response retirarRestauranteD(@QueryParam("clave") int clave,@QueryParam("usuario") int usuario, @QueryParam("restaurante") String restaurante)
+	{
+		TM tm = new TM(getPath());
+		String res= null;
+		try {
+			res = tm.retirarRestauranteD(clave, usuario, restaurante);
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(res).build();
+	}
+	@GET
+	@Produces({ MediaType.APPLICATION_JSON })
+	@Path("C13")
+	public Response consultarProductosD()
+	{
+		TM tm = new TM(getPath());
+		ArrayList<Producto> res = null;
+		try {
+			res = tm.consultarProductosD();
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(res).build();
+	}
+	@GET
+	@Produces({ MediaType.APPLICATION_JSON })
+	@Path("C5")
 	public Response consultarBuenosClientes(@QueryParam("mes") String dia,@QueryParam("clave") int clave,@QueryParam("usuario") int usuario) {
 		TM tm = new TM(getPath());
 		String res = null;
