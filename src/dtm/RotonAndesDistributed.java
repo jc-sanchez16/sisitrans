@@ -2,6 +2,8 @@ package dtm;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Date;
 
 import javax.jms.JMSException;
 import javax.jms.Queue;
@@ -22,42 +24,41 @@ import org.codehaus.jackson.map.JsonMappingException;
 import com.rabbitmq.jms.admin.RMQConnectionFactory;
 import com.rabbitmq.jms.admin.RMQDestination;
 
-import jms.AllVideosMDB;
 import jms.NonReplyException;
-import tm.VideoAndesMaster;
-import vos.ListaVideos;
-
-public class VideoAndesDistributed 
+import jms.RF18MQ;
+import rest.RequerimientosServices.Respuesta;
+import tm.TM;
+public class RotonAndesDistributed 
 {
-	private final static String QUEUE_NAME = "java:global/RMQAppQueue";
-	private final static String MQ_CONNECTION_NAME = "java:global/RMQClient";
+	private final static String QUEUE_NAME = "java:global/18";
+	private final static String MQ_CONNECTION_NAME = "java:global/IT5";
 	
-	private static VideoAndesDistributed instance;
+	private static RotonAndesDistributed instance;
 	
-	private VideoAndesMaster tm;
+	private TM tm;
 	
 	private QueueConnectionFactory queueFactory;
 	
 	private TopicConnectionFactory factory;
 	
-	private AllVideosMDB allVideosMQ;
+	private RF18MQ req18;
 	
 	private static String path;
 
 
-	private VideoAndesDistributed() throws NamingException, JMSException
+	private RotonAndesDistributed() throws NamingException, JMSException
 	{
 		InitialContext ctx = new InitialContext();
 		factory = (RMQConnectionFactory) ctx.lookup(MQ_CONNECTION_NAME);
-		allVideosMQ = new AllVideosMDB(factory, ctx);
+//		req18 = new RF18MQ(factory, ctx);
 		
-		allVideosMQ.start();
+//		req18.start();
 		
 	}
 	
 	public void stop() throws JMSException
 	{
-		allVideosMQ.close();
+		req18.close();
 	}
 	
 	/**
@@ -68,22 +69,22 @@ public class VideoAndesDistributed
 		path = p;
 	}
 	
-	public void setUpTransactionManager(VideoAndesMaster tm)
+	public void setUpTransactionManager(TM tm)
 	{
 	   this.tm = tm;
 	}
 	
-	private static VideoAndesDistributed getInst()
+	private static RotonAndesDistributed getInst()
 	{
 		return instance;
 	}
 	
-	public static VideoAndesDistributed getInstance(VideoAndesMaster tm)
+	public static RotonAndesDistributed getInstance(TM tm)
 	{
 		if(instance == null)
 		{
 			try {
-				instance = new VideoAndesDistributed();
+				instance = new RotonAndesDistributed();
 			} catch (NamingException e) {
 				e.printStackTrace();
 			} catch (JMSException e) {
@@ -95,28 +96,27 @@ public class VideoAndesDistributed
 		return instance;
 	}
 	
-	public static VideoAndesDistributed getInstance()
+	public static RotonAndesDistributed getInstance()
 	{
 		if(instance == null)
 		{
-			VideoAndesMaster tm = new VideoAndesMaster(path);
+			TM tm = new TM(path);
 			return getInstance(tm);
 		}
 		if(instance.tm != null)
 		{
 			return instance;
 		}
-		VideoAndesMaster tm = new VideoAndesMaster(path);
+		TM tm = new TM(path);
 		return getInstance(tm);
 	}
-	
-	public ListaVideos getLocalVideos() throws Exception
-	{
-		return tm.darVideosLocal();
+
+	public boolean registrarPedidoOrdenD(int mesa, Date f, ArrayList<String> productos, ArrayList<Integer> usuarios) throws JsonGenerationException, JsonMappingException, NoSuchAlgorithmException, JMSException, IOException, NonReplyException, InterruptedException {
+		
+		return req18.registrar(mesa,f,new Respuesta(productos, usuarios) );
 	}
-	
-	public ListaVideos getRemoteVideos() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
-	{
-		return allVideosMQ.getRemoteVideos();
+
+	public Respuesta registrarLocal(int mesa,Date f,Respuesta res) throws Exception {
+		return tm.registrarPedidoOrden(mesa, f, res.productos, res.usuarios);
 	}
 }

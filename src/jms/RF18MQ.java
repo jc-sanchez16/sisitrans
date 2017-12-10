@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -38,39 +39,38 @@ import org.codehaus.jackson.map.ObjectMapper;
 import com.rabbitmq.jms.admin.RMQConnectionFactory;
 import com.rabbitmq.jms.admin.RMQDestination;
 
-import dtm.VideoAndesDistributed;
+import dtm.RotonAndesDistributed;
+import rest.RequerimientosServices.Respuesta;
 import vos.ExchangeMsg;
-import vos.ListaVideos;
-import vos.Video;
 
 
-public class AllVideosMDB implements MessageListener, ExceptionListener 
+public class RF18MQ implements MessageListener, ExceptionListener 
 {
-	public final static int TIME_OUT = 5;
-	private final static String APP = "app1";
+	public final static int TIME_OUT = 1000000;
+	private final static String APP = "app3";
 	
-	private final static String GLOBAL_TOPIC_NAME = "java:global/RMQTopicAllVideos";
-	private final static String LOCAL_TOPIC_NAME = "java:global/RMQAllVideosLocal";
+	private final static String GLOBAL_TOPIC_NAME1 = "java:global/RF19.1";
+	private final static String GLOBAL_TOPIC_NAME2 = "java:global/RF19.2";
 	
 	private final static String REQUEST = "REQUEST";
 	private final static String REQUEST_ANSWER = "REQUEST_ANSWER";
 	
 	private TopicConnection topicConnection;
 	private TopicSession topicSession;
-	private Topic globalTopic;
-	private Topic localTopic;
+	private Topic globalTopic1;
+	private Topic globalTopic2;
 	
-	private List<Video> answer = new ArrayList<Video>();
+	private Respuesta answer = new Respuesta();
 	
-	public AllVideosMDB(TopicConnectionFactory factory, InitialContext ctx) throws JMSException, NamingException 
+	public RF18MQ(TopicConnectionFactory factory, InitialContext ctx) throws JMSException, NamingException 
 	{	
 		topicConnection = factory.createTopicConnection();
 		topicSession = topicConnection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
-		globalTopic = (RMQDestination) ctx.lookup(GLOBAL_TOPIC_NAME);
-		TopicSubscriber topicSubscriber =  topicSession.createSubscriber(globalTopic);
+		globalTopic1 = (RMQDestination) ctx.lookup(GLOBAL_TOPIC_NAME1);
+		globalTopic2 = (RMQDestination) ctx.lookup(GLOBAL_TOPIC_NAME2);
+		TopicSubscriber topicSubscriber =  topicSession.createSubscriber(globalTopic1);
 		topicSubscriber.setMessageListener(this);
-		localTopic = (RMQDestination) ctx.lookup(LOCAL_TOPIC_NAME);
-		topicSubscriber =  topicSession.createSubscriber(localTopic);
+		topicSubscriber =  topicSession.createSubscriber(globalTopic2);
 		topicSubscriber.setMessageListener(this);
 		topicConnection.setExceptionListener(this);
 	}
@@ -86,34 +86,59 @@ public class AllVideosMDB implements MessageListener, ExceptionListener
 		topicConnection.close();
 	}
 	
-	public ListaVideos getRemoteVideos() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
+	public boolean registrar(int mesa, Date f, Respuesta rest) throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
 	{
-		answer.clear();
+		answer= new Respuesta();
 		String id = APP+""+System.currentTimeMillis();
 		MessageDigest md = MessageDigest.getInstance("MD5");
 		id = DatatypeConverter.printHexBinary(md.digest(id.getBytes())).substring(0, 8);
 //		id = new String(md.digest(id.getBytes()));
-		
-		sendMessage("", REQUEST, globalTopic, id);
+		ObjectMapper map = new ObjectMapper();
+		sendMessage(map.writeValueAsString(rest), REQUEST, globalTopic1, id);
 		boolean waiting = true;
-
 		int count = 0;
 		while(TIME_OUT != count){
 			TimeUnit.SECONDS.sleep(1);
 			count++;
 		}
 		if(count == TIME_OUT){
-			if(this.answer.isEmpty()){
+			if(this.answer.isEmpty){
 				waiting = false;
 				throw new NonReplyException("Time Out - No Reply");
 			}
 		}
 		waiting = false;
 		
-		if(answer.isEmpty())
+		if(answer.isEmpty)
 			throw new NonReplyException("Non Response");
-		ListaVideos res = new ListaVideos(answer);
-        return res;
+		if(answer.productos.isEmpty())
+		{
+			return true;
+		}			
+		sendMessage(map.writeValueAsString(rest), REQUEST, globalTopic2, id);
+		waiting = true;
+		count = 0;
+		while(TIME_OUT != count){
+			TimeUnit.SECONDS.sleep(1);
+			count++;
+		}
+		if(count == TIME_OUT){
+			if(this.answer.isEmpty){
+				waiting = false;
+				throw new NonReplyException("Time Out - No Reply");
+			}
+		}
+		waiting = false;
+		
+		if(answer.isEmpty)
+			throw new NonReplyException("Non Response");
+		if(answer.productos.isEmpty())
+		{
+			sendMessage("true", REQUEST, globalTopic1, id);
+			return true;
+		}	
+		sendMessage("false", REQUEST, globalTopic1, id);
+		return false;
 	}
 	
 	
@@ -121,14 +146,13 @@ public class AllVideosMDB implements MessageListener, ExceptionListener
 	{
 		ObjectMapper mapper = new ObjectMapper();
 		System.out.println(id);
-		ExchangeMsg msg = new ExchangeMsg("videos.general.app1", APP, payload, status, id);
+		ExchangeMsg msg = new ExchangeMsg("registrar.app3", APP, payload, status, id);
 		TopicPublisher topicPublisher = topicSession.createPublisher(dest);
 		topicPublisher.setDeliveryMode(DeliveryMode.PERSISTENT);
 		TextMessage txtMsg = topicSession.createTextMessage();
 		txtMsg.setJMSType("TextMessage");
-		String envelope = mapper.writeValueAsString(msg);
-		System.out.println(envelope);
-		txtMsg.setText(envelope);
+		System.out.println(payload);
+		txtMsg.setText(payload);
 		topicPublisher.publish(txtMsg);
 	}
 	
@@ -149,31 +173,21 @@ public class AllVideosMDB implements MessageListener, ExceptionListener
 			{
 				if(ex.getStatus().equals(REQUEST))
 				{
-					VideoAndesDistributed dtm = VideoAndesDistributed.getInstance();
-					ListaVideos videos = dtm.getLocalVideos();
-					String payload = mapper.writeValueAsString(videos);
+					if()
+					RotonAndesDistributed dtm = RotonAndesDistributed.getInstance();
+					Respuesta resp = dtm.registrarLocal();
+					String payload = mapper.writeValueAsString(resp);
 					Topic t = new RMQDestination("", "videos.test", ex.getRoutingKey(), "", false);
 					sendMessage(payload, REQUEST_ANSWER, t, id);
 				}
 				else if(ex.getStatus().equals(REQUEST_ANSWER))
 				{
+					
 					ListaVideos v = mapper.readValue(ex.getPayload(), ListaVideos.class);
 					answer.addAll(v.getVideos());
 				}
 			}
 			
-		} catch (JMSException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JsonParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

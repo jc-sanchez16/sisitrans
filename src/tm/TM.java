@@ -30,6 +30,8 @@ import dao.DAORestaurante;
 import dao.DAOUsuario;
 import dao.DAOOrden;
 import dao.DAOZona;
+import dtm.RotonAndesDistributed;
+import rest.RequerimientosServices.Respuesta;
 
 public class TM {
 
@@ -68,7 +70,7 @@ public class TM {
 	 */
 	private Connection conn;
 
-
+	private RotonAndesDistributed dtm;
 	/**
 	 * Metodo constructor de la clase Master, esta clase modela y contiene cada una de las 
 	 * transacciones y la logica de negocios que estas conllevan.
@@ -79,6 +81,9 @@ public class TM {
 	public TM(String contextPathP) {
 		connectionDataPath = contextPathP + CONNECTION_DATA_FILE_NAME_REMOTE;
 		initConnectionData();
+		System.out.println("Instancing DTM...");
+		dtm =  RotonAndesDistributed.getInstance(this);
+		System.out.println("Done!");
 	}
 
 	/**
@@ -229,15 +234,13 @@ public class TM {
 		}
 		return res;
 	}
-	public void registrarPedidoOrden(int mesa, Date fecha, ArrayList<String> productos, ArrayList<Integer> usuarios) throws Exception {
+	public Respuesta registrarPedidoOrden(int mesa, Date fecha, ArrayList<String> productos, ArrayList<Integer> usuarios) throws Exception {
 		DAOOrden daoOrden = new DAOOrden();	
 		DAOProducto daoProducto = new DAOProducto();
-		Savepoint save = null;
+		Respuesta res = new Respuesta();
+		res.usuarios=usuarios;
 		try 
 		{
-			this.conn = darConexion();	
-			conn.setAutoCommit(false);		
-			save =conn.setSavepoint();
 			daoOrden.setConn(conn);
 			daoOrden.addOrdenEnProceso(new Orden(mesa, fecha, usuarios, null, null, false));
 			daoProducto.setConn(conn);
@@ -245,24 +248,55 @@ public class TM {
 			{
 				String[] producto = productos.get(i).split(";");
 				String[] cambios = producto[2].split(":");
-				daoProducto.setConn(conn);
-				if(daoProducto.verificarDisponibilidad(producto[0],producto[1],cambios))
-					throw new Exception("no hay unidades disponible");
-				daoProducto.cerrarRecursos();
-				daoOrden.registrarPedidoProducto(producto[0],producto[1],producto[2],Integer.parseInt(producto[3]), mesa, fecha);
+				if(!daoProducto.verificarDisponibilidad(producto[0],producto[1],cambios))
+				{
+					res.productos.add(productos.get(i));
+				}
+				else
+					daoOrden.registrarPedidoProducto(producto[0],producto[1],producto[2],Integer.parseInt(producto[3]), mesa, fecha);
 			}
-			conn.commit();
+			daoProducto.cerrarRecursos();
 
 
 		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoOrden.cerrarRecursos();
+				daoProducto.cerrarRecursos();
+			} catch (Exception exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return res;
+	}
+	public void registrarPedidoOrdenD(int mesa, Date f, ArrayList<String> productos, ArrayList<Integer> usuarios) throws Exception {
+		Savepoint save = null;
+		try 
+		{
+			this.conn = darConexion();	
+			conn.setAutoCommit(false);		
+			save =conn.setSavepoint();
+			Respuesta faltante =registrarPedidoOrden(mesa, f, productos, usuarios);
+			if(faltante.productos.size()!=0)
+			{
+				dtm.registrarPedidoOrdenD(mesa,f,faltante.productos,faltante.usuarios);
+			}
+			else
+				
+			conn.commit();
+		}
+		catch (Exception e) {
 			System.err.println("GeneralException:" + e.getMessage());
 			e.printStackTrace();
 			conn.rollback(save);
 			throw e;
 		} finally {
 			try {
-				daoOrden.cerrarRecursos();
-				daoProducto.cerrarRecursos();
 				if(this.conn!=null)
 					this.conn.close();
 			} catch (SQLException exception) {
@@ -271,7 +305,9 @@ public class TM {
 				throw exception;
 			}
 		}
+
 	}
+
 
 	public String registrarServicio(int clave, String restaurante, Date fecha, int mesa) throws Exception {
 		String res = "no se realizo la accion";
@@ -516,7 +552,7 @@ public class TM {
 		}
 		return res;
 	}
-	
+
 	public String consultarFuncionamiento(int usuario, int clave, Date dia) throws Exception {
 		String res = null;
 		DAOOrden daoOrden = new DAOOrden();	
@@ -550,7 +586,7 @@ public class TM {
 		}
 		return res;
 	}
-	
+
 	public String consultarBuenosClientes(Date dia, int clave, int usuario) throws Exception {
 		String res = null;
 		DAOOrden daoOrden = new DAOOrden();	
@@ -786,7 +822,7 @@ public class TM {
 	}
 
 	//Producto
-	
+
 	public List<Producto> getProductos() throws Exception {
 		List<Producto> productos;
 		DAOProducto daoProducto = new DAOProducto();
@@ -1098,7 +1134,7 @@ public class TM {
 	}
 
 	//Reserva
-	
+
 	public List<Reserva> getReservas() throws Exception {
 		List<Reserva> reservas;
 		DAOReserva daoReserva = new DAOReserva();
@@ -1130,7 +1166,7 @@ public class TM {
 		}
 		return reservas;
 	}
-	
+
 	public Reserva getReservaPK(int id, Date fecha) throws Exception {
 		Reserva reserva;
 		DAOReserva daoReserva = new DAOReserva();
@@ -1549,7 +1585,7 @@ public class TM {
 			this.conn = darConexion();
 			daoUsuario.setConn(conn);
 			daoUsuario.deleteUsuario(id, usuario, clave);
-	
+
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
 			e.printStackTrace();
@@ -1854,5 +1890,6 @@ public class TM {
 			}
 		}
 	}
+
 
 }

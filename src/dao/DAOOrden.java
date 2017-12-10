@@ -103,7 +103,8 @@ public class DAOOrden {
 		String sql = "INSERT INTO ORDEN VALUES (";
 		sql += orden.getFecha().getTime() + ",";
 		sql += orden.getMesa() + ",";
-		sql += aten+")";
+		sql += aten+",";
+		sql += " 0)";
 
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
