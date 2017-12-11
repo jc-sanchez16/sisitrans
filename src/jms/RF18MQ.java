@@ -46,12 +46,12 @@ import vos.ExchangeMsg;
 
 public class RF18MQ implements MessageListener, ExceptionListener 
 {
-	public final static int TIME_OUT = 1000000;
+	public final static int TIME_OUT = 5;
 	private final static String APP = "app1";
 	
-	private final static String GLOBAL_TOPIC_NAME1 = "java:global/RF19.1";
-	private final static String GLOBAL_TOPIC_NAME2 = "java:global/RF19.2";
-	private final static String GLOBAL_TOPIC_NAME3 = "java:global/RF19.3";
+	private final static String GLOBAL_TOPIC_NAME1 = "java:global/RF18.1";
+	private final static String GLOBAL_TOPIC_NAME2 = "java:global/RF18.2";
+	private final static String GLOBAL_TOPIC_NAME3 = "java:global/RF18.3";
 	
 	private final static String REQUEST = "REQUEST";
 	private final static String REQUEST_ANSWER = "REQUEST_ANSWER";
@@ -76,8 +76,6 @@ public class RF18MQ implements MessageListener, ExceptionListener
 		globalTopic3 = (RMQDestination) ctx.lookup(GLOBAL_TOPIC_NAME3);
 		TopicSubscriber topicSubscriber =  topicSession.createSubscriber(globalTopic1);
     	topicSubscriber.setMessageListener(this);
-		topicSubscriber =  topicSession.createSubscriber(globalTopic2);
-		topicSubscriber =  topicSession.createSubscriber(globalTopic3);
 		topicConnection.setExceptionListener(this);
 	}
 	
@@ -101,7 +99,7 @@ public class RF18MQ implements MessageListener, ExceptionListener
 		id = DatatypeConverter.printHexBinary(md.digest(id.getBytes())).substring(0, 8);
 //		id = new String(md.digest(id.getBytes()));
 		ObjectMapper map = new ObjectMapper();
-		sendMessage(map.writeValueAsString(rest), REQUEST, globalTopic1, id);
+		sendMessage(map.writeValueAsString(rest), REQUEST, globalTopic2, id);
 		boolean waiting = true;
 		int count = 0;
 		while(TIME_OUT != count){
@@ -118,7 +116,9 @@ public class RF18MQ implements MessageListener, ExceptionListener
 		
 		if(answer.isEmpty || appA!=2)
 			throw new NonReplyException("Non Response");
-		sendMessage(map.writeValueAsString(answer), REQUEST, globalTopic2, id);
+		sendMessage(map.writeValueAsString(answer), REQUEST, globalTopic3, id);
+		answer= new Respuesta();
+		appA=0;
 		waiting = true;
 		count = 0;
 		while(TIME_OUT != count){
@@ -133,12 +133,12 @@ public class RF18MQ implements MessageListener, ExceptionListener
 		}
 		waiting = false;
 		
-		if(answer.isEmpty)
+		if(answer.isEmpty|| appA!=3)
 			throw new NonReplyException("Non Response");
 		if(answer.productos.isEmpty())
 		{
-			sendMessage(rest.mesa+";"+rest.fecha, REQUEST_ACTION, globalTopic1, id);
-			sendMessage(rest.mesa+";"+rest.fecha, REQUEST_ACTION, globalTopic2, id);
+			sendMessage(rest.mesa+";"+rest.fecha.getTime(), REQUEST_ACTION, globalTopic3, id);
+			sendMessage(rest.mesa+";"+rest.fecha.getTime(), REQUEST_ACTION, globalTopic2, id);
 			return true;
 		}	
 		return false;
@@ -149,7 +149,7 @@ public class RF18MQ implements MessageListener, ExceptionListener
 	{
 		ObjectMapper mapper = new ObjectMapper();
 		System.out.println(id);
-		ExchangeMsg msg = new ExchangeMsg("videos.general", APP, payload, status, id);
+		ExchangeMsg msg = new ExchangeMsg("orden", APP, payload, status, id);
 		TopicPublisher topicPublisher = topicSession.createPublisher(dest);
 		topicPublisher.setDeliveryMode(DeliveryMode.PERSISTENT);
 		TextMessage txtMsg = topicSession.createTextMessage();
@@ -179,10 +179,11 @@ public class RF18MQ implements MessageListener, ExceptionListener
 				{
 					
 					RotonAndesDistributed dtm = RotonAndesDistributed.getInstance();
-					Respuesta resp = dtm.registrarLocal(new Respuesta());
-					String payload = mapper.writeValueAsString(mapper.readValue(ex.getPayload(), Respuesta.class));
-					Topic t = new RMQDestination(payload, "1", ex.getRoutingKey(), "", false);
-					sendMessage(payload, REQUEST_ANSWER, t, id);
+					Respuesta resp = dtm.registrarLocal(mapper.readValue(ex.getPayload(), Respuesta.class));
+					String payload = mapper.writeValueAsString(resp);
+					Topic t = ex.getSender().equals("app2") ? globalTopic2:globalTopic3;
+					sendMessage(payload, REQUEST_ANSWER,t , id);
+					
 				}
 				else if(ex.getStatus().equals(REQUEST_ANSWER))
 				{

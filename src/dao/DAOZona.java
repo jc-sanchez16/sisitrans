@@ -129,7 +129,7 @@ public class DAOZona {
 		try
 		{
 			daoUsuario.setConn(conn);
-			if(!daoUsuario.verificar(usuario,clave,tipo))
+			if(!daoUsuario.verificar(usuario,clave+"",tipo))
 			throw new Exception("usuario no valido");
 			String sql = "INSERT INTO ZONA VALUES (";
 			sql += zona.getId() + ",";
@@ -161,7 +161,7 @@ public class DAOZona {
 		try
 		{
 			daoUsuario.setConn(conn);
-			if(!daoUsuario.verificar(usuario,clave,tipo))
+			if(!daoUsuario.verificar(usuario,clave+"",tipo))
 			throw new Exception("usuario no valido");
 			String sql = "UPDATE ZONA SET ";
 			sql += "ID="+zona.getId() + ",";

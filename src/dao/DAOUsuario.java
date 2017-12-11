@@ -56,7 +56,7 @@ public class DAOUsuario {
 			daoReserva.setConn(conn);
 			daoOrden.setConn(conn);
 			daoUsuario.setConn(conn);
-			if(!daoUsuario.verificar(usuario2, clave, administrador2))
+			if(!daoUsuario.verificar(usuario2, clave+"", administrador2))
 				throw new Exception("No es un usuario valido");	
 			String sql = "SELECT * FROM PERSONA";
 
@@ -127,7 +127,7 @@ public class DAOUsuario {
 		try
 		{
 			daoUsuario.setConn(conn);
-			if(!daoUsuario.verificar(usuario2, clave2, DAOUsuario.ADMINISTRADOR))
+			if(!daoUsuario.verificar(usuario2, clave2+"", DAOUsuario.ADMINISTRADOR))
 				throw new Exception("No es un usuario valido");	
 			String sql = "INSERT INTO PERSONA VALUES (";
 			sql += usuario.getId() + ",'";
@@ -158,7 +158,7 @@ public class DAOUsuario {
 			daoUsuario.setConn(conn);
 			if(usuario.getId()==usuario2)
 			{
-				if(!daoUsuario.verificar(usuario2, clave, DAOUsuario.USUARIO))
+				if(!daoUsuario.verificar(usuario2, clave+"", DAOUsuario.USUARIO))
 					throw new Exception("No es un usuario valido");	
 
 				String sql = "UPDATE PERSONA SET ";
@@ -175,7 +175,7 @@ public class DAOUsuario {
 			}
 			else
 			{
-				if(!daoUsuario.verificar(usuario2, clave, DAOUsuario.ADMINISTRADOR))
+				if(!daoUsuario.verificar(usuario2, clave+"", DAOUsuario.ADMINISTRADOR))
 					throw new Exception("No es un usuario valido");	
 				String sql = "UPDATE PERSONA SET ";
 				sql += "NOMBRE='"+usuario.getNombre() + "',";
@@ -205,7 +205,7 @@ public class DAOUsuario {
 		try
 		{
 			daoUsuario.setConn(conn);
-			if(!daoUsuario.verificar(usuario2, clave, DAOUsuario.ADMINISTRADOR))
+			if(!daoUsuario.verificar(usuario2, clave+"", DAOUsuario.ADMINISTRADOR))
 				throw new Exception("No es un usuario valido");	
 			String sql = "DELETE FROM PERSONA";
 			sql += " WHERE NUMERO_ID = " + id;
@@ -234,7 +234,7 @@ public class DAOUsuario {
 			daoReserva.setConn(conn);
 			daoOrden.setConn(conn);
 			daoUsuario.setConn(conn);
-			if(!daoUsuario.verificar(usuario2, clave, DAOUsuario.ADMINISTRADOR))
+			if(!daoUsuario.verificar(usuario2, clave+"", DAOUsuario.ADMINISTRADOR))
 				throw new Exception("No es un usuario valido");
 			String sql = "SELECT * FROM PERSONA WHERE TIPO = 1";
 
@@ -274,7 +274,7 @@ public class DAOUsuario {
 			daoReserva.setConn(conn);
 			daoOrden.setConn(conn);
 			daoUsuario.setConn(conn);
-			if(!daoUsuario.verificar(usuario2, clave, DAOUsuario.ADMINISTRADOR))
+			if(!daoUsuario.verificar(usuario2, clave+"", DAOUsuario.ADMINISTRADOR))
 				throw new Exception("No es un usuario valido");
 			String sql = "SELECT * FROM PERSONA WHERE NUMERO_ID = "+PK+" AND TIPO = 1";
 
@@ -332,12 +332,12 @@ public class DAOUsuario {
 			daoRestaurante.setConn(conn);
 			if(admin>0)
 			{
-				if(!daoUsuario.verificar(admin, claveUsuario, DAOUsuario.ADMINISTRADOR))
+				if(!daoUsuario.verificar(admin, claveUsuario+"", DAOUsuario.ADMINISTRADOR))
 					throw new Exception("No es un usuario valido");
 			}
 			if(userRepresentante>0)
 			{
-				if(!daoUsuario.verificar(userRepresentante, claveRep, DAOUsuario.REPRESENTANTE))
+				if(!daoUsuario.verificar(userRepresentante, claveRep+"", DAOUsuario.REPRESENTANTE))
 					throw new Exception("No es un usuario valido");
 			}
 			String sql = "SELECT * FROM PERSONA WHERE TIPO = 2";
@@ -383,14 +383,14 @@ public class DAOUsuario {
 			daoUsuario.setConn(conn);
 			if(admin2>0)
 			{
-				if(!daoUsuario.verificar(admin2, claveUsuario, DAOUsuario.ADMINISTRADOR))
+				if(!daoUsuario.verificar(admin2, claveUsuario+"", DAOUsuario.ADMINISTRADOR))
 					throw new Exception("No es un usuario valido");
 			}
 			if(userRepresentante>0)
 			{
 				if(userRepresentante==PK)
 				{
-					if(!daoUsuario.verificar(userRepresentante, claveRep, DAOUsuario.REPRESENTANTE))
+					if(!daoUsuario.verificar(userRepresentante, claveRep+"", DAOUsuario.REPRESENTANTE))
 						throw new Exception("No es un usuario valido");
 				}
 				else
@@ -431,9 +431,9 @@ public class DAOUsuario {
 	}
 
 
-	public boolean verificar(int usuario, int clave, int tipo) throws SQLException {
+	public boolean verificar(int usuario, String clave, int tipo) throws SQLException {
 
-		String sql = "SELECT CLAVE FROM PERSONA WHERE NUMERO_ID ="+usuario+" AND CLAVE = "+clave+" AND TIPO ="+tipo;
+		String sql = "SELECT CLAVE FROM PERSONA WHERE NUMERO_ID ="+usuario+" AND CLAVE = \'"+clave+"\' AND TIPO ="+tipo;
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();

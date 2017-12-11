@@ -134,7 +134,7 @@ public class DAORestaurante {
 		try
 		{
 			daoUsuario.setConn(conn);
-			if(!daoUsuario.verificar(usuario, contraseñaAd, DAOUsuario.ADMINISTRADOR))
+			if(!daoUsuario.verificar(usuario, contraseñaAd+"", DAOUsuario.ADMINISTRADOR))
 				throw new Exception("No es un usuario valido");
 			String sql = "INSERT INTO RESTAURANTE VALUES ('";
 			sql += restaurante.getNombre() + "',";
@@ -162,7 +162,7 @@ public class DAORestaurante {
 		try
 		{
 			daoUsuario.setConn(conn);
-			if(!daoUsuario.verificar(usuario, contraseñaAd, DAOUsuario.ADMINISTRADOR))
+			if(!daoUsuario.verificar(usuario, contraseñaAd+"", DAOUsuario.ADMINISTRADOR))
 				throw new Exception("No es un usuario valido");
 			
 			String sql = "UPDATE RESTAURANTE SET ";
@@ -193,7 +193,7 @@ public class DAORestaurante {
 		try
 		{
 			daoUsuario.setConn(conn);
-			if(!daoUsuario.verificar(usuario, contraseñaAd, DAOUsuario.ADMINISTRADOR))
+			if(!daoUsuario.verificar(usuario, contraseñaAd+"", DAOUsuario.ADMINISTRADOR))
 				throw new Exception("No es un usuario valido");
 			
 			String sql = "DELETE FROM RESTAURANTE";
@@ -247,7 +247,7 @@ public class DAORestaurante {
 		return lista;
 	}
 	
-	public boolean verificarRest(String restaurante, int clave) throws SQLException {
+	public boolean verificarRest(String restaurante, String clave) throws SQLException {
 
 		String sql = "SELECT CLAVE FROM RESTAURANTE WHERE NOMBRE ='"+restaurante+"' AND CLAVE="+clave;
 		PreparedStatement prepStmt = conn.prepareStatement(sql);

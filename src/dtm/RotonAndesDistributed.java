@@ -26,6 +26,8 @@ import com.rabbitmq.jms.admin.RMQDestination;
 
 import jms.NonReplyException;
 import jms.RF18MQ;
+import jms.RF19MQ;
+import jms.RFC14MQ;
 import rest.RequerimientosServices.Respuesta;
 import tm.TM;
 public class RotonAndesDistributed 
@@ -42,6 +44,8 @@ public class RotonAndesDistributed
 	private TopicConnectionFactory factory;
 	
 	private RF18MQ req18;
+	private RF19MQ req19;
+	private RFC14MQ reqc14;
 	
 	private static String path;
 
@@ -51,13 +55,19 @@ public class RotonAndesDistributed
 		InitialContext ctx = new InitialContext();
 		factory = (RMQConnectionFactory) ctx.lookup(MQ_CONNECTION_NAME);
 		req18 = new RF18MQ(factory, ctx);
+		req19 = new RF19MQ(factory, ctx);
+		reqc14 = new RFC14MQ(factory, ctx);
 		req18.start();
+		req19.start();
+		reqc14.start();
 		
 	}
 	
 	public void stop() throws JMSException
 	{
 		req18.close();
+		req19.close();
+		reqc14.close();
 	}
 	
 	/**
@@ -121,5 +131,20 @@ public class RotonAndesDistributed
 
 	public void marcarAprovada(String datos) throws Exception {
 		tm.marcarAprovada(datos);
+	}
+
+	public void retirarRestauranteD(String restaurante) throws JsonGenerationException, JsonMappingException, NoSuchAlgorithmException, JMSException, IOException, NonReplyException, InterruptedException {
+		req19.retirar(restaurante);		
+	}
+	public void retirarRestauranteL(String restaurante) throws Exception
+	{
+		tm.retirarRestaurante(restaurante);
+	}
+
+	public String consultarRentabilidadD(String restaurante, Date fecI, Date fecF) throws JsonGenerationException, JsonMappingException, NoSuchAlgorithmException, JMSException, IOException, NonReplyException, InterruptedException {
+		return reqc14.consultarRentabilidad(restaurante, fecF, fecF);
+	}
+	public String consultarRentabilidadL(String restaurante, Date fecI, Date fecF) throws Exception {
+		return tm.consultarRentabilidadL(restaurante, fecI, fecF);
 	}
 }

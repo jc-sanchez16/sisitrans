@@ -393,9 +393,9 @@ public class DAOOrden {
 			daoRestaurante.setConn(conn);
 			daoProducto.setConn(conn);
 			String sql = "SELECT * FROM ORDEN_PRODUCTO ";
-			if(daoRestaurante.verificarRest(usuario,clave))
+			if(daoRestaurante.verificarRest(usuario,clave+""))
 				sql += "WHERE RESTAURANTE = '"+usuario+"' ";
-			else if(!daoUsuario.verificar(Integer.parseInt(usuario), clave, 1))
+			else if(!daoUsuario.verificar(Integer.parseInt(usuario), clave+"", 1))
 				throw new Exception("no es un usuario valido");
 			sql += "ORDER BY RESTAURANTE";
 			PreparedStatement prepStmt = conn.prepareStatement(sql);
@@ -470,7 +470,7 @@ public class DAOOrden {
 				}
 				String nombre = rs.getString("NOMBRE");
 				int usua = rs.getInt("USUARIO");
-				if(daoUsuario.verificar(usua, 0, 0))
+				if(daoUsuario.verificar(usua, 0+"", 0))
 					clientesNR++;
 				productos.add(nombre);				
 			}		
@@ -713,11 +713,66 @@ public class DAOOrden {
 
 
 	public void marcarAprovada(String mesa, String fecha) throws SQLException {
-		String sql = "UPDATE ORDEN SET RECHAZADO = 0";
+		String sql = "UPDATE ORDEN SET RECHAZADO = 1";
 		sql += " WHERE MESA = "+mesa+" AND FECHA = "+fecha;
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
+	}
+
+
+	public String consultarRentabilidad(String restaurante, Date fecI, Date fecF) throws Exception {
+		String res = null;
+		DAOProducto daoProducto = new DAOProducto();		
+		try
+		{
+			daoProducto.setConn(conn);
+			String sql = "SELECT NOMBRE , COUNT(NOMBRE) FROM ORDEN_PRODUCTO ";
+			sql += "WHERE RESTAURANTE = '"+restaurante+"' AND FECHA BETWEEN "+ fecI.getTime() +" AND "+ fecF.getTime()+" GROUP BY NOMBRE ";
+			PreparedStatement prepStmt = conn.prepareStatement(sql);
+			recursos.add(prepStmt);
+			ResultSet rs = prepStmt.executeQuery();
+			res = "{\"productos\": [";
+			double ventas= 0;
+			double costo = 0;
+			while (rs.next())
+			{
+				String nom = rs.getString("NOMBRE");
+				int cant = rs.getInt(2);
+				res+= "{\"nombre\": \""+nom+"\",";
+				res+="\"unidadesVendidas\": "+cant+",";
+				Producto prod = daoProducto.getProductoPK(nom, restaurante);
+				if(prod == null)
+				{
+					Menu men = daoProducto.getMenuPK(nom, restaurante);
+					res+="\"costos\": "+men.getCosto()*cant+",";
+					res+="\"ventas\": "+men.getPrecio()*cant+"},";
+					ventas+=men.getPrecio()*cant;
+					costo+=men.getCosto()*cant;
+				}
+				else
+				{
+					res+="\"costos\": "+prod.getCosto()*cant+",";
+					res+="\"ventas\": "+prod.getPrecio()*cant+"},";
+					ventas+=prod.getPrecio()*cant;
+					costo+=prod.getCosto()*cant;
+				}
+			}		
+
+			res = res.substring(0,res.lastIndexOf(","));
+			res +="], \"totalVentas\": "+ventas+", ";
+			res +=" \"totalCostos\": "+costo+"} ";
+			res +="#"+ventas+"#"+costo;
+		}
+		catch(Exception e)
+		{
+			throw e;
+		}
+		finally
+		{
+			daoProducto.cerrarRecursos();
+		}
+		return res;
 	}
 }

@@ -165,7 +165,7 @@ public class DAOProducto {
 			daoRestaurante.setConn(conn);
 			if(restaurante.equals(producto.getRestaurante()))
 			{
-				if(!daoRestaurante.verificarRest(restaurante, claveRestaurante))
+				if(!daoRestaurante.verificarRest(restaurante, claveRestaurante+""))
 					throw new Exception("No es un usuario valido");
 			}
 			else
@@ -207,7 +207,7 @@ public class DAOProducto {
 			daoRestaurante.setConn(conn);
 			if(restaurante.equals(producto.getRestaurante()))
 			{
-				if(!daoRestaurante.verificarRest(restaurante, claveRestaurante))
+				if(!daoRestaurante.verificarRest(restaurante, claveRestaurante+""))
 					throw new Exception("No es un usuario valido");
 			}
 			else
@@ -249,7 +249,7 @@ public class DAOProducto {
 			daoRestaurante.setConn(conn);
 			if(restaurant.equals(restaurante2))
 			{
-				if(!daoRestaurante.verificarRest(restaurante2, claveRestaurante))
+				if(!daoRestaurante.verificarRest(restaurante2, claveRestaurante+""))
 					throw new Exception("No es un usuario valido");
 			}
 			else
@@ -331,7 +331,7 @@ public class DAOProducto {
 			daoRestaurante.setConn(conn);
 			if(restaurante.equals(menu.getRestaurante()))
 			{
-				if(!daoRestaurante.verificarRest(restaurante, claveRestaurante))
+				if(!daoRestaurante.verificarRest(restaurante, claveRestaurante+""))
 					throw new Exception("No es un usuario valido");
 			}
 			else
@@ -406,7 +406,7 @@ public class DAOProducto {
 			daoRestaurante.setConn(conn);
 			if(restaurante.equals(menu.getRestaurante()))
 			{
-				if(!daoRestaurante.verificarRest(restaurante, claveRestaurante))
+				if(!daoRestaurante.verificarRest(restaurante, claveRestaurante+""))
 					throw new Exception("No es un usuario valido");
 			}
 			else
@@ -483,7 +483,7 @@ public class DAOProducto {
 			daoRestaurante.setConn(conn);
 			if(restaurante.equals(restaurante2))
 			{
-				if(!daoRestaurante.verificarRest(restaurante2, claveRestaurante))
+				if(!daoRestaurante.verificarRest(restaurante2, claveRestaurante+""))
 					throw new Exception("No es un usuario valido");
 			}
 			else
@@ -777,6 +777,16 @@ public class DAOProducto {
 				restarUnidad(nom, plato.getRestaurante(), null);				
 			}
 		}		
+	}
+
+
+	public void retirarRestaurante(String restaurante) throws SQLException {
+		String sql = "UPDATE PRODUCTO SET ";
+		sql += "NO_VALIDO="+ 0;
+		sql += " WHERE RESTAURANTE ='"+restaurante+"'";
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();		
 	}
 
 

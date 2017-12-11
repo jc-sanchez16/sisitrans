@@ -127,21 +127,7 @@ public class RequerimientosServices {
 			isEmpty = false;
 		}
 	}
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path("15")
-	public Response registrarPedidoOrden(Respuesta res) {
-		TM tm = new TM(getPath());
-		try {
-			Date f =new Date();
-			f = new Date(f.getYear(),f.getMonth(),f.getDate(),f.getHours(), f.getMinutes());
-			res.fecha=f;
-			tm.registrarPedidoOrden(res);
-		} catch (Exception e) {
-			return Response.status(500).entity(doErrorMessage(e)).build();
-		}		return Response.status(200).entity(res).build();
-	}
+	
 	@PUT
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Path("16")
@@ -283,32 +269,31 @@ public class RequerimientosServices {
 		}		return Response.status(200).entity(res).build();
 	}
 	@PUT
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({ MediaType.APPLICATION_JSON })
-	@Path("19C")
-	public Response retirarRestauranteDC(@QueryParam("clave") int clave,@QueryParam("usuario") int usuario, @QueryParam("restaurante") String restaurante)
+	@Path("19")
+	public Response retirarRestauranteDC(@QueryParam("clave") String clave,@QueryParam("usuario") int usuario, @QueryParam("restaurante") String restaurante)
 	{
 		TM tm = new TM(getPath());
-		String res= null;
 		try {
-			res = tm.retirarRestauranteDC(clave, usuario, restaurante);
+			tm.retirarRestauranteDC(clave, usuario, restaurante);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
-		return Response.status(200).entity(res).build();
+		return Response.status(200).entity(restaurante).build();
 	}
 	@PUT
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Path("19T")
-	public Response retirarRestauranteDT(@QueryParam("clave") int clave,@QueryParam("usuario") int usuario, @QueryParam("restaurante") String restaurante)
+	public Response retirarRestauranteDT(@QueryParam("clave") String clave,@QueryParam("usuario") int usuario, @QueryParam("restaurante") String restaurante)
 	{
 		TM tm = new TM(getPath());
-		String res= null;
 		try {
-			res = tm.retirarRestauranteDT(clave, usuario, restaurante);
+			tm.retirarRestauranteDT(clave, usuario, restaurante);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
-		return Response.status(200).entity(res).build();
+		return Response.status(200).entity(restaurante).build();
 	}
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON })
@@ -325,9 +310,10 @@ public class RequerimientosServices {
 		return Response.status(200).entity(res).build();
 	}
 	@GET
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Path("C14")
-	public Response consultarRentabilidadD(@QueryParam("restaurante") String restaurante,@QueryParam("usuario") int usuario,@QueryParam("clave") int clave,@QueryParam("fechaI") String fechaI,@QueryParam("fechaF") String fechaF) {
+	public Response consultarRentabilidadD(@QueryParam("restaurante") String restaurante,@QueryParam("usuario") int usuario,@QueryParam("clave") String clave,@QueryParam("fechaI") String fechaI,@QueryParam("fechaF") String fechaF) {
 		TM tm = new TM(getPath());
 		String res = null;
 		Date fecI = new Date(fechaI);
