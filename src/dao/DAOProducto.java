@@ -698,8 +698,7 @@ public class DAOProducto {
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
-
-		while (rs.next()) {
+		if(rs.next()) {
 			if(rs.getInt("CANT_ACTUAL")<=0)
 				return false;
 			if (rs.getInt("MENU")==0)
@@ -707,6 +706,8 @@ public class DAOProducto {
 				return verificarDisponibilidadPlatos(nombre,restaurante,cambios);
 			}
 		}
+		else
+			return false;
 		return true;
 	}
 

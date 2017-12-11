@@ -105,15 +105,25 @@ public class RequerimientosServices {
 		public ArrayList<String> productos;
 		@JsonProperty(value="usuarios")
 		public ArrayList<Integer> usuarios;
+		public int mesa;
+		public Date fecha;
 		public boolean isEmpty;
 		public Respuesta() {
 			productos = new ArrayList<String>();
 			usuarios = new ArrayList<Integer>();
 			isEmpty = true;
 		}
-		public Respuesta(@JsonProperty(value="productos")ArrayList<String> productos,@JsonProperty(value="usuarios") ArrayList<Integer> usuarios) {
+		public Respuesta(@JsonProperty(value="productos")ArrayList<String> productos,@JsonProperty(value="usuarios") ArrayList<Integer> usuarios,@JsonProperty(value="mesa")int mesa) {
 			this.productos = productos;
 			this.usuarios = usuarios;
+			this.mesa = mesa;
+			isEmpty = false;
+		}
+		public Respuesta(ArrayList<String> productos, ArrayList<Integer> usuarios,int mesa,Date fecha) {
+			this.productos = productos;
+			this.usuarios = usuarios;
+			this.mesa = mesa;
+			this.fecha = fecha;
 			isEmpty = false;
 		}
 	}
@@ -121,12 +131,13 @@ public class RequerimientosServices {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("15")
-	public Response registrarPedidoOrden(@QueryParam("mesa") int mesa, Respuesta res) {
+	public Response registrarPedidoOrden(Respuesta res) {
 		TM tm = new TM(getPath());
 		try {
 			Date f =new Date();
 			f = new Date(f.getYear(),f.getMonth(),f.getDate(),f.getHours(), f.getMinutes());
-			tm.registrarPedidoOrden(mesa,f,res.productos,res.usuarios);
+			res.fecha=f;
+			tm.registrarPedidoOrden(res);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}		return Response.status(200).entity(res).build();
@@ -260,12 +271,13 @@ public class RequerimientosServices {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("18")
-	public Response registrarPedidoOrdenD(@QueryParam("mesa") int mesa, Respuesta res) {
+	public Response registrarPedidoOrdenD(Respuesta res) {
 		TM tm = new TM(getPath());
 		try {
 			Date f =new Date();
 			f = new Date(f.getYear(),f.getMonth(),f.getDate(),f.getHours(), f.getMinutes());
-			tm.registrarPedidoOrdenD(mesa,f,res.productos,res.usuarios);
+			res.fecha=f;
+			tm.registrarPedidoOrdenD(res);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}		return Response.status(200).entity(res).build();

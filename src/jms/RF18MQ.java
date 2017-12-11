@@ -47,20 +47,25 @@ import vos.ExchangeMsg;
 public class RF18MQ implements MessageListener, ExceptionListener 
 {
 	public final static int TIME_OUT = 1000000;
-	private final static String APP = "app3";
+	private final static String APP = "app1";
 	
 	private final static String GLOBAL_TOPIC_NAME1 = "java:global/RF19.1";
 	private final static String GLOBAL_TOPIC_NAME2 = "java:global/RF19.2";
+	private final static String GLOBAL_TOPIC_NAME3 = "java:global/RF19.3";
 	
 	private final static String REQUEST = "REQUEST";
 	private final static String REQUEST_ANSWER = "REQUEST_ANSWER";
+	private final static String REQUEST_ACTION = "REQUEST_ACTION";
 	
 	private TopicConnection topicConnection;
 	private TopicSession topicSession;
 	private Topic globalTopic1;
 	private Topic globalTopic2;
+	private Topic globalTopic3;
 	
 	private Respuesta answer = new Respuesta();
+	
+	private int appA =0;
 	
 	public RF18MQ(TopicConnectionFactory factory, InitialContext ctx) throws JMSException, NamingException 
 	{	
@@ -68,10 +73,11 @@ public class RF18MQ implements MessageListener, ExceptionListener
 		topicSession = topicConnection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
 		globalTopic1 = (RMQDestination) ctx.lookup(GLOBAL_TOPIC_NAME1);
 		globalTopic2 = (RMQDestination) ctx.lookup(GLOBAL_TOPIC_NAME2);
+		globalTopic3 = (RMQDestination) ctx.lookup(GLOBAL_TOPIC_NAME3);
 		TopicSubscriber topicSubscriber =  topicSession.createSubscriber(globalTopic1);
-		topicSubscriber.setMessageListener(this);
+    	topicSubscriber.setMessageListener(this);
 		topicSubscriber =  topicSession.createSubscriber(globalTopic2);
-		topicSubscriber.setMessageListener(this);
+		topicSubscriber =  topicSession.createSubscriber(globalTopic3);
 		topicConnection.setExceptionListener(this);
 	}
 	
@@ -86,9 +92,10 @@ public class RF18MQ implements MessageListener, ExceptionListener
 		topicConnection.close();
 	}
 	
-	public boolean registrar(int mesa, Date f, Respuesta rest) throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
+	public boolean registrar(Respuesta rest) throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
 	{
 		answer= new Respuesta();
+		appA=0;
 		String id = APP+""+System.currentTimeMillis();
 		MessageDigest md = MessageDigest.getInstance("MD5");
 		id = DatatypeConverter.printHexBinary(md.digest(id.getBytes())).substring(0, 8);
@@ -109,13 +116,9 @@ public class RF18MQ implements MessageListener, ExceptionListener
 		}
 		waiting = false;
 		
-		if(answer.isEmpty)
+		if(answer.isEmpty || appA!=2)
 			throw new NonReplyException("Non Response");
-		if(answer.productos.isEmpty())
-		{
-			return true;
-		}			
-		sendMessage(map.writeValueAsString(rest), REQUEST, globalTopic2, id);
+		sendMessage(map.writeValueAsString(answer), REQUEST, globalTopic2, id);
 		waiting = true;
 		count = 0;
 		while(TIME_OUT != count){
@@ -134,10 +137,10 @@ public class RF18MQ implements MessageListener, ExceptionListener
 			throw new NonReplyException("Non Response");
 		if(answer.productos.isEmpty())
 		{
-			sendMessage("true", REQUEST, globalTopic1, id);
+			sendMessage(rest.mesa+";"+rest.fecha, REQUEST_ACTION, globalTopic1, id);
+			sendMessage(rest.mesa+";"+rest.fecha, REQUEST_ACTION, globalTopic2, id);
 			return true;
 		}	
-		sendMessage("false", REQUEST, globalTopic1, id);
 		return false;
 	}
 	
@@ -146,13 +149,14 @@ public class RF18MQ implements MessageListener, ExceptionListener
 	{
 		ObjectMapper mapper = new ObjectMapper();
 		System.out.println(id);
-		ExchangeMsg msg = new ExchangeMsg("registrar.app3", APP, payload, status, id);
+		ExchangeMsg msg = new ExchangeMsg("videos.general", APP, payload, status, id);
 		TopicPublisher topicPublisher = topicSession.createPublisher(dest);
 		topicPublisher.setDeliveryMode(DeliveryMode.PERSISTENT);
 		TextMessage txtMsg = topicSession.createTextMessage();
 		txtMsg.setJMSType("TextMessage");
-		System.out.println(payload);
-		txtMsg.setText(payload);
+		String envelope = mapper.writeValueAsString(msg);
+		System.out.println(envelope);
+		txtMsg.setText(envelope);
 		topicPublisher.publish(txtMsg);
 	}
 	
@@ -173,18 +177,23 @@ public class RF18MQ implements MessageListener, ExceptionListener
 			{
 				if(ex.getStatus().equals(REQUEST))
 				{
-					if()
+					
 					RotonAndesDistributed dtm = RotonAndesDistributed.getInstance();
-					Respuesta resp = dtm.registrarLocal();
-					String payload = mapper.writeValueAsString(resp);
-					Topic t = new RMQDestination("", "videos.test", ex.getRoutingKey(), "", false);
+					Respuesta resp = dtm.registrarLocal(new Respuesta());
+					String payload = mapper.writeValueAsString(mapper.readValue(ex.getPayload(), Respuesta.class));
+					Topic t = new RMQDestination(payload, "1", ex.getRoutingKey(), "", false);
 					sendMessage(payload, REQUEST_ANSWER, t, id);
 				}
 				else if(ex.getStatus().equals(REQUEST_ANSWER))
 				{
+					appA=Integer.parseInt(ex.getSender().charAt(3)+"");
+					answer = mapper.readValue(ex.getPayload(), Respuesta.class);
+				}
+				else if (ex.getStatus().equals(REQUEST_ACTION))
+				{
 					
-					ListaVideos v = mapper.readValue(ex.getPayload(), ListaVideos.class);
-					answer.addAll(v.getVideos());
+					RotonAndesDistributed dtm = RotonAndesDistributed.getInstance();
+					dtm.marcarAprovada(ex.getPayload());
 				}
 			}
 			

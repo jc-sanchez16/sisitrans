@@ -710,4 +710,14 @@ public class DAOOrden {
 
 		return res;
 	}
+
+
+	public void marcarAprovada(String mesa, String fecha) throws SQLException {
+		String sql = "UPDATE ORDEN SET RECHAZADO = 0";
+		sql += " WHERE MESA = "+mesa+" AND FECHA = "+fecha;
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+	}
 }

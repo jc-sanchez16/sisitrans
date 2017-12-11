@@ -50,9 +50,8 @@ public class RotonAndesDistributed
 	{
 		InitialContext ctx = new InitialContext();
 		factory = (RMQConnectionFactory) ctx.lookup(MQ_CONNECTION_NAME);
-//		req18 = new RF18MQ(factory, ctx);
-		
-//		req18.start();
+		req18 = new RF18MQ(factory, ctx);
+		req18.start();
 		
 	}
 	
@@ -111,12 +110,16 @@ public class RotonAndesDistributed
 		return getInstance(tm);
 	}
 
-	public boolean registrarPedidoOrdenD(int mesa, Date f, ArrayList<String> productos, ArrayList<Integer> usuarios) throws JsonGenerationException, JsonMappingException, NoSuchAlgorithmException, JMSException, IOException, NonReplyException, InterruptedException {
+	public boolean registrarPedidoOrdenD(Respuesta res) throws JsonGenerationException, JsonMappingException, NoSuchAlgorithmException, JMSException, IOException, NonReplyException, InterruptedException {
 		
-		return req18.registrar(mesa,f,new Respuesta(productos, usuarios) );
+		return req18.registrar(res);
 	}
 
-	public Respuesta registrarLocal(int mesa,Date f,Respuesta res) throws Exception {
-		return tm.registrarPedidoOrden(mesa, f, res.productos, res.usuarios);
+	public Respuesta registrarLocal(Respuesta res) throws Exception {
+		return tm.registrarPedidoOrden(res.mesa, res.fecha, res.productos, res.usuarios);
+	}
+
+	public void marcarAprovada(String datos) throws Exception {
+		tm.marcarAprovada(datos);
 	}
 }

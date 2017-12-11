@@ -237,8 +237,9 @@ public class TM {
 	public Respuesta registrarPedidoOrden(int mesa, Date fecha, ArrayList<String> productos, ArrayList<Integer> usuarios) throws Exception {
 		DAOOrden daoOrden = new DAOOrden();	
 		DAOProducto daoProducto = new DAOProducto();
+		ArrayList<String> p = new ArrayList<String>();
 		Respuesta res = new Respuesta();
-		res.usuarios=usuarios;
+		
 		try 
 		{
 			daoOrden.setConn(conn);
@@ -250,14 +251,14 @@ public class TM {
 				String[] cambios = producto[2].split(":");
 				if(!daoProducto.verificarDisponibilidad(producto[0],producto[1],cambios))
 				{
-					res.productos.add(productos.get(i));
+					p.add(productos.get(i));
 				}
 				else
 					daoOrden.registrarPedidoProducto(producto[0],producto[1],producto[2],Integer.parseInt(producto[3]), mesa, fecha);
 			}
 			daoProducto.cerrarRecursos();
 
-
+			res = new Respuesta(p, usuarios, mesa, fecha);
 		} catch (Exception e) {
 			System.err.println("GeneralException:" + e.getMessage());
 			e.printStackTrace();
@@ -274,19 +275,16 @@ public class TM {
 		}
 		return res;
 	}
-	public void registrarPedidoOrdenD(int mesa, Date f, ArrayList<String> productos, ArrayList<Integer> usuarios) throws Exception {
+	public void registrarPedidoOrdenD(Respuesta res) throws Exception {
 		Savepoint save = null;
 		try 
 		{
 			this.conn = darConexion();	
 			conn.setAutoCommit(false);		
 			save =conn.setSavepoint();
-			Respuesta faltante =registrarPedidoOrden(mesa, f, productos, usuarios);
-			if(faltante.productos.size()!=0)
-			{
-				dtm.registrarPedidoOrdenD(mesa,f,faltante.productos,faltante.usuarios);
-			}
-			else
+			Respuesta faltante =registrarPedidoOrden(res.mesa, res.fecha, res.productos, res.usuarios);
+			dtm.registrarPedidoOrdenD(faltante);
+			
 				
 			conn.commit();
 		}
@@ -306,6 +304,32 @@ public class TM {
 			}
 		}
 
+	}
+	public void marcarAprovada(String datos) throws Exception {
+		DAOOrden daoOrden = new DAOOrden();	
+		try 
+		{
+			this.conn = darConexion();	
+			daoOrden.setConn(conn);
+			String[] r = datos.split(";");
+			daoOrden.marcarAprovada(r[0],r[1]);
+			conn.commit();
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoOrden.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		
 	}
 
 
@@ -1890,6 +1914,8 @@ public class TM {
 			}
 		}
 	}
+
+	
 
 
 }
